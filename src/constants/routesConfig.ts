@@ -14,6 +14,6 @@ export const routesConfig = {
   projectLongLatOnSphere: {
     path: '/project-long-lat-on-sphere',
     name: 'Project Long Lat On Sphere',
-    component: lazy(() => import('@pages/project-long-lat-on-sphere'))
+    component: lazy(() => import('@pages/projectLongLatOnSphere'))
   }
 };
