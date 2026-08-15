@@ -29,15 +29,19 @@ export default defineConfig([
       }
     },
     rules: {
+      // General rules
+      'no-empty': 'off',
+      'prefer-const': 'warn',
+      'no-case-declarations': 'off',
+      // Typescript rules
       '@typescript-eslint/no-non-null-assertion': 'off',
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-this-alias': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      'no-empty': 'off',
-      'prefer-const': 'warn',
-      'no-case-declarations': 'off'
+      // React rules
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-hooks/immutability': 'off'
     }
   }
 ]);

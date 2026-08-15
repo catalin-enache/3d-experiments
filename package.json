@@ -16,6 +16,7 @@
     "@tweakpane/plugin-essentials": "0.2.1",
     "fast-glob": "3.3.3",
     "gh-pages": "6.3.0",
+    "lil-gui": "^0.21.0",
     "lygia": "1.4.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
