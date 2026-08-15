@@ -3,7 +3,7 @@ import GUI from 'lil-gui';
 import { useEffect, useRef, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { projectLongLatOnSphere } from 'lib/math/projectLongLatOnSphere';
+import { projectLongLatOnSphere } from '@lib/math/projectLongLatOnSphere';
 
 const radius = 10;
 

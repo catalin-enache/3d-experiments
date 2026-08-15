@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Suspense } from 'react';
 
-import Home from 'pages/home/home';
-import FirstPage from 'pages/first/first';
-import SecondPage from 'pages/second/second';
+import { routesConfig } from '@src/constants/routesConfig';
 
 import classes from './App.module.css';
 
@@ -10,11 +9,22 @@ function App() {
   return (
     <BrowserRouter>
       <div className={classes.app}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/first" element={<FirstPage />} />
-          <Route path="/second" element={<SecondPage />} />
-        </Routes>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            {(Object.keys(routesConfig) as (keyof typeof routesConfig)[]).map(
+              (page) => {
+                const Component = routesConfig[page].component;
+                return (
+                  <Route
+                    key={routesConfig[page].path}
+                    path={routesConfig[page].path}
+                    element={<Component />}
+                  />
+                );
+              }
+            )}
+          </Routes>
+        </Suspense>
       </div>
     </BrowserRouter>
   );
