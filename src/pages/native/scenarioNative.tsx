@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function startThreeApp(container: HTMLElement) {
+export function scenarioNative(container: HTMLElement) {
   // Scene
   const scene = new THREE.Scene();
 

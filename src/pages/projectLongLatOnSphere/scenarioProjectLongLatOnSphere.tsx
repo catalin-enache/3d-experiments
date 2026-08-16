@@ -12,14 +12,7 @@ const initialDirection = {
   y: 1.6
 };
 
-export function ProjectLongLatOnSphere() {
-  const [direction, setDirection] = useState(() =>
-    projectLongLatOnSphere({
-      ...initialDirection,
-      r: radius
-    })
-  );
-
+export function ScenarioProjectLongLatOnSphere() {
   const { scene, camera } = useThree();
 
   useEffect(() => {
@@ -39,6 +32,13 @@ export function ProjectLongLatOnSphere() {
       camera.updateProjectionMatrix();
     }
   }, [camera]);
+
+  const [direction, setDirection] = useState(() =>
+    projectLongLatOnSphere({
+      ...initialDirection,
+      r: radius
+    })
+  );
 
   const guiValues = useRef({
     longitude: initialDirection.x,
@@ -93,4 +93,4 @@ export function ProjectLongLatOnSphere() {
   );
 }
 
-export default ProjectLongLatOnSphere;
+export default ScenarioProjectLongLatOnSphere;

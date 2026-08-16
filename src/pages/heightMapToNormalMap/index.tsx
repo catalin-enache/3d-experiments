@@ -1,12 +1,12 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import ScenarioProjectLongLatOnSphere from './scenarioProjectLongLatOnSphere.tsx';
+import ScenarioHeightMapToNormalMap from './scenarioHeightMapToNormalMap.tsx';
 
-export default function ProjectLongLatOnSpherePage() {
+export default function HeightMapToNormalMapPage() {
   return (
     <Canvas camera={{ fov: 75, position: [0, 0, 5] }}>
       <Suspense fallback={null}>
-        <ScenarioProjectLongLatOnSphere />
+        <ScenarioHeightMapToNormalMap />
       </Suspense>
     </Canvas>
   );
