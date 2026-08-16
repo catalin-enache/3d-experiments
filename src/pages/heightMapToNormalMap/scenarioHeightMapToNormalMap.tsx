@@ -8,6 +8,7 @@ import fragmentShader from './glsl/fragment.glsl';
 import { CameraControls } from '@src/components/cameraControls/cameraControls.tsx';
 import { ObjectTransformControls } from '@src/components/objectTransformControls/objectTransformControls.tsx';
 import { SelectableGroup } from '@src/components/selectableGroup/selectableGroup.tsx';
+import { SelectedObjectInfo } from '@src/components/inspector/inspector.tsx';
 
 export function ScenarioHeightMapToNormalMap() {
   const { scene, camera } = useThree();
@@ -66,6 +67,7 @@ export function ScenarioHeightMapToNormalMap() {
     <>
       <CameraControls selectedObject={selectedObject} />
       <ObjectTransformControls selectedObject={selectedObject} />
+      <SelectedObjectInfo object={selectedObject} />
       <SelectableGroup setSelectedObject={setSelectedObject}>
         <pointLight position={[3, 4, 2]} intensity={10} />
         <spotLight position={[-3, 5, 2]} intensity={20} />
