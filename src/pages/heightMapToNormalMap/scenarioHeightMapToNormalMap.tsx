@@ -1,13 +1,18 @@
 import * as THREE from 'three';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import GUI from 'lil-gui';
-import { useTexture, OrbitControls } from '@react-three/drei';
+import { useTexture } from '@react-three/drei';
 import vertexShader from './glsl/vertex.glsl';
 import fragmentShader from './glsl/fragment.glsl';
+import { CameraControls } from '@src/components/cameraControls/cameraControls.tsx';
+import { ObjectTransformControls } from '@src/components/objectTransformControls/objectTransformControls.tsx';
 
 export function ScenarioHeightMapToNormalMap() {
   const { scene, camera } = useThree();
+  const [selectedObject, setSelectedObject] = useState<THREE.Object3D | null>(
+    null
+  );
 
   useEffect(() => {
     scene.background = new THREE.Color().setHex(0x000000);
@@ -49,8 +54,21 @@ export function ScenarioHeightMapToNormalMap() {
 
   return (
     <>
-      <OrbitControls makeDefault />
-      <mesh position={[0, 0, 0]} name="mesh">
+      <CameraControls selectedObject={selectedObject} />
+      <ObjectTransformControls selectedObject={selectedObject} />
+      <mesh
+        position={[0, 0, 0]}
+        name="mesh"
+        onDoubleClick={(event) => {
+          event.stopPropagation();
+          setSelectedObject(event.object);
+        }}
+        onPointerMissed={(evt) => {
+          if (evt.button === 0 && evt.type === 'dblclick') {
+            setSelectedObject(null);
+          }
+        }}
+      >
         <planeGeometry args={[10, 10, 1, 1]} />
         <shaderMaterial
           ref={materialRef}
