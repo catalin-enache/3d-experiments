@@ -68,8 +68,8 @@ export function ScenarioHeightMapToNormalMap() {
       <ObjectTransformControls selectedObject={selectedObject} />
       <SelectableGroup setSelectedObject={setSelectedObject}>
         <pointLight position={[3, 4, 2]} intensity={10} />
-
         <spotLight position={[-3, 5, 2]} intensity={20} />
+        <directionalLight position={[3, 5, 4]} intensity={3} />
         <mesh position={[0, 0, 0]} name="mesh">
           <planeGeometry args={[10, 10, 1, 1]} />
           <shaderMaterial

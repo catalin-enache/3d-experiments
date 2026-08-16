@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { useEffect, useRef, type ReactNode, useCallback } from 'react';
-import type { ThreeEvent } from '@react-three/fiber';
+import { useFrame, type ThreeEvent } from '@react-three/fiber';
 
 function createHelper(object: THREE.Object3D) {
   if (object instanceof THREE.PointLight) {
@@ -43,15 +43,21 @@ function getSelectionTarget(object: THREE.Object3D) {
   return object;
 }
 
+type Helper = NonNullable<ReturnType<typeof createHelper>>;
+
+interface SelectableGroupProps {
+  children: ReactNode;
+  setSelectedObject: (object: THREE.Object3D | null) => void;
+}
+
 export function SelectableGroup({
   children,
   setSelectedObject
-}: {
-  children: ReactNode;
-  setSelectedObject: (object: THREE.Object3D | null) => void;
-}) {
+}: SelectableGroupProps) {
   const groupRef = useRef<THREE.Group>(null);
   const helpersGroupRef = useRef<THREE.Group>(null);
+
+  const helpersRef = useRef<Helper[]>([]);
 
   useEffect(() => {
     const group = groupRef.current;
@@ -59,32 +65,43 @@ export function SelectableGroup({
 
     if (!group || !helpersGroup) return;
 
-    const helpers: NonNullable<ReturnType<typeof createHelper>>[] = [];
+    const helpers: Helper[] = [];
 
-    // Discover helper-compatible objects first.
+    // Scan the actual scenario objects.
     group.traverse((object) => {
       const helper = createHelper(object);
 
       if (!helper) return;
 
-      // Clicking the helper should select the actual object.
+      // If the user clicks the helper, we want to select
+      // the actual object that the helper represents.
       helper.userData.selectTarget = object;
 
       helpers.push(helper);
     });
 
-    // Keep helpers in their own group, separate from scene content.
+    // Keep editor helpers outside the actual scene-content group.
     for (const helper of helpers) {
       helpersGroup.add(helper);
     }
+
+    helpersRef.current = helpers;
 
     return () => {
       for (const helper of helpers) {
         helpersGroup.remove(helper);
         helper.dispose();
       }
+
+      helpersRef.current = [];
     };
   }, []);
+
+  useFrame(() => {
+    for (const helper of helpersRef.current) {
+      helper.update();
+    }
+  });
 
   const onDoubleClick = useCallback(
     (event: ThreeEvent<MouseEvent>) => {
@@ -95,13 +112,21 @@ export function SelectableGroup({
     [setSelectedObject]
   );
 
+  const onPointerMissed = useCallback(
+    (event: MouseEvent) => {
+      if (event.detail === 2) {
+        setSelectedObject(null);
+      }
+    },
+    [setSelectedObject]
+  );
+
   return (
-    <>
+    <group onPointerMissed={onPointerMissed}>
       <group ref={groupRef} onDoubleClick={onDoubleClick}>
         {children}
       </group>
-
       <group ref={helpersGroupRef} onDoubleClick={onDoubleClick} />
-    </>
+    </group>
   );
 }
