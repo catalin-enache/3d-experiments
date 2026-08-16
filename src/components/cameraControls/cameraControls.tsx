@@ -19,6 +19,7 @@ interface NavigationControlsProps {
 export function CameraControls({ selectedObject }: NavigationControlsProps) {
   const { camera, gl } = useThree();
   const orbitControlsRef = useRef<OrbitControlsImpl>(null);
+  const activePointerId = useRef<number | null>(null);
 
   const rightMouseDown = useRef(false);
   const leftMouseDown = useRef(false);
@@ -155,7 +156,8 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
   }, [focusObject, selectedObject]);
 
   useEffect(() => {
-    const onPointerDown = (event: MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
+      activePointerId.current = event.pointerId;
       if (event.button === 0) {
         leftMouseDown.current = true;
       } else if (event.button === 1) {
@@ -204,6 +206,21 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
     const onPointerLeave = () => {
       leftMouseDown.current = false;
       middleMouseDown.current = false;
+
+      if (activePointerId.current !== null) {
+        // Let OrbitControls think that pointer was released in order to stop dragging.
+        // This is a workaround that plays well with ObjectTransformControls.
+        // Before this workaround we swallowed pointerMove events which interfered with ObjectTransformControls
+        // making it to jump when dragging.
+        document.dispatchEvent(
+          new PointerEvent('pointerup', {
+            bubbles: true,
+            pointerId: activePointerId.current
+          })
+        );
+
+        activePointerId.current = null;
+      }
     };
 
     const onPointerLockChange = () => {
