@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
 import GUI from 'lil-gui';
 import { useTexture } from '@react-three/drei';
@@ -37,6 +37,15 @@ export function ScenarioHeightMapToNormalMap() {
 
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
 
+  const uniforms = useMemo(
+    () => ({
+      uHeightMap: { value: texture },
+      uIntensity: { value: 2 },
+      uOffset: { value: 0.3 }
+    }),
+    [texture]
+  );
+
   useEffect(() => {
     const gui = new GUI();
 
@@ -67,11 +76,7 @@ export function ScenarioHeightMapToNormalMap() {
             wireframe={false}
             side={THREE.DoubleSide}
             transparent={false}
-            uniforms={{
-              uHeightMap: { value: texture },
-              uIntensity: { value: 2 },
-              uOffset: { value: 0.3 }
-            }}
+            uniforms={uniforms}
           />
         </mesh>
       </SelectableGroup>
