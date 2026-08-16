@@ -185,7 +185,7 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
       }
     };
 
-    const onPointerUp = (event: MouseEvent) => {
+    const onPointerUp = (event: PointerEvent) => {
       if (event.button === 0) {
         leftMouseDown.current = false;
       }
@@ -235,18 +235,6 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
     };
 
     const onPointerMove = (event: PointerEvent) => {
-      const noMouseButtonTracked =
-        !rightMouseDown.current &&
-        !middleMouseDown.current &&
-        !leftMouseDown.current;
-
-      if (noMouseButtonTracked) {
-        // OrbitControls may still think a drag is active if mouseup
-        // happened outside the browser window.
-        event.stopPropagation();
-        return;
-      }
-
       if (!rightMouseDown.current) return;
       if (document.pointerLockElement !== gl.domElement) return;
 

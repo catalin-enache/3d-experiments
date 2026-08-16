@@ -7,6 +7,7 @@ import vertexShader from './glsl/vertex.glsl';
 import fragmentShader from './glsl/fragment.glsl';
 import { CameraControls } from '@src/components/cameraControls/cameraControls.tsx';
 import { ObjectTransformControls } from '@src/components/objectTransformControls/objectTransformControls.tsx';
+import { SelectableGroup } from '@src/components/selectableGroup/selectableGroup.tsx';
 
 export function ScenarioHeightMapToNormalMap() {
   const { scene, camera } = useThree();
@@ -56,34 +57,24 @@ export function ScenarioHeightMapToNormalMap() {
     <>
       <CameraControls selectedObject={selectedObject} />
       <ObjectTransformControls selectedObject={selectedObject} />
-      <mesh
-        position={[0, 0, 0]}
-        name="mesh"
-        onDoubleClick={(event) => {
-          event.stopPropagation();
-          setSelectedObject(event.object);
-        }}
-        onPointerMissed={(evt) => {
-          if (evt.button === 0 && evt.type === 'dblclick') {
-            setSelectedObject(null);
-          }
-        }}
-      >
-        <planeGeometry args={[10, 10, 1, 1]} />
-        <shaderMaterial
-          ref={materialRef}
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-          wireframe={false}
-          side={THREE.DoubleSide}
-          transparent={false}
-          uniforms={{
-            uHeightMap: { value: texture },
-            uIntensity: { value: 2 },
-            uOffset: { value: 0.3 }
-          }}
-        />
-      </mesh>
+      <SelectableGroup setSelectedObject={setSelectedObject}>
+        <mesh position={[0, 0, 0]} name="mesh">
+          <planeGeometry args={[10, 10, 1, 1]} />
+          <shaderMaterial
+            ref={materialRef}
+            vertexShader={vertexShader}
+            fragmentShader={fragmentShader}
+            wireframe={false}
+            side={THREE.DoubleSide}
+            transparent={false}
+            uniforms={{
+              uHeightMap: { value: texture },
+              uIntensity: { value: 2 },
+              uOffset: { value: 0.3 }
+            }}
+          />
+        </mesh>
+      </SelectableGroup>
     </>
   );
 }
