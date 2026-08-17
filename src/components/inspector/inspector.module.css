@@ -6,6 +6,13 @@
   width: 360px;
 
   --tp-blade-value-width: 70%;
+  --tp-base-background-opacity: 0.5;
+  --tp-base-background-color: hsla(
+    0,
+    0%,
+    10%,
+    var(--tp-base-background-opacity)
+  );
 }
 
 .pane :global(.tp-lblv_l) {
