@@ -3,11 +3,13 @@ import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 
+import classes from './inspector.module.css';
+
 interface SelectedObjectInfoProps {
   object: THREE.Object3D | null;
 }
 
-export function SelectedObjectInfo({ object }: SelectedObjectInfoProps) {
+export function Inspector({ object }: SelectedObjectInfoProps) {
   const positionRef = useRef<HTMLDivElement>(null);
   const rotationRef = useRef<HTMLDivElement>(null);
   const scaleRef = useRef<HTMLDivElement>(null);
@@ -40,50 +42,21 @@ export function SelectedObjectInfo({ object }: SelectedObjectInfoProps) {
   if (!object) return null;
 
   return (
-    <Html
-      calculatePosition={(_, __, ___) => [12, 12]}
-      style={{
-        pointerEvents: 'none'
-      }}
-    >
-      <div
-        style={{
-          padding: '12px 14px',
-          minWidth: 280,
-
-          color: '#eee',
-          background: 'rgba(20, 20, 20, 0.92)',
-          border: '1px solid #444',
-          borderRadius: 6,
-
-          fontFamily:
-            '"SFMono-Regular", Consolas, "Liberation Mono", monospace',
-          fontSize: 12,
-          lineHeight: 1.5,
-
-          boxShadow: '0 4px 16px rgba(0,0,0,0.35)'
-        }}
-      >
-        <div
-          style={{
-            marginBottom: 10,
-            fontWeight: 600
-          }}
-        >
-          {object.name || object.type}
-        </div>
+    <Html calculatePosition={() => [12, 12]} className={classes.html}>
+      <div className={classes.inspector}>
+        <div className={classes.title}>{object.name || object.type}</div>
 
         <div>
           <strong>Position</strong>
           <div ref={positionRef} />
         </div>
 
-        <div style={{ marginTop: 8 }}>
+        <div className={classes.section}>
           <strong>Rotation</strong>
           <div ref={rotationRef} />
         </div>
 
-        <div style={{ marginTop: 8 }}>
+        <div className={classes.section}>
           <strong>Scale</strong>
           <div ref={scaleRef} />
         </div>
