@@ -1,24 +1,8 @@
-import { Link } from 'react-router-dom';
-import { routesConfig } from '@src/constants/routesConfig';
-import classes from './home.module.css';
+import { useNativeScenario } from '@hooks/useNativeScenario';
+import { scenarioNative } from './scenarioNative.tsx';
 
-const HomePage = () => {
+export default function NativePage() {
   return (
-    <div className={classes.homePage}>
-      <ul>
-        {(Object.keys(routesConfig) as (keyof typeof routesConfig)[]).map(
-          (page) => {
-            return (
-              <li key={routesConfig[page].path}>
-                <Link to={routesConfig[page].path}>
-                  {routesConfig[page].name}
-                </Link>
-              </li>
-            );
-          }
-        )}
-      </ul>
-    </div>
+    <div ref={useNativeScenario(scenarioNative)} className="scenarioContainer" />
   );
-};
-export default HomePage;
+}

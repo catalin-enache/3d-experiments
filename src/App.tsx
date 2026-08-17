@@ -4,12 +4,14 @@ import { Suspense } from 'react';
 import { routesConfig } from '@src/constants/routesConfig';
 
 import classes from './App.module.css';
+import { ExperimentsMenu } from '@src/components/menu/menu.tsx';
 
 function App() {
   return (
     <BrowserRouter>
       <div className={classes.app}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <ExperimentsMenu />
+        <Suspense fallback={<div className={classes.loading}>Loading...</div>}>
           <Routes>
             {(Object.keys(routesConfig) as (keyof typeof routesConfig)[]).map(
               (page) => {

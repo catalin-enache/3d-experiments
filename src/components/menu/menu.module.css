@@ -1,0 +1,73 @@
+/* ExperimentsMenu.module.css */
+
+.container {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  font-size: 12px;
+
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+
+  color: #eee;
+  background: rgba(20, 20, 20, 0.94);
+
+  border: 1px solid #444;
+  border-radius: 6px;
+
+  cursor: pointer;
+  text-align: left;
+}
+
+.buttonOpen {
+  border-radius: 6px 6px 0 0;
+}
+
+.menu {
+  min-width: 240px;
+
+  background: rgba(20, 20, 20, 0.94);
+
+  border: 1px solid #444;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.link {
+  display: block;
+
+  padding: 8px 12px;
+
+  color: #ccc;
+  background: transparent;
+
+  text-decoration: none;
+
+  border-top: 1px solid #2d2d2d;
+}
+
+.link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.activeLink {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+
+  font-weight: 600;
+}
