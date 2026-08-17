@@ -1,33 +1,15 @@
 .html {
-  pointer-events: none;
+  pointer-events: auto;
 }
 
-.inspector {
-  min-width: 280px;
-  padding: 12px 14px;
+.pane {
+  width: 360px;
 
-  color: #eee;
-  background: rgba(20, 20, 20, 0.92);
-
-  border: 1px solid #444;
-  border-radius: 6px;
-
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-
-  font-size: 12px;
-  line-height: 1.5;
-
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-
-  user-select: none;
-  -webkit-user-select: none;
+  --tp-blade-value-width: 70%;
 }
 
-.title {
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.section {
-  margin-top: 8px;
+.pane :global(.tp-lblv_l) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

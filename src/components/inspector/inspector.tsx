@@ -1,66 +1,107 @@
 import * as THREE from 'three';
-import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useRef } from 'react';
-
+import { Html } from '@react-three/drei';
+import { Pane } from 'tweakpane';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+  type WheelEvent
+} from 'react';
+import { buildBindings } from '@src/components/inspector/buildBindings.ts';
 import classes from './inspector.module.css';
 
-interface SelectedObjectInfoProps {
+interface InspectorProps {
   object: THREE.Object3D | null;
 }
 
-export function Inspector({ object }: SelectedObjectInfoProps) {
-  const positionRef = useRef<HTMLDivElement>(null);
-  const rotationRef = useRef<HTMLDivElement>(null);
-  const scaleRef = useRef<HTMLDivElement>(null);
+export function Inspector({ object }: InspectorProps) {
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  const paneRef = useRef<Pane | null>(null);
+  const refreshTimer = useRef(0);
+  const pointerOwnedRef = useRef<PointerEvent | null>(null);
+  const pointerEnteredRef = useRef<PointerEvent | null>(null);
 
-  useFrame(() => {
-    if (!object) return;
-
-    if (positionRef.current) {
-      positionRef.current.textContent =
-        `X ${object.position.x.toFixed(2)}  ` +
-        `Y ${object.position.y.toFixed(2)}  ` +
-        `Z ${object.position.z.toFixed(2)}`;
+  useEffect(() => {
+    if (!object || !container) {
+      return;
     }
 
-    if (rotationRef.current) {
-      rotationRef.current.textContent =
-        `X ${THREE.MathUtils.radToDeg(object.rotation.x).toFixed(1)}°  ` +
-        `Y ${THREE.MathUtils.radToDeg(object.rotation.y).toFixed(1)}°  ` +
-        `Z ${THREE.MathUtils.radToDeg(object.rotation.z).toFixed(1)}°`;
-    }
+    const pane = new Pane({
+      container,
+      title: object.name || object.type
+    });
+    paneRef.current = pane;
 
-    if (scaleRef.current) {
-      scaleRef.current.textContent =
-        `X ${object.scale.x.toFixed(2)}  ` +
-        `Y ${object.scale.y.toFixed(2)}  ` +
-        `Z ${object.scale.z.toFixed(2)}`;
+    buildBindings({ pane, object });
+
+    container.querySelectorAll('.tp-lblv_l').forEach((element) => {
+      const htmlElement = element as HTMLElement;
+      htmlElement.title = htmlElement.textContent;
+    });
+
+    return () => {
+      pane.dispose();
+      paneRef.current = null;
+    };
+  }, [object, container]);
+
+  const handlePointerDown = useCallback((evt: PointerEvent) => {
+    evt.stopPropagation();
+    pointerOwnedRef.current = evt;
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    pointerOwnedRef.current = null;
+  }, []);
+
+  const handlePointerMove = useCallback((evt: PointerEvent) => {
+    if (pointerOwnedRef.current) {
+      evt.stopPropagation();
+    }
+  }, []);
+
+  const handlePointerEnter = useCallback((evt: PointerEvent) => {
+    pointerEnteredRef.current = evt;
+  }, []);
+
+  const handlePointerLeft = useCallback(() => {
+    pointerEnteredRef.current = null;
+  }, []);
+
+  const handleWheel = useCallback((evt: WheelEvent) => {
+    if (pointerEnteredRef.current) {
+      evt.stopPropagation();
+    }
+  }, []);
+
+  useFrame((_, delta) => {
+    refreshTimer.current += delta;
+
+    if (refreshTimer.current >= 0.1) {
+      paneRef.current?.refresh();
+      refreshTimer.current = 0;
     }
   });
 
-  if (!object) return null;
+  if (!object) {
+    return null;
+  }
 
   return (
     <Html calculatePosition={() => [12, 12]} className={classes.html}>
-      <div className={classes.inspector}>
-        <div className={classes.title}>{object.name || object.type}</div>
-
-        <div>
-          <strong>Position</strong>
-          <div ref={positionRef} />
-        </div>
-
-        <div className={classes.section}>
-          <strong>Rotation</strong>
-          <div ref={rotationRef} />
-        </div>
-
-        <div className={classes.section}>
-          <strong>Scale</strong>
-          <div ref={scaleRef} />
-        </div>
-      </div>
+      <div
+        className={classes.pane}
+        ref={setContainer}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeft}
+        onWheel={handleWheel}
+      />
     </Html>
   );
 }
