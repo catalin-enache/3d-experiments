@@ -12,7 +12,7 @@ const defaultPerspectiveCameraProps: CameraProps = {
 
 const defaultOrthographicCameraProps: CameraProps = {
   position: [0, 0, 24],
-  zoom: 65
+  zoom: 25
 };
 
 interface PageProps {
@@ -33,6 +33,7 @@ export const Page = ({
   return (
     <Canvas
       camera={cameraProps}
+      orthographic={orthographic}
       scene={{
         background
       }}

@@ -437,13 +437,6 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
   return (
     <OrbitControls
       ref={orbitControlsRef}
-      onChange={(evt) => {
-        console.log('OrbitControls change', {
-          evt,
-          cameraZoom: camera.zoom,
-          cameraPosition: camera.position.toArray()
-        });
-      }}
       makeDefault
       enableDamping
       dampingFactor={0.2}

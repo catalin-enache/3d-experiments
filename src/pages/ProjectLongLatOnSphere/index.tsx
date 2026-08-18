@@ -3,7 +3,7 @@ import ScenarioProjectLongLatOnSphere from './ScenarioProjectLongLatOnSphere.tsx
 
 export default function ProjectLongLatOnSpherePage() {
   return (
-    <Page>
+    <Page orthographic>
       <ScenarioProjectLongLatOnSphere />
     </Page>
   );
