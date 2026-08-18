@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { routesConfig } from '@src/constants/routesConfig';
-import classes from './menu.module.css';
+import classes from './Menu.module.css';
 
 export function ExperimentsMenu() {
   const [open, setOpen] = useState(false);
@@ -24,12 +24,12 @@ export function ExperimentsMenu() {
       setIsVisible(true);
     };
 
-    window.addEventListener('inspector-on', handleInspectorOn);
-    window.addEventListener('inspector-off', handleInspectorOff);
+    window.addEventListener('Inspector-on', handleInspectorOn);
+    window.addEventListener('Inspector-off', handleInspectorOff);
 
     return () => {
-      window.removeEventListener('inspector-on', handleInspectorOn);
-      window.removeEventListener('inspector-off', handleInspectorOff);
+      window.removeEventListener('Inspector-on', handleInspectorOn);
+      window.removeEventListener('Inspector-off', handleInspectorOff);
     };
   }, []);
 

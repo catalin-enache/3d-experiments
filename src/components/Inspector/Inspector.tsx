@@ -10,8 +10,8 @@ import {
   type PointerEvent,
   type WheelEvent
 } from 'react';
-import { buildBindings } from '@src/components/inspector/buildBindings.ts';
-import classes from './inspector.module.css';
+import { buildBindings } from '@src/components/Inspector/buildBindings.ts';
+import classes from './Inspector.module.css';
 
 interface InspectorProps {
   object: THREE.Object3D | null;

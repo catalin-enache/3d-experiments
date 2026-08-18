@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import ScenarioHeightMapToNormalMap from './scenarioHeightMapToNormalMap.tsx';
+import ScenarioHeightMapToNormalMap from './ScenarioHeightMapToNormalMap.tsx';
 const defaultRaycasterParams = new THREE.Raycaster().params;
 export default function HeightMapToNormalMapPage() {
   return (

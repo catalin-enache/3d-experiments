@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import ScenarioProjectLongLatOnSphere from './scenarioProjectLongLatOnSphere.tsx';
+import ScenarioProjectLongLatOnSphere from './ScenarioProjectLongLatOnSphere.tsx';
 
 export default function ProjectLongLatOnSpherePage() {
   return (

@@ -1,2 +1,2 @@
-export const InspectorOnEvent = new CustomEvent('inspector-on');
-export const InspectorOffEvent = new CustomEvent('inspector-off');
+export const InspectorOnEvent = new CustomEvent('Inspector-on');
+export const InspectorOffEvent = new CustomEvent('Inspector-off');

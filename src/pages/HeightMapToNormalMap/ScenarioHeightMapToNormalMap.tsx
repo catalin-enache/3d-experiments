@@ -5,10 +5,10 @@ import GUI from 'lil-gui';
 import { useTexture } from '@react-three/drei';
 import vertexShader from './glsl/vertex.glsl';
 import fragmentShader from './glsl/fragment.glsl';
-import { CameraControls } from '@src/components/cameraControls/cameraControls';
-import { ObjectTransformControls } from '@src/components/objectTransformControls/objectTransformControls';
-import { SelectableGroup } from '@src/components/selectableGroup/selectableGroup';
-import { Inspector } from '@src/components/inspector/inspector';
+import { CameraControls } from '@src/components/CameraControls/CameraControls.tsx';
+import { ObjectTransformControls } from '@src/components/ObjectTransformControls/ObjectTransformControls.tsx';
+import { SelectableGroup } from '@src/components/SelectableGroup/SelectableGroup.tsx';
+import { Inspector } from '@src/components/Inspector/Inspector.tsx';
 
 export function ScenarioHeightMapToNormalMap() {
   const { scene, camera } = useThree();
