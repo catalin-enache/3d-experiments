@@ -24,12 +24,11 @@
 
     "paths": {
       "@src/*": ["src/*"],
+      "@components": ["src/components/index.ts"],
       "@pages/*": ["src/pages/*"],
       "@hooks/*": ["src/hooks/*"],
       "@lib/*": ["src/lib/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

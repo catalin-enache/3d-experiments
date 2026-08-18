@@ -1,11 +1,16 @@
 import * as THREE from 'three';
 
-export function scenarioNative(container: HTMLElement) {
+export function scenarioHome(container: HTMLElement) {
   // Scene
   const scene = new THREE.Scene();
 
   // Camera
-  const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    container.clientWidth / container.clientHeight,
+    0.1,
+    1000
+  );
 
   camera.position.z = 5;
 

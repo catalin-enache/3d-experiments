@@ -1,11 +1,6 @@
-import { useNativeScenario } from '@hooks/useNativeScenario';
-import { scenarioNative } from './ScenarioNative.tsx';
+import { NativePage } from '@components';
+import { scenarioHome } from './scenarioHome';
 
-export default function NativePage() {
-  return (
-    <div
-      ref={useNativeScenario(scenarioNative)}
-      className="scenarioContainer"
-    />
-  );
+export default function HomePage() {
+  return <NativePage nativeScenario={scenarioHome} />;
 }

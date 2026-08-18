@@ -1,15 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-type Scenario = (container: HTMLElement) => (() => void) | undefined;
+export type NativeScenario = (
+  container: HTMLElement
+) => (() => void) | undefined;
 
-export function useNativeScenario(scenario: Scenario) {
+export function useNativeScenario(nativeScenario: NativeScenario) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
-
-    return scenario(containerRef.current);
-  }, [scenario]);
+    return nativeScenario(containerRef.current);
+  }, [nativeScenario]);
 
   return containerRef;
 }

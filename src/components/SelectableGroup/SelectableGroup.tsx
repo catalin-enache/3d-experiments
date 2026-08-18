@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { useEffect, useRef, type ReactNode, useCallback } from 'react';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
-import { InspectorOnEvent, InspectorOffEvent } from '@src/constants/events.ts';
+import { InspectorOn, InspectorOff } from '@src/constants/events.ts';
 
 function createHelper(object: THREE.Object3D) {
   if (object instanceof THREE.PointLight) {
@@ -107,7 +107,7 @@ export function SelectableGroup({
   const onDoubleClick = useCallback(
     (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
-      window.dispatchEvent(InspectorOnEvent);
+      window.dispatchEvent(InspectorOn);
 
       setSelectedObject(getSelectionTarget(event.object));
     },
@@ -117,7 +117,7 @@ export function SelectableGroup({
   const onPointerMissed = useCallback(
     (event: MouseEvent) => {
       if (event.detail === 2) {
-        window.dispatchEvent(InspectorOffEvent);
+        window.dispatchEvent(InspectorOff);
         setSelectedObject(null);
       }
     },

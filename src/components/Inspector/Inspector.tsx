@@ -10,7 +10,7 @@ import {
   type PointerEvent,
   type WheelEvent
 } from 'react';
-import { buildBindings } from '@src/components/Inspector/buildBindings.ts';
+import { buildBindings } from './buildBindings.ts';
 import classes from './Inspector.module.css';
 
 interface InspectorProps {

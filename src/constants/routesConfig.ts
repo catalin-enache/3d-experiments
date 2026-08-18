@@ -6,11 +6,6 @@ export const routesConfig = {
     name: 'Home',
     component: lazy(() => import('@pages/Home'))
   },
-  first: {
-    path: '/Native',
-    name: 'First',
-    component: lazy(() => import('@pages/Native'))
-  },
   projectLongLatOnSphere: {
     path: '/project-long-lat-on-sphere',
     name: 'Project Long Lat On Sphere',
