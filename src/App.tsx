@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { routesConfig } from '@src/constants/routesConfig';
 
 import classes from './App.module.css';
-import { ExperimentsMenu } from '@src/components/Menu/Menu.tsx';
+import { ExperimentsMenu } from '@src/components/Menu';
 
 function App() {
   return (
