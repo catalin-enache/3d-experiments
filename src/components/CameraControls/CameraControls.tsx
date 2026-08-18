@@ -382,13 +382,32 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
 
     // Horizontal right vector.
     moveRight.current.crossVectors(moveForward.current, camera.up).normalize();
+    const zoomFactor = Math.exp(moveSpeed.current * delta * 0.1);
 
     if (keys.current.forward) {
-      movement.current.add(moveForward.current);
+      if (camera instanceof THREE.OrthographicCamera) {
+        camera.zoom = THREE.MathUtils.clamp(
+          camera.zoom * zoomFactor,
+          0.01,
+          1000
+        );
+        camera.updateProjectionMatrix();
+      } else {
+        movement.current.add(moveForward.current);
+      }
     }
 
     if (keys.current.backward) {
-      movement.current.sub(moveForward.current);
+      if (camera instanceof THREE.OrthographicCamera) {
+        camera.zoom = THREE.MathUtils.clamp(
+          camera.zoom / zoomFactor,
+          0.01,
+          1000
+        );
+        camera.updateProjectionMatrix();
+      } else {
+        movement.current.sub(moveForward.current);
+      }
     }
 
     if (keys.current.right) {
@@ -418,6 +437,13 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
   return (
     <OrbitControls
       ref={orbitControlsRef}
+      onChange={(evt) => {
+        console.log('OrbitControls change', {
+          evt,
+          cameraZoom: camera.zoom,
+          cameraPosition: camera.position.toArray()
+        });
+      }}
       makeDefault
       enableDamping
       dampingFactor={0.2}
