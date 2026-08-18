@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 export function scenarioHome(container: HTMLElement) {
   // Scene
@@ -20,16 +21,19 @@ export function scenarioHome(container: HTMLElement) {
   });
 
   renderer.setSize(container.clientWidth, container.clientHeight);
-
   renderer.setPixelRatio(window.devicePixelRatio);
 
   container.appendChild(renderer.domElement);
 
+  // Orbit controls
+  const controls = new OrbitControls(camera, renderer.domElement);
+
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.1;
+
   // Cube
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-
   const material = new THREE.MeshNormalMaterial();
-
   const cube = new THREE.Mesh(geometry, material);
 
   scene.add(cube);
@@ -42,6 +46,8 @@ export function scenarioHome(container: HTMLElement) {
 
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
+
+    controls.update();
 
     renderer.render(scene, camera);
   }
@@ -61,12 +67,14 @@ export function scenarioHome(container: HTMLElement) {
 
   window.addEventListener('resize', handleResize);
 
+  // Cleanup
   // React calls this when leaving the page
   return () => {
-    console.log('Cleaning up Three.js scene...');
     cancelAnimationFrame(animationId);
 
     window.removeEventListener('resize', handleResize);
+
+    controls.dispose();
 
     geometry.dispose();
     material.dispose();
