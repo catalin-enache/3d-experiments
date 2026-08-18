@@ -1,39 +1,62 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { routesConfig } from '@src/constants/routesConfig';
 import classes from './menu.module.css';
 
 export function ExperimentsMenu() {
   const [open, setOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const location = useLocation();
 
   const currentRoute = Object.values(routesConfig).find(
     ({ path }) => path === location.pathname
   );
 
-  const [isVisible, setIsVisible] = useState(true);
-
   useEffect(() => {
     const handleInspectorOn = () => {
       setIsVisible(false);
     };
+
     const handleInspectorOff = () => {
       setIsVisible(true);
     };
+
     window.addEventListener('inspector-on', handleInspectorOn);
     window.addEventListener('inspector-off', handleInspectorOff);
+
     return () => {
       window.removeEventListener('inspector-on', handleInspectorOn);
       window.removeEventListener('inspector-off', handleInspectorOff);
     };
   }, []);
 
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (
+        open &&
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, [open]);
+
   if (!isVisible) {
     return null;
   }
 
   return (
-    <div className={classes.container}>
+    <div ref={containerRef} className={classes.container}>
       <button
         type="button"
         onClick={() => {
@@ -56,7 +79,9 @@ export function ExperimentsMenu() {
                 onClick={() => {
                   setOpen(false);
                 }}
-                className={`${classes.link} ${isActive ? classes.activeLink : ''}`}
+                className={`${classes.link} ${
+                  isActive ? classes.activeLink : ''
+                }`}
               >
                 {name}
               </Link>
