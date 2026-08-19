@@ -1,8 +1,9 @@
-import * as THREE from 'three';
-import { Suspense, type ReactNode } from 'react';
-import { type CameraProps, Canvas } from '@react-three/fiber';
+import * as THREE from "three";
+import { Suspense, type ReactNode } from "react";
+import { type CameraProps, Canvas } from "@react-three/fiber";
 
 const defaultRaycasterParams = new THREE.Raycaster().params;
+defaultRaycasterParams.Line.threshold = 0.1;
 
 const defaultPerspectiveCameraProps: CameraProps = {
   fov: 75,
@@ -20,6 +21,7 @@ interface PageProps {
   background?: THREE.Color | THREE.Texture | null;
   orthographic?: boolean;
   cameraProps?: CameraProps;
+  raycasterParams?: Partial<THREE.RaycasterParameters>;
 }
 
 export const Page = ({
@@ -28,7 +30,8 @@ export const Page = ({
   orthographic = false,
   cameraProps = !orthographic
     ? defaultPerspectiveCameraProps
-    : defaultOrthographicCameraProps
+    : defaultOrthographicCameraProps,
+  raycasterParams = defaultRaycasterParams
 }: PageProps) => {
   return (
     <Canvas
@@ -40,10 +43,7 @@ export const Page = ({
       raycaster={{
         params: {
           ...defaultRaycasterParams,
-          Line: {
-            ...defaultRaycasterParams.Line,
-            threshold: 0.1
-          }
+          ...raycasterParams
         }
       }}
     >
