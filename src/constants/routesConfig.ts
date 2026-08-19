@@ -15,5 +15,10 @@ export const routesConfig = {
     path: '/heigh-map-to-normal-map',
     name: 'Heigh Map To Normal Map',
     component: lazy(() => import('@pages/HeightMapToNormalMap'))
+  },
+  materialTest: {
+    path: '/material-test',
+    name: 'Material Test',
+    component: lazy(() => import('@pages/MaterialTest'))
   }
 };
