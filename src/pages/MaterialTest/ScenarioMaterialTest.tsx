@@ -110,12 +110,12 @@ const backgroundTexturesMap: Record<
 export function MaterialTest() {
   const [meshType, setMeshType] = useState<MeshType>("sphere");
   const [platformMaterialType, setPlatformMaterialType] =
-    useState<PlatformMaterialType>("mirror");
+    useState<PlatformMaterialType>("default");
   const [materialType, setMaterialType] = useState<MaterialType>(
     "MeshStandardMaterial"
   );
   const [sceneBackgroundName, setSceneBackgroundName] =
-    useState<SceneBackgroundName>("Park3Med");
+    useState<SceneBackgroundName>("None");
   const [tessellation, setTessellation] = useState(80);
   const [showPlatform, setShowPlatform] = useState(true);
 
@@ -255,13 +255,14 @@ export function MaterialTest() {
   } = useCubeCamera({
     resolution: 1024,
     near: 0.1,
-    far: 1000,
+    far: 50,
     // name forces new renderTarget (fbo) - workaround for Pisa PMREM cache bug
     name: sceneBackgroundName
   });
 
   useFrame(() => {
     if (platformMaterialType !== "mirror" || !platformRef.current) {
+      updateCubeCamera();
       return;
     }
     platformRef.current.visible = false;
@@ -284,23 +285,40 @@ export function MaterialTest() {
           <primitive object={cubeCamera} position={[0, -20, 0]} />
 
           <directionalLight
+            shadow-mapSize-width={2048}
+            shadow-mapSize-height={2048}
+            shadow-radius={4}
+            shadow-camera-right={15}
+            shadow-camera-left={-15}
+            shadow-camera-top={15}
+            shadow-camera-bottom={-15}
+            shadow-blurSamples={8}
+            shadow-bias={-0.0014}
             castShadow
             position={[-20, 20, 20]}
+            scale={1}
             intensity={4.5}
-            color="white"
+            color={"white"}
           />
 
           <spotLight
             castShadow
             position={[20, 20, 20]}
+            scale={1}
             intensity={6}
+            power={20}
             distance={70}
+            color={"white"}
             angle={Math.PI / 8}
             penumbra={0.5}
             decay={0.4}
           />
 
-          <ambientLight color="white" intensity={0.1} />
+          <ambientLight
+            color={"#ffffff"}
+            intensity={0.1}
+            position={[0, 20, 0]}
+          />
 
           <mesh material={material} castShadow receiveShadow name={meshType}>
             {meshType === "cube" ? (
@@ -324,6 +342,7 @@ export function MaterialTest() {
             >
               {platformMaterialType === "default" ? (
                 <meshStandardMaterial
+                  key={platformMaterialType}
                   color={
                     sceneBackgroundName === "SpruitSunrise"
                       ? platformDefaultMaterialSpruitSunriseColor
@@ -336,6 +355,7 @@ export function MaterialTest() {
                 />
               ) : (
                 <meshStandardMaterial
+                  key={platformMaterialType}
                   color={new THREE.Color().setRGB(1, 1, 1)}
                   envMap={fbo.texture}
                   metalness={1}

@@ -1,7 +1,53 @@
-import * as THREE from 'three';
-import { useEffect, useRef, type ReactNode, useCallback } from 'react';
-import { useFrame, type ThreeEvent } from '@react-three/fiber';
-import { InspectorOn, InspectorOff } from '@src/constants/events.ts';
+import * as THREE from "three";
+import {
+  useEffect,
+  useRef,
+  type ReactNode,
+  useCallback,
+  useState
+} from "react";
+import { useFrame, type ThreeEvent } from "@react-three/fiber";
+import { InspectorOn, InspectorOff } from "@src/constants/events.ts";
+
+class CubeCameraHelper extends THREE.Group {
+  private helpers: THREE.CameraHelper[] = [];
+
+  constructor(camera: THREE.CubeCamera) {
+    super();
+    for (const child of camera.children) {
+      if (child instanceof THREE.PerspectiveCamera) {
+        const helper = new THREE.CameraHelper(child);
+        helper.update();
+        this.helpers.push(helper);
+        this.add(helper);
+      }
+    }
+  }
+
+  update() {
+    for (const helper of this.helpers) {
+      helper.update();
+    }
+  }
+
+  dispose() {
+    for (const helper of this.helpers) {
+      helper.dispose();
+    }
+  }
+}
+
+function createCubeCameraHelper(cubeCamera: THREE.CubeCamera) {
+  const group = new CubeCameraHelper(cubeCamera);
+
+  for (const child of cubeCamera.children) {
+    if (child instanceof THREE.Camera) {
+      group.add(new THREE.CameraHelper(child));
+    }
+  }
+
+  return group;
+}
 
 function createHelper(object: THREE.Object3D) {
   if (object instanceof THREE.PointLight) {
@@ -22,6 +68,10 @@ function createHelper(object: THREE.Object3D) {
 
   if (object instanceof THREE.Camera) {
     return new THREE.CameraHelper(object);
+  }
+
+  if (object instanceof THREE.CubeCamera) {
+    return createCubeCameraHelper(object);
   }
 
   return null;
@@ -55,16 +105,17 @@ export function SelectableGroup({
   children,
   setSelectedObject
 }: SelectableGroupProps) {
-  const groupRef = useRef<THREE.Group>(null);
-  const helpersGroupRef = useRef<THREE.Group>(null);
+  const [group, setGroup] = useState<THREE.Group | null>(null);
+  const [helpersGroup, setHelpersGroup] = useState<THREE.Group | null>(null);
+
+  const [showHelpers, setShowHelpers] = useState(true);
 
   const helpersRef = useRef<Helper[]>([]);
 
   useEffect(() => {
-    const group = groupRef.current;
-    const helpersGroup = helpersGroupRef.current;
-
-    if (!group || !helpersGroup) return;
+    if (!showHelpers || !group || !helpersGroup) {
+      return;
+    }
 
     const helpers: Helper[] = [];
 
@@ -96,7 +147,7 @@ export function SelectableGroup({
 
       helpersRef.current = [];
     };
-  }, []);
+  }, [group, helpersGroup, showHelpers]);
 
   useFrame(() => {
     for (const helper of helpersRef.current) {
@@ -124,12 +175,27 @@ export function SelectableGroup({
     [setSelectedObject]
   );
 
+  const onKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.code === "KeyG") {
+      setShowHelpers((prev) => !prev);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown]);
+
   return (
     <group onPointerMissed={onPointerMissed}>
-      <group ref={groupRef} onDoubleClick={onDoubleClick}>
+      <group ref={setGroup} onDoubleClick={onDoubleClick}>
         {children}
       </group>
-      <group ref={helpersGroupRef} onDoubleClick={onDoubleClick} />
+      {showHelpers && (
+        <group ref={setHelpersGroup} onDoubleClick={onDoubleClick} />
+      )}
     </group>
   );
 }

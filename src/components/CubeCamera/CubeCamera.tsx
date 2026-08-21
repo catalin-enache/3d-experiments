@@ -12,8 +12,7 @@ import {
   Texture,
   Group
 } from "three";
-import * as React from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useCallback, useRef, type ReactNode } from "react";
 import { type ThreeElements, useFrame, useThree } from "@react-three/fiber";
 
 export interface CubeCameraOptions {
@@ -65,7 +64,7 @@ export function useCubeCamera(
 
   let originalFog;
   let originalBackground;
-  const update = React.useCallback(() => {
+  const update = useCallback(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps, react-x/exhaustive-deps
     originalFog = scene.fog;
     // eslint-disable-next-line react-hooks/exhaustive-deps, react-x/exhaustive-deps
@@ -86,7 +85,7 @@ export function useCubeCamera(
 
 export type CubeCameraProps = Omit<ThreeElements["group"], "children"> & {
   /** The contents of CubeCamera will be hidden when filming the cube */
-  children?: (tex: Texture) => React.ReactNode;
+  children?: (tex: Texture) => ReactNode;
   /** Number of frames to render, Infinity */
   frames?: number;
 } & CubeCameraOptions;
@@ -102,7 +101,7 @@ export function CubeCamera({
   name,
   ...props
 }: CubeCameraProps) {
-  const ref = React.useRef<Group>(null);
+  const ref = useRef<Group>(null);
   const { fbo, camera, update } = useCubeCamera({
     resolution,
     near,

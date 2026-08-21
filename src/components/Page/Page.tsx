@@ -37,6 +37,7 @@ export const Page = ({
     <Canvas
       camera={cameraProps}
       orthographic={orthographic}
+      shadows="soft"
       scene={{
         background
       }}
