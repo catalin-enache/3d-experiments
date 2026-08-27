@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { Pane } from "tweakpane";
 
-export const transformBindings = ({
+export const objectBindings = ({
   pane,
   object
 }: {
@@ -9,7 +9,7 @@ export const transformBindings = ({
   object: THREE.Object3D;
 }) => {
   const transformFolder = pane.addFolder({
-    title: "Transform"
+    title: "Object 3D"
   });
 
   transformFolder.addBinding(object, "position", {
@@ -48,4 +48,12 @@ export const transformBindings = ({
   });
 
   transformFolder.addBinding(object, "visible", { label: "Visible" });
+
+  transformFolder.addBinding(object, "castShadow", {
+    label: "Cast Shadow"
+  });
+
+  transformFolder.addBinding(object, "receiveShadow", {
+    label: "Receive Shadow"
+  });
 };

@@ -23,7 +23,7 @@ export function Inspector({ object }: InspectorProps) {
   const refreshTimer = useRef(0);
   const pointerOwnedRef = useRef<PointerEvent | null>(null);
   const pointerEnteredRef = useRef<PointerEvent | null>(null);
-  const { gl } = useThree();
+  const { gl, camera } = useThree();
   const [_refresh, setRefresh] = useState(0);
   const refresh = useCallback(() => {
     setRefresh((prev) => prev + 1);
@@ -40,7 +40,7 @@ export function Inspector({ object }: InspectorProps) {
     });
     paneRef.current = pane;
 
-    buildBindings({ pane, object, gl, refresh });
+    buildBindings({ pane, object, gl, refresh, camera });
 
     container.querySelectorAll(".tp-lblv_l").forEach((element) => {
       const htmlElement = element as HTMLElement;
@@ -51,7 +51,7 @@ export function Inspector({ object }: InspectorProps) {
       pane.dispose();
       paneRef.current = null;
     };
-  }, [object, container, gl, refresh, _refresh]);
+  }, [object, container, gl, camera, refresh, _refresh]);
 
   const handlePointerDown = useCallback((evt: PointerEvent) => {
     evt.stopPropagation();
