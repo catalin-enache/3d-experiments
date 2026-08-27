@@ -1,7 +1,13 @@
 import * as THREE from "three";
-import { Suspense, type ReactNode } from "react";
+import {
+  Suspense,
+  type ReactNode,
+  useState,
+  useCallback,
+  useEffect
+} from "react";
 import { type CameraProps, Canvas } from "@react-three/fiber";
-import { GizmoViewport, Stats, GizmoHelper } from "@react-three/drei";
+import { GizmoViewport, Stats, GizmoHelper, Grid } from "@react-three/drei";
 import classes from "./Page.module.css";
 
 const defaultRaycasterParams = new THREE.Raycaster().params;
@@ -26,6 +32,8 @@ interface PageProps {
   raycasterParams?: Partial<THREE.RaycasterParameters>;
   showStats?: boolean;
   showViewportGizmo?: boolean;
+  showGrid?: boolean;
+  axesSize?: number | null;
 }
 
 export const Page = ({
@@ -37,8 +45,25 @@ export const Page = ({
     : defaultOrthographicCameraProps,
   raycasterParams = defaultRaycasterParams,
   showStats = true,
-  showViewportGizmo = true
+  showViewportGizmo = true,
+  showGrid = false,
+  axesSize = null
 }: PageProps) => {
+  const [showWidgets, setShowWidgets] = useState(showGrid || axesSize !== null);
+
+  const onKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.code === "KeyG") {
+      setShowWidgets((prev) => !prev);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown]);
+
   return (
     <Canvas
       camera={cameraProps}
@@ -54,6 +79,19 @@ export const Page = ({
         }
       }}
     >
+      {axesSize !== null && showWidgets && <axesHelper args={[axesSize]} />}
+      {showGrid && showWidgets && (
+        <Grid
+          args={[10, 10]}
+          cellSize={1}
+          cellThickness={1}
+          sectionSize={5}
+          sectionThickness={1}
+          infiniteGrid
+          fadeDistance={300}
+          fadeStrength={1}
+        />
+      )}
       {showStats && <Stats className={classes.stats} />}
       {showViewportGizmo && (
         <GizmoHelper alignment="bottom-left" margin={[60, 60]}>
