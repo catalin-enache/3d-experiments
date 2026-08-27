@@ -62,19 +62,32 @@ export function useCubeCamera(
     [near, far, fbo]
   );
 
+  interface UpdateParams {
+    listOfObjectsToHideDuringUpdate?: THREE.Object3D[];
+  }
+
   let originalFog;
   let originalBackground;
-  const update = useCallback(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react-x/exhaustive-deps
-    originalFog = scene.fog;
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react-x/exhaustive-deps
-    originalBackground = scene.background;
-    scene.background = envMap ?? originalBackground;
-    scene.fog = fog ?? originalFog;
-    camera.update(gl, scene);
-    scene.fog = originalFog;
-    scene.background = originalBackground;
-  }, [gl, scene, camera]);
+  const update = useCallback(
+    ({ listOfObjectsToHideDuringUpdate = [] }: UpdateParams = {}) => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps, react-x/exhaustive-deps
+      originalFog = scene.fog;
+      // eslint-disable-next-line react-hooks/exhaustive-deps, react-x/exhaustive-deps
+      originalBackground = scene.background;
+      scene.background = envMap ?? originalBackground;
+      scene.fog = fog ?? originalFog;
+      listOfObjectsToHideDuringUpdate.forEach((object) => {
+        object.visible = false;
+      });
+      camera.update(gl, scene);
+      listOfObjectsToHideDuringUpdate.forEach((object) => {
+        object.visible = true;
+      });
+      scene.fog = originalFog;
+      scene.background = originalBackground;
+    },
+    [gl, scene, camera]
+  );
 
   return {
     fbo,

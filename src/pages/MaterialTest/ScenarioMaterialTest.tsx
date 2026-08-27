@@ -265,9 +265,10 @@ export function MaterialTest() {
       updateCubeCamera();
       return;
     }
-    platformRef.current.visible = false;
-    updateCubeCamera();
-    platformRef.current.visible = true;
+    const updateParams = {
+      listOfObjectsToHideDuringUpdate: [platformRef.current]
+    };
+    updateCubeCamera(updateParams);
   });
 
   return (
