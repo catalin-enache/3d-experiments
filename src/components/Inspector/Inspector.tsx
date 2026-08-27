@@ -14,7 +14,7 @@ import { buildBindings } from "./buildBindings.ts";
 import classes from "./Inspector.module.css";
 
 interface InspectorProps {
-  object: THREE.Object3D | null;
+  object?: THREE.Object3D | null;
 }
 
 export function Inspector({ object }: InspectorProps) {
@@ -25,18 +25,23 @@ export function Inspector({ object }: InspectorProps) {
   const pointerEnteredRef = useRef<PointerEvent | null>(null);
   const { gl, camera } = useThree();
   const [_refresh, setRefresh] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
   const refresh = useCallback(() => {
     setRefresh((prev) => prev + 1);
   }, []);
 
   useEffect(() => {
-    if (!object || !container) {
+    if (!container) {
       return;
     }
 
     const pane = new Pane({
       container,
-      title: object.name || object.type
+      // eslint-disable-next-line
+      title: object?.name || object?.type || "Inspector",
+      expanded: isExpanded
+    }).on("fold", (evt) => {
+      setIsExpanded(evt.expanded);
     });
     paneRef.current = pane;
 
@@ -51,7 +56,7 @@ export function Inspector({ object }: InspectorProps) {
       pane.dispose();
       paneRef.current = null;
     };
-  }, [object, container, gl, camera, refresh, _refresh]);
+  }, [object, container, gl, camera, refresh, _refresh, isExpanded]);
 
   const handlePointerDown = useCallback((evt: PointerEvent) => {
     evt.stopPropagation();
@@ -91,12 +96,8 @@ export function Inspector({ object }: InspectorProps) {
     }
   });
 
-  if (!object) {
-    return null;
-  }
-
   return (
-    <Html calculatePosition={() => [12, 12]} className={classes.html}>
+    <Html calculatePosition={() => [4, 4]} className={classes.html}>
       <div
         className={classes.pane}
         ref={setContainer}

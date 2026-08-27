@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { routesConfig } from '@src/constants/routesConfig';
-import classes from './Menu.module.css';
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { routesConfig } from "@src/constants/routesConfig";
+import classes from "./Menu.module.css";
 
 export function ExperimentsMenu() {
   const [open, setOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -14,24 +13,6 @@ export function ExperimentsMenu() {
   const currentRoute = Object.values(routesConfig).find(
     ({ path }) => path === location.pathname
   );
-
-  useEffect(() => {
-    const handleInspectorOn = () => {
-      setIsVisible(false);
-    };
-
-    const handleInspectorOff = () => {
-      setIsVisible(true);
-    };
-
-    window.addEventListener('Inspector-on', handleInspectorOn);
-    window.addEventListener('Inspector-off', handleInspectorOff);
-
-    return () => {
-      window.removeEventListener('Inspector-on', handleInspectorOn);
-      window.removeEventListener('Inspector-off', handleInspectorOff);
-    };
-  }, []);
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
@@ -44,29 +25,15 @@ export function ExperimentsMenu() {
       }
     };
 
-    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener("pointerdown", handlePointerDown);
 
     return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
     };
   }, [open]);
 
-  if (!isVisible) {
-    return null;
-  }
-
   return (
     <div ref={containerRef} className={classes.container}>
-      <button
-        type="button"
-        onClick={() => {
-          setOpen((current) => !current);
-        }}
-        className={`${classes.button} ${open ? classes.buttonOpen : ''}`}
-      >
-        {currentRoute?.name ?? 'Unknown'} {open ? '▲' : '▼'}
-      </button>
-
       {open && (
         <div className={classes.menu}>
           {Object.values(routesConfig).map(({ path, name }) => {
@@ -80,7 +47,7 @@ export function ExperimentsMenu() {
                   setOpen(false);
                 }}
                 className={`${classes.link} ${
-                  isActive ? classes.activeLink : ''
+                  isActive ? classes.activeLink : ""
                 }`}
               >
                 {name}
@@ -89,6 +56,15 @@ export function ExperimentsMenu() {
           })}
         </div>
       )}
+      <button
+        type="button"
+        onClick={() => {
+          setOpen((current) => !current);
+        }}
+        className={`${classes.button} ${open ? classes.buttonOpen : ""}`}
+      >
+        {currentRoute?.name ?? "Unknown"} {open ? "▼" : "▲"}
+      </button>
     </div>
   );
 }

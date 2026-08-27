@@ -7,7 +7,6 @@ import {
   useState
 } from "react";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
-import { InspectorOn, InspectorOff } from "@src/constants/events";
 import { type Helper, createHelper, getSelectionTarget } from "./utils";
 
 interface SelectableGroupProps {
@@ -74,7 +73,6 @@ export function SelectableGroup({
   const onDoubleClick = useCallback(
     (event: ThreeEvent<MouseEvent>) => {
       event.stopPropagation();
-      window.dispatchEvent(InspectorOn);
 
       setSelectedObject(getSelectionTarget(event.object));
     },
@@ -84,7 +82,6 @@ export function SelectableGroup({
   const onPointerMissed = useCallback(
     (event: MouseEvent) => {
       if (event.detail === 2) {
-        window.dispatchEvent(InspectorOff);
         setSelectedObject(null);
       }
     },

@@ -18,7 +18,7 @@ export function buildBindings({
   camera
 }: {
   pane: Pane;
-  object: THREE.Object3D;
+  object?: THREE.Object3D | null;
   gl: THREE.WebGLRenderer;
   refresh: () => void;
   camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
@@ -27,6 +27,10 @@ export function buildBindings({
 
   const cameraFolder = pane.addFolder({ title: "Camera", expanded: false });
   cameraBindings({ object: camera, cameraFolder });
+
+  if (!object) {
+    return;
+  }
 
   objectBindings({ pane, object });
 

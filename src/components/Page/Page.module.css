@@ -1,7 +1,6 @@
 .stats {
   position: fixed;
   top: unset !important;
-  left: unset !important;
-  right: 0;
-  bottom: 0;
+  left: 120px !important;
+  bottom: 4px;
 }

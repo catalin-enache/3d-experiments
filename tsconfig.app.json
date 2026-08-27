@@ -23,11 +23,11 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "@src/*": ["src/*"],
-      "@components": ["src/components/index.ts"],
-      "@pages/*": ["src/pages/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@lib/*": ["src/lib/*"]
+      "@src/*": ["./src/*"],
+      "@components": ["./src/components/index.ts"],
+      "@pages/*": ["./src/pages/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@lib/*": ["./src/lib/*"]
     }
   },
   "include": ["src/**/*"]
