@@ -1,9 +1,9 @@
-import * as THREE from 'three';
-import { OrbitControls } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useRef, useCallback } from 'react';
-import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-import { isEditableTarget } from '@lib/utils';
+import * as THREE from "three";
+import { OrbitControls } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useEffect, useRef, useCallback } from "react";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { isEditableTarget } from "@lib/utils";
 
 const MOVE_SPEED_MIN = 0.5;
 const MOVE_SPEED_MAX = 100;
@@ -78,8 +78,16 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
       return;
     }
 
+    object.updateWorldMatrix(true, false);
+
+    const box = new THREE.Box3().setFromObject(object, true);
     const center = new THREE.Vector3();
-    new THREE.Box3().setFromObject(object).getCenter(center);
+
+    if (!box.isEmpty()) {
+      box.getCenter(center);
+    } else {
+      object.getWorldPosition(center);
+    }
 
     controls.target.copy(center);
     controls.update();
@@ -91,7 +99,7 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
         return;
       }
 
-      if (event.code === 'KeyF') {
+      if (event.code === "KeyF") {
         if (!event.repeat && !rightMouseDown.current) {
           focusObject(selectedObject);
         }
@@ -102,22 +110,22 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
       if (!rightMouseDown.current) return;
 
       switch (event.code) {
-        case 'KeyW':
+        case "KeyW":
           keys.current.forward = true;
           break;
-        case 'KeyS':
+        case "KeyS":
           keys.current.backward = true;
           break;
-        case 'KeyA':
+        case "KeyA":
           keys.current.left = true;
           break;
-        case 'KeyD':
+        case "KeyD":
           keys.current.right = true;
           break;
-        case 'KeyE':
+        case "KeyE":
           keys.current.up = true;
           break;
-        case 'KeyQ':
+        case "KeyQ":
           keys.current.down = true;
           break;
       }
@@ -125,33 +133,33 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
 
     const onKeyUp = (event: KeyboardEvent) => {
       switch (event.code) {
-        case 'KeyW':
+        case "KeyW":
           keys.current.forward = false;
           break;
-        case 'KeyS':
+        case "KeyS":
           keys.current.backward = false;
           break;
-        case 'KeyA':
+        case "KeyA":
           keys.current.left = false;
           break;
-        case 'KeyD':
+        case "KeyD":
           keys.current.right = false;
           break;
-        case 'KeyE':
+        case "KeyE":
           keys.current.up = false;
           break;
-        case 'KeyQ':
+        case "KeyQ":
           keys.current.down = false;
           break;
       }
     };
 
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
 
     return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
     };
   }, [focusObject, selectedObject]);
 
@@ -213,7 +221,7 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
         // Before this workaround we swallowed pointerMove events which interfered with ObjectTransformControls
         // making it to jump when dragging.
         document.dispatchEvent(
-          new PointerEvent('pointerup', {
+          new PointerEvent("pointerup", {
             bubbles: true,
             pointerId: activePointerId.current
           })
@@ -246,24 +254,24 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
       event.preventDefault();
     };
 
-    gl.domElement.addEventListener('contextmenu', onContextMenu);
-    gl.domElement.addEventListener('pointerdown', onPointerDown);
-    gl.domElement.addEventListener('pointerup', onPointerUp);
-    gl.domElement.addEventListener('pointermove', onPointerMove, {
+    gl.domElement.addEventListener("contextmenu", onContextMenu);
+    gl.domElement.addEventListener("pointerdown", onPointerDown);
+    gl.domElement.addEventListener("pointerup", onPointerUp);
+    gl.domElement.addEventListener("pointermove", onPointerMove, {
       capture: true
     });
-    document.addEventListener('pointerleave', onPointerLeave);
-    document.addEventListener('pointerlockchange', onPointerLockChange);
+    document.addEventListener("pointerleave", onPointerLeave);
+    document.addEventListener("pointerlockchange", onPointerLockChange);
 
     return () => {
-      gl.domElement.removeEventListener('contextmenu', onContextMenu);
-      gl.domElement.removeEventListener('pointerdown', onPointerDown);
-      gl.domElement.removeEventListener('pointerup', onPointerUp);
-      gl.domElement.removeEventListener('pointermove', onPointerMove, {
+      gl.domElement.removeEventListener("contextmenu", onContextMenu);
+      gl.domElement.removeEventListener("pointerdown", onPointerDown);
+      gl.domElement.removeEventListener("pointerup", onPointerUp);
+      gl.domElement.removeEventListener("pointermove", onPointerMove, {
         capture: true
       });
-      document.removeEventListener('pointerleave', onPointerLeave);
-      document.removeEventListener('pointerlockchange', onPointerLockChange);
+      document.removeEventListener("pointerleave", onPointerLeave);
+      document.removeEventListener("pointerlockchange", onPointerLockChange);
 
       if (document.pointerLockElement === gl.domElement) {
         document.exitPointerLock();
@@ -292,13 +300,13 @@ export function CameraControls({ selectedObject }: NavigationControlsProps) {
       );
     };
 
-    gl.domElement.addEventListener('wheel', onWheel, {
+    gl.domElement.addEventListener("wheel", onWheel, {
       capture: true,
       passive: false
     });
 
     return () => {
-      gl.domElement.removeEventListener('wheel', onWheel, {
+      gl.domElement.removeEventListener("wheel", onWheel, {
         capture: true
       });
     };
