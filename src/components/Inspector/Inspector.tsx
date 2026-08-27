@@ -1,7 +1,7 @@
-import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
-import { Pane } from 'tweakpane';
+import * as THREE from "three";
+import { useFrame, useThree } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
+import { Pane } from "tweakpane";
 import {
   useCallback,
   useEffect,
@@ -9,9 +9,9 @@ import {
   useState,
   type PointerEvent,
   type WheelEvent
-} from 'react';
-import { buildBindings } from './buildBindings.ts';
-import classes from './Inspector.module.css';
+} from "react";
+import { buildBindings } from "./buildBindings.ts";
+import classes from "./Inspector.module.css";
 
 interface InspectorProps {
   object: THREE.Object3D | null;
@@ -23,6 +23,11 @@ export function Inspector({ object }: InspectorProps) {
   const refreshTimer = useRef(0);
   const pointerOwnedRef = useRef<PointerEvent | null>(null);
   const pointerEnteredRef = useRef<PointerEvent | null>(null);
+  const { gl } = useThree();
+  const [_refresh, setRefresh] = useState(0);
+  const refresh = useCallback(() => {
+    setRefresh((prev) => prev + 1);
+  }, []);
 
   useEffect(() => {
     if (!object || !container) {
@@ -35,9 +40,9 @@ export function Inspector({ object }: InspectorProps) {
     });
     paneRef.current = pane;
 
-    buildBindings({ pane, object });
+    buildBindings({ pane, object, gl, refresh });
 
-    container.querySelectorAll('.tp-lblv_l').forEach((element) => {
+    container.querySelectorAll(".tp-lblv_l").forEach((element) => {
       const htmlElement = element as HTMLElement;
       htmlElement.title = htmlElement.textContent;
     });
@@ -46,7 +51,7 @@ export function Inspector({ object }: InspectorProps) {
       pane.dispose();
       paneRef.current = null;
     };
-  }, [object, container]);
+  }, [object, container, gl, refresh, _refresh]);
 
   const handlePointerDown = useCallback((evt: PointerEvent) => {
     evt.stopPropagation();

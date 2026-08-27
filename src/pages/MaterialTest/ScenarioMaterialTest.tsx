@@ -284,21 +284,31 @@ export function MaterialTest() {
 
           <primitive object={cubeCamera} position={[0, -20, 0]} />
 
+          <pointLight
+            castShadow
+            // shadow-mapSize={[2048, 2048]}
+            position={[0, -15, 0]}
+            color={"orange"}
+            // decay={0}
+            scale={1}
+            intensity={Math.PI}
+          />
+
           <directionalLight
             shadow-mapSize-width={2048}
             shadow-mapSize-height={2048}
             shadow-radius={4}
-            shadow-camera-right={15}
-            shadow-camera-left={-15}
-            shadow-camera-top={15}
-            shadow-camera-bottom={-15}
+            shadow-camera-right={20}
+            shadow-camera-left={-20}
+            shadow-camera-top={20}
+            shadow-camera-bottom={-20}
             shadow-blurSamples={8}
             shadow-bias={-0.0014}
             castShadow
             position={[-20, 20, 20]}
             scale={1}
             intensity={4.5}
-            color={"white"}
+            color={new THREE.Color().setRGB(1, 1, 1)}
           />
 
           <spotLight
@@ -318,6 +328,11 @@ export function MaterialTest() {
             color={"#ffffff"}
             intensity={0.1}
             position={[0, 20, 0]}
+          />
+
+          <hemisphereLight
+            args={[0xffffff, 0x000000, 0.1]}
+            position={[0, 30, 0]}
           />
 
           <mesh material={material} castShadow receiveShadow name={meshType}>

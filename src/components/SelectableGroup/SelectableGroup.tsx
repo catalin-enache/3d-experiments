@@ -7,7 +7,46 @@ import {
   useState
 } from "react";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
-import { InspectorOn, InspectorOff } from "@src/constants/events.ts";
+import { InspectorOn, InspectorOff } from "@src/constants/events";
+
+class AmbientLightHelper extends THREE.Group {
+  private light: THREE.AmbientLight;
+  private readonly geometry: THREE.SphereGeometry;
+  private readonly material: THREE.MeshBasicMaterial;
+  private readonly marker: THREE.Mesh;
+
+  constructor(light: THREE.AmbientLight, size = 1) {
+    super();
+
+    this.light = light;
+
+    this.geometry = new THREE.SphereGeometry(size, 12, 8);
+
+    this.material = new THREE.MeshBasicMaterial({
+      color: light.color,
+      wireframe: true,
+      toneMapped: false,
+      depthTest: false
+    });
+
+    this.marker = new THREE.Mesh(this.geometry, this.material);
+
+    this.add(this.marker);
+
+    this.update();
+  }
+
+  update() {
+    this.light.getWorldPosition(this.position);
+
+    this.material.color.copy(this.light.color);
+  }
+
+  dispose() {
+    this.geometry.dispose();
+    this.material.dispose();
+  }
+}
 
 class CubeCameraHelper extends THREE.Group {
   private helpers: THREE.CameraHelper[] = [];
@@ -50,6 +89,10 @@ function createCubeCameraHelper(cubeCamera: THREE.CubeCamera) {
 }
 
 function createHelper(object: THREE.Object3D) {
+  if (object instanceof THREE.AmbientLight) {
+    return new AmbientLightHelper(object, 1);
+  }
+
   if (object instanceof THREE.PointLight) {
     return new THREE.PointLightHelper(object, 0.5);
   }
