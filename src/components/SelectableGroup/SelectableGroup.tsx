@@ -8,136 +8,7 @@ import {
 } from "react";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { InspectorOn, InspectorOff } from "@src/constants/events";
-
-class AmbientLightHelper extends THREE.Group {
-  private light: THREE.AmbientLight;
-  private readonly geometry: THREE.SphereGeometry;
-  private readonly material: THREE.MeshBasicMaterial;
-  private readonly marker: THREE.Mesh;
-
-  constructor(light: THREE.AmbientLight, size = 1) {
-    super();
-
-    this.light = light;
-
-    this.geometry = new THREE.SphereGeometry(size, 12, 8);
-
-    this.material = new THREE.MeshBasicMaterial({
-      color: light.color,
-      wireframe: true,
-      toneMapped: false,
-      depthTest: false
-    });
-
-    this.marker = new THREE.Mesh(this.geometry, this.material);
-
-    this.add(this.marker);
-
-    this.update();
-  }
-
-  update() {
-    this.light.getWorldPosition(this.position);
-
-    this.material.color.copy(this.light.color);
-  }
-
-  dispose() {
-    this.geometry.dispose();
-    this.material.dispose();
-  }
-}
-
-class CubeCameraHelper extends THREE.Group {
-  private helpers: THREE.CameraHelper[] = [];
-
-  constructor(camera: THREE.CubeCamera) {
-    super();
-    for (const child of camera.children) {
-      if (child instanceof THREE.PerspectiveCamera) {
-        const helper = new THREE.CameraHelper(child);
-        helper.update();
-        this.helpers.push(helper);
-        this.add(helper);
-      }
-    }
-  }
-
-  update() {
-    for (const helper of this.helpers) {
-      helper.update();
-    }
-  }
-
-  dispose() {
-    for (const helper of this.helpers) {
-      helper.dispose();
-    }
-  }
-}
-
-function createCubeCameraHelper(cubeCamera: THREE.CubeCamera) {
-  const group = new CubeCameraHelper(cubeCamera);
-
-  for (const child of cubeCamera.children) {
-    if (child instanceof THREE.Camera) {
-      group.add(new THREE.CameraHelper(child));
-    }
-  }
-
-  return group;
-}
-
-function createHelper(object: THREE.Object3D) {
-  if (object instanceof THREE.AmbientLight) {
-    return new AmbientLightHelper(object, 1);
-  }
-
-  if (object instanceof THREE.PointLight) {
-    return new THREE.PointLightHelper(object, 0.5);
-  }
-
-  if (object instanceof THREE.SpotLight) {
-    return new THREE.SpotLightHelper(object);
-  }
-
-  if (object instanceof THREE.DirectionalLight) {
-    return new THREE.DirectionalLightHelper(object, 1);
-  }
-
-  if (object instanceof THREE.HemisphereLight) {
-    return new THREE.HemisphereLightHelper(object, 1);
-  }
-
-  if (object instanceof THREE.Camera) {
-    return new THREE.CameraHelper(object);
-  }
-
-  if (object instanceof THREE.CubeCamera) {
-    return createCubeCameraHelper(object);
-  }
-
-  return null;
-}
-
-function getSelectionTarget(object: THREE.Object3D) {
-  let current: THREE.Object3D | null = object;
-
-  while (current) {
-    const selectTarget = current.userData.selectTarget as
-      THREE.Object3D | undefined;
-
-    if (selectTarget) {
-      return selectTarget;
-    }
-
-    current = current.parent;
-  }
-
-  return object;
-}
-
-type Helper = NonNullable<ReturnType<typeof createHelper>>;
+import { type Helper, createHelper, getSelectionTarget } from "./utils";
 
 interface SelectableGroupProps {
   children: ReactNode;
@@ -164,6 +35,8 @@ export function SelectableGroup({
 
     // Scan the actual scenario objects.
     group.traverse((object) => {
+      if (object.parent instanceof THREE.CubeCamera) return;
+
       const helper = createHelper(object);
 
       if (!helper) return;
