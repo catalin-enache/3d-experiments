@@ -40,7 +40,9 @@ export function ScenarioHeightMapToNormalMap() {
 
   return (
     <Scenario
-      selectableChildren={
+      useTransformControls={false}
+      useCameraControls={false}
+      unselectableChildren={
         <mesh position={[0, 0, 0]} name="mesh">
           <planeGeometry args={[10, 10, 1, 1]} />
           <shaderMaterial

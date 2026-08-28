@@ -92,7 +92,7 @@ export function ScenarioShaderShapes() {
     <Scenario
       useCameraControls={false}
       useTransformControls={false}
-      selectableChildren={
+      unselectableChildren={
         <mesh
           position={[0, 0, 0]}
           name="mesh"

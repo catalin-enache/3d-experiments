@@ -126,7 +126,8 @@ export function ScenarioShaderPatternsUV() {
 
   return (
     <Scenario
-      selectableChildren={
+      useCameraControls={false}
+      unselectableChildren={
         <mesh
           position={[0, 0, 0]}
           name="mesh"
