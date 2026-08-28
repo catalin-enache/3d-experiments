@@ -30,5 +30,10 @@ export const routesConfig = {
     path: "/shaders/flag",
     name: "Shader Flag",
     component: lazy(() => import("@pages/Shaders/Flag"))
+  },
+  shaderPatternsUV: {
+    path: "/shaders/patterns-uv",
+    name: "Shader Patterns UV",
+    component: lazy(() => import("@pages/Shaders/PatternsUV"))
   }
 };
