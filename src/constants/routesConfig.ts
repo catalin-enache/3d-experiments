@@ -25,5 +25,10 @@ export const routesConfig = {
     path: "/shaders/shapes",
     name: "Shader Shapes",
     component: lazy(() => import("@pages/Shaders/Shapes"))
+  },
+  shaderFlag: {
+    path: "/shaders/flag",
+    name: "Shader Flag",
+    component: lazy(() => import("@pages/Shaders/Flag"))
   }
 };
