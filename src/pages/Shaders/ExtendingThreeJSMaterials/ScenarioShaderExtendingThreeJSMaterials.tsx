@@ -16,9 +16,12 @@ const modelPath =
   "/models/FromThreeRepo/gltf_glb/DamagedHelmet/glTF/DamagedHelmet.gltf";
 
 const cubeFiles = ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"];
+const cubeFilesPath = "/textures/background/cube/Park3Med/";
 
 const planeGeometry = new THREE.PlaneGeometry(10, 10, 1, 1);
-const planeMaterial = new THREE.MeshStandardMaterial();
+const planeMaterial = new THREE.MeshStandardMaterial({
+  side: THREE.DoubleSide
+});
 
 export function ScenarioShaderExtendingThreeJSMaterials() {
   const gltf = useGLTF(modelPath);
@@ -30,11 +33,21 @@ export function ScenarioShaderExtendingThreeJSMaterials() {
       }
     };
 
+    /*
+     * Clone because useGLTF() caches its result.
+     * We don't want this scenario to modify the cached original.
+     */
     const object = gltf.scene.clone(true);
 
     const mesh = object.children[0] as THREE.Mesh;
 
-    const objectMaterial = mesh.material as THREE.MeshStandardMaterial;
+    /*
+     * Clone the material too, otherwise we'd still be modifying
+     * the cached GLTF material.
+     */
+    const objectMaterial = (
+      mesh.material as THREE.MeshStandardMaterial
+    ).clone();
 
     mesh.material = objectMaterial;
     mesh.castShadow = true;
@@ -165,11 +178,7 @@ ${distortPositions}`
     <Scenario
       selectableChildren={
         <>
-          <Environment
-            files={cubeFiles}
-            path="/textures/background/cube/Park3Med/"
-            background
-          />
+          <Environment files={cubeFiles} path={cubeFilesPath} background />
           <directionalLight
             shadow-mapSize-width={2048}
             shadow-mapSize-height={2048}
