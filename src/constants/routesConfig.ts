@@ -21,6 +21,11 @@ export const routesConfig = {
     name: "Material Test",
     component: lazy(() => import("@pages/MaterialTest"))
   },
+  dotCrossProduct: {
+    path: "/dot-cross-product",
+    name: "Dot Cross Product",
+    component: lazy(() => import("@pages/DotAndCrossProduct"))
+  },
   shaderShapes: {
     path: "/shaders/shapes",
     name: "Shader Shapes",
