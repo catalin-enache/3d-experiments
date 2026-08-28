@@ -13,10 +13,10 @@ import {
 } from "./glsl/includes.glsl";
 
 const modelPath =
-  "/models/FromThreeRepo/gltf_glb/DamagedHelmet/glTF/DamagedHelmet.gltf";
+  "models/FromThreeRepo/gltf_glb/DamagedHelmet/glTF/DamagedHelmet.gltf";
 
 const cubeFiles = ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"];
-const cubeFilesPath = "/textures/background/cube/Park3Med/";
+const cubeFilesPath = "textures/background/cube/Park3Med/";
 
 const planeGeometry = new THREE.PlaneGeometry(10, 10, 1, 1);
 const planeMaterial = new THREE.MeshStandardMaterial({

@@ -17,6 +17,8 @@ export default defineConfig({
       }
     })
   ],
+  // base: process.env.NODE_ENV === 'production' ? '/3d-experiments/' : './'
+  base: "/3d-experiments/",
   assetsInclude: [],
   resolve: {
     tsconfigPaths: true

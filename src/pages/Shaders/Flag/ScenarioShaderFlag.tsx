@@ -25,7 +25,7 @@ addRandoms(planeGeometry);
 
 export function ScenarioShaderFlag() {
   const flagTexture = useTexture(
-    "/textures/pbr/floors/FloorsCheckerboard_S_Diffuse.jpg"
+    "textures/pbr/floors/FloorsCheckerboard_S_Diffuse.jpg"
   );
 
   const { material, uniforms } = useMemo(() => {

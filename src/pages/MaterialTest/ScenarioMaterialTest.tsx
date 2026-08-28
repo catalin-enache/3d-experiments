@@ -53,11 +53,11 @@ const materialsMap: Record<MaterialType, THREE.Material> = {
 };
 
 const pbrTexture = {
-  map: "/textures/pbr/Rocks005/Rocks005_1K-JPG_Color.jpg",
-  displacementMap: "/textures/pbr/Rocks005/Rocks005_1K-JPG_Displacement.jpg",
-  normalMap: "/textures/pbr/Rocks005/Rocks005_1K-JPG_NormalGL.jpg",
-  roughnessMap: "/textures/pbr/Rocks005/Rocks005_1K-JPG_Roughness.jpg",
-  aoMap: "/textures/pbr/Rocks005/Rocks005_1K-JPG_AmbientOcclusion.jpg"
+  map: "textures/pbr/Rocks005/Rocks005_1K-JPG_Color.jpg",
+  displacementMap: "textures/pbr/Rocks005/Rocks005_1K-JPG_Displacement.jpg",
+  normalMap: "textures/pbr/Rocks005/Rocks005_1K-JPG_NormalGL.jpg",
+  roughnessMap: "textures/pbr/Rocks005/Rocks005_1K-JPG_Roughness.jpg",
+  aoMap: "textures/pbr/Rocks005/Rocks005_1K-JPG_AmbientOcclusion.jpg"
 };
 
 const minTessellation = 1;
@@ -77,22 +77,22 @@ type SceneBackgroundName = (typeof sceneBackgrounds)[number];
 const cubeCoords = ["px", "nx", "py", "ny", "pz", "nz"];
 
 const texturesPisa = cubeCoords.map(
-  (t) => `/textures/background/cube/pisa/${t}.png`
+  (t) => `textures/background/cube/pisa/${t}.png`
 );
 
 const textureSpruitSunrise =
-  "/textures/background/equirectangular/spruit_sunrise_4k.hdr.jpg";
+  "textures/background/equirectangular/spruit_sunrise_4k.hdr.jpg";
 
 const texturesMilkyWay = cubeCoords.map(
-  (t) => `/textures/background/cube/MilkyWay/dark-s_${t}.jpg`
+  (t) => `textures/background/cube/MilkyWay/dark-s_${t}.jpg`
 );
 
 const texturesPark3Med = cubeCoords.map(
-  (t) => `/textures/background/cube/Park3Med/${t}.jpg`
+  (t) => `textures/background/cube/Park3Med/${t}.jpg`
 );
 
 const texturesSkyboxSun = cubeCoords.map(
-  (t) => `/textures/background/cube/skyboxsun25deg/${t}.jpg`
+  (t) => `textures/background/cube/skyboxsun25deg/${t}.jpg`
 );
 
 const backgroundTexturesMap: Record<

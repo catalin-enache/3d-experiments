@@ -8,7 +8,7 @@ import { Scenario } from "@components";
 
 export function ScenarioHeightMapToNormalMap() {
   const texture = useTexture(
-    "/textures/pbr/castle_brick_02/castle_brick_02_red_4k_disp.jpg"
+    "textures/pbr/castle_brick_02/castle_brick_02_red_4k_disp.jpg"
   );
 
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);

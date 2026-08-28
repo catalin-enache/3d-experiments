@@ -1,14 +1,14 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Suspense } from 'react';
+import { Routes, Route, HashRouter } from "react-router-dom";
+import { Suspense } from "react";
 
-import { routesConfig } from '@src/constants/routesConfig';
+import { routesConfig } from "@src/constants/routesConfig";
 
-import classes from './App.module.css';
-import { ExperimentsMenu } from '@components';
+import classes from "./App.module.css";
+import { ExperimentsMenu } from "@components";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className={classes.app}>
         <ExperimentsMenu />
         <Suspense fallback={<div className={classes.loading}>Loading...</div>}>
@@ -28,7 +28,7 @@ function App() {
           </Routes>
         </Suspense>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
