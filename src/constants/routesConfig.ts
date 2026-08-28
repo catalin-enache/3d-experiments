@@ -35,5 +35,10 @@ export const routesConfig = {
     path: "/shaders/patterns-uv",
     name: "Shader Patterns UV",
     component: lazy(() => import("@pages/Shaders/PatternsUV"))
+  },
+  shaderExtendingThreeJsMaterials: {
+    path: "/shaders/extending-three-js-materials",
+    name: "Shader Extending Three JS Materials",
+    component: lazy(() => import("@pages/Shaders/ExtendingThreeJSMaterials"))
   }
 };

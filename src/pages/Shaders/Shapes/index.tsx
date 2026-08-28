@@ -1,7 +1,7 @@
 import { Page } from "@components";
 import ScenarioShaderShapes from "./ScenarioShaderShapes";
 
-export default function ProjectLongLatOnSpherePage() {
+export default function ShaderShapesPage() {
   return (
     <Page
       orthographic

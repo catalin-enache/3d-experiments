@@ -1,7 +1,7 @@
 import { Page } from "@components";
 import ScenarioShaderPatternsUV from "./ScenarioShaderPatternsUV";
 
-export default function ProjectLongLatOnSpherePage() {
+export default function ShaderPatternsUVPage() {
   return (
     <Page
       orthographic

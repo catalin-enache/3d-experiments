@@ -1,7 +1,7 @@
 import { Page } from "@components";
 import ScenarioShaderFlag from "./ScenarioShaderFlag";
 
-export default function ProjectLongLatOnSpherePage() {
+export default function ShaderFlagPage() {
   return (
     <Page
       orthographic
