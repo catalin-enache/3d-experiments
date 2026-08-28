@@ -36,6 +36,8 @@ export function SelectableGroup({
     group.traverse((object) => {
       if (object.parent instanceof THREE.CubeCamera) return;
 
+      if (object.userData.noHelper) return;
+
       const helper = createHelper(object);
 
       if (!helper) return;
