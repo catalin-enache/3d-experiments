@@ -167,13 +167,23 @@ hr {
   border-top: 1px solid var(--border);
 }
 
-/* -------------- LIL GUI ---------------*/
+/* -------------- LIL GUI custom controls ---------------*/
 
 .lil-root {
   position: fixed !important;
   top: 4px !important;
   right: 4px !important;
   left: auto !important;
+  width: 256px !important;
   z-index: 1000;
   opacity: 0.6;
+}
+
+/* -------------- Tweakpane custom controls ---------------*/
+
+.tp-dfwv {
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  width: 256px !important;
 }

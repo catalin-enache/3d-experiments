@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import { useEffect, useMemo } from "react";
 import { useTexture } from "@react-three/drei";
-import GUI from "lil-gui";
+import { useFrame } from "@react-three/fiber";
+import { Pane } from "tweakpane";
 
 import vertexShader from "./glsl/vertex.glsl";
 import fragmentShader from "./glsl/fragment.glsl";
 import { Scenario } from "@components";
-import { useFrame } from "@react-three/fiber";
 
 const planeGeometry = new THREE.PlaneGeometry(10, 10, 64, 64);
 
@@ -28,68 +28,105 @@ export function ScenarioShaderFlag() {
     "/textures/pbr/floors/FloorsCheckerboard_S_Diffuse.jpg"
   );
 
-  const material = useMemo(
-    () =>
-      new THREE.RawShaderMaterial({
-        vertexShader,
-        fragmentShader,
-        wireframe: false,
-        side: THREE.DoubleSide,
-        transparent: false,
-        uniforms: {
-          uIntensity: { value: 0.5 },
-          uFrequency: {
-            value: new THREE.Vector2(0.5, 0.5)
-          },
-          uTime: { value: 0 },
-          uTexture: { value: flagTexture }
-        }
-      }),
-    [flagTexture]
-  );
+  const { material, uniforms } = useMemo(() => {
+    const uniforms = {
+      uIntensity: {
+        value: 0.5
+      },
+      uFrequency: {
+        value: new THREE.Vector2(0.5, 0.5)
+      },
+      uTime: {
+        value: 0
+      },
+      uTexture: {
+        value: flagTexture
+      }
+    };
+
+    const material = new THREE.RawShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      wireframe: false,
+      side: THREE.DoubleSide,
+      transparent: false,
+      uniforms
+    });
+
+    return {
+      material,
+      uniforms
+    };
+  }, [flagTexture]);
 
   useEffect(() => {
-    const gui = new GUI();
+    const pane = new Pane({
+      title: "Shader Flag"
+    });
 
     const params = {
       tessellation: planeGeometry.parameters.heightSegments
     };
 
-    gui
-      .add(params, "tessellation", 1, 256, 1)
-      .name("Tessellation")
-      .onChange((value: number) => {
+    pane
+      .addBinding(params, "tessellation", {
+        label: "Tessellation",
+        min: 1,
+        max: 256,
+        step: 1
+      })
+      .on("change", ({ value }) => {
         const newGeometry = new THREE.PlaneGeometry(10, 10, value, value);
 
         addRandoms(newGeometry);
 
         planeGeometry.copy(newGeometry);
-
         newGeometry.dispose();
       });
 
-    gui.add(material.uniforms.uIntensity, "value", 0, 1, 0.1).name("Intensity");
+    pane.addBinding(uniforms.uIntensity, "value", {
+      label: "Intensity",
+      min: 0,
+      max: 1,
+      step: 0.1
+    });
 
-    const frequencyFolder = gui.addFolder("Frequency");
+    const frequencyFolder = pane.addFolder({
+      title: "Frequency"
+    });
 
-    const frequency = material.uniforms.uFrequency.value as THREE.Vector2;
+    frequencyFolder.addBinding(uniforms.uFrequency.value, "x", {
+      label: "X",
+      min: 0,
+      max: 2,
+      step: 0.1
+    });
 
-    frequencyFolder.add(frequency, "x", 0, 2, 0.1).name("X");
-
-    frequencyFolder.add(frequency, "y", 0, 2, 0.1).name("Y");
+    frequencyFolder.addBinding(uniforms.uFrequency.value, "y", {
+      label: "Y",
+      min: 0,
+      max: 2,
+      step: 0.1
+    });
 
     return () => {
-      gui.destroy();
+      pane.dispose();
+    };
+  }, [uniforms]);
+
+  useFrame(({ clock }) => {
+    uniforms.uTime.value = clock.elapsedTime;
+  });
+
+  useEffect(() => {
+    return () => {
+      material.dispose();
     };
   }, [material]);
 
-  useFrame((_rootState, _delta, _frame) => {
-    material.uniforms.uTime.value = _rootState.clock.elapsedTime;
-  });
-
   return (
     <Scenario
-      selectableChildren={
+      unselectableChildren={
         <mesh
           position={[0, 0, 0]}
           name="mesh"
