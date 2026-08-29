@@ -40,6 +40,8 @@ export function getSelectionTarget(object: THREE.Object3D) {
   let current: THREE.Object3D | null = object;
 
   while (current) {
+    if (current.userData.noSelect) continue;
+
     const selectTarget = current.userData.selectTarget as
       THREE.Object3D | undefined;
 

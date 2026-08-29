@@ -26,6 +26,11 @@ export const routesConfig = {
     name: "Dot Cross Product",
     component: lazy(() => import("@pages/DotAndCrossProduct"))
   },
+  matrixInverse: {
+    path: "/matrix-inverse",
+    name: "Matrix Inverse",
+    component: lazy(() => import("@pages/MatrixInverse"))
+  },
   shaderShapes: {
     path: "/shaders/shapes",
     name: "Shader Shapes",
