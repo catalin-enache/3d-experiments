@@ -9,7 +9,6 @@ import {
   formatEulerDeg,
   formatVector3
 } from "@lib/utils";
-import classes from "./ScenarioMatrixInverse.module.css";
 
 export function ScenarioMatrixInverse() {
   const parentRef = useRef<THREE.Mesh>(null);
@@ -290,9 +289,8 @@ export function ScenarioMatrixInverse() {
 
             <axesHelper args={[0.5]} />
 
-            <Html center className={classes.htmlSphereLabel}>
+            <Html center className="htmlLabel">
               <div
-                className={classes.sphereLabel}
                 style={{
                   transform: "translateY(-46px)"
                 }}
@@ -318,8 +316,8 @@ export function ScenarioMatrixInverse() {
 
             <axesHelper args={[0.5]} userData={{ noSelect: true }} />
 
-            <Html center className={classes.htmlSphereLabel}>
-              <div className={classes.sphereLabel}>Recovered Local</div>
+            <Html center className="htmlLabel">
+              <div>Recovered Local</div>
             </Html>
           </mesh>
 
@@ -351,7 +349,7 @@ export function ScenarioMatrixInverse() {
               pointerEvents: "none"
             }}
           >
-            <pre ref={infoRef} className={classes.htmlInfo} />
+            <pre ref={infoRef} className="htmlInfo" />
           </Html>
         </>
       }
@@ -367,8 +365,8 @@ export function ScenarioMatrixInverse() {
         >
           <meshStandardMaterial color="#5599ff" />
 
-          <Html center className={classes.htmlSphereLabel}>
-            <div className={classes.sphereLabel}>Parent</div>
+          <Html center className="htmlLabel">
+            <div>Parent</div>
           </Html>
 
           {/*
@@ -394,8 +392,8 @@ export function ScenarioMatrixInverse() {
 
             <axesHelper args={[0.5]} userData={{ noSelect: true }} />
 
-            <Html center className={classes.htmlSphereLabel}>
-              <div className={classes.sphereLabel}>C</div>
+            <Html center className="htmlLabel">
+              <div>C</div>
             </Html>
           </mesh>
         </mesh>

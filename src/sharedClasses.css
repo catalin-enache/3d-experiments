@@ -1,6 +1,11 @@
-.htmlSphereLabel {
+.htmlLabel {
   pointer-events: none;
   color: #ffffff;
+  font-size: 12px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  > * {
+    /*transform: translateY(-22px);*/
+  }
 }
 
 .htmlInfo {
@@ -17,9 +22,4 @@
   line-height: 1.45;
   white-space: pre-wrap;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-}
-.sphereLabel {
-  transform: translateY(-22px);
-  font-size: 12px;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
