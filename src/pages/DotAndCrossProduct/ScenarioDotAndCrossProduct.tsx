@@ -3,36 +3,9 @@ import { useEffect, useMemo, useRef } from "react";
 import { Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Scenario } from "@components";
+import { makeLineGeometry, setLinePoints } from "@lib/utils";
+import { EPSILON } from "@lib/constants";
 import classes from "./ScenarioDotAndCrossProduct.module.css";
-
-const EPSILON = 1e-6;
-
-function makeLineGeometry() {
-  return new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(),
-    new THREE.Vector3()
-  ]);
-}
-
-function setLinePoints(
-  line: THREE.Line,
-  start: THREE.Vector3,
-  end: THREE.Vector3
-) {
-  const geometry = line.geometry;
-  const positions = geometry.attributes.position;
-
-  positions.setXYZ(0, start.x, start.y, start.z);
-  positions.setXYZ(1, end.x, end.y, end.z);
-  positions.needsUpdate = true;
-
-  geometry.computeBoundingSphere();
-
-  // Computes an array of distance values which are necessary for | LineDashedMaterial
-  if ("computeLineDistances" in line) {
-    line.computeLineDistances();
-  }
-}
 
 export function ScenarioDotAndCrossProduct() {
   const { scene, camera } = useThree();

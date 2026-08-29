@@ -3,42 +3,13 @@ import { useMemo, useRef } from "react";
 import { Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Scenario } from "@components";
-
+import {
+  makeLineGeometry,
+  setLinePoints,
+  formatEulerDeg,
+  formatVector3
+} from "@lib/utils";
 import classes from "./ScenarioMatrixInverse.module.css";
-
-function makeLineGeometry() {
-  return new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(),
-    new THREE.Vector3()
-  ]);
-}
-
-function setLinePoints(
-  line: THREE.Line,
-  start: THREE.Vector3,
-  end: THREE.Vector3
-) {
-  const positions = line.geometry.attributes.position;
-
-  positions.setXYZ(0, start.x, start.y, start.z);
-  positions.setXYZ(1, end.x, end.y, end.z);
-
-  positions.needsUpdate = true;
-
-  line.geometry.computeBoundingSphere();
-
-  if (line.material instanceof THREE.LineDashedMaterial) {
-    line.computeLineDistances();
-  }
-}
-
-function formatVector3(vector: THREE.Vector3) {
-  return `(${vector.x.toFixed(3)}, ${vector.y.toFixed(3)}, ${vector.z.toFixed(3)})`;
-}
-
-function formatEulerDeg(euler: THREE.Euler) {
-  return `(${THREE.MathUtils.radToDeg(euler.x).toFixed(2)}°, ${THREE.MathUtils.radToDeg(euler.y).toFixed(2)}°, ${THREE.MathUtils.radToDeg(euler.z).toFixed(2)}°)`;
-}
 
 export function ScenarioMatrixInverse() {
   const parentRef = useRef<THREE.Mesh>(null);

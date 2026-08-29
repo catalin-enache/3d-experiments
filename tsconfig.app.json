@@ -26,7 +26,7 @@
       "@src/*": ["./src/*"],
       "@components": ["./src/components/index.ts"],
       "@pages/*": ["./src/pages/*"],
-      "@hooks/*": ["./src/hooks/*"],
+      "@hooks": ["./src/hooks/index.ts"],
       "@lib/*": ["./src/lib/*"]
     }
   },

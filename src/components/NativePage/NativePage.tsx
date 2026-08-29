@@ -1,8 +1,5 @@
-import {
-  useNativeScenario,
-  type NativeScenario
-} from '@hooks/useNativeScenario';
-import classes from './NativePage.module.css';
+import { useNativeScenario, type NativeScenario } from "@hooks";
+import classes from "./NativePage.module.css";
 
 interface NativePageProps {
   nativeScenario: NativeScenario;

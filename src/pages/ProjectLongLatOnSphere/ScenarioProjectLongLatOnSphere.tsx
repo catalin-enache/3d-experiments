@@ -1,7 +1,7 @@
-import GUI from 'lil-gui';
-import { useEffect, useRef, useState } from 'react';
-import { Scenario } from '@components';
-import { projectLongLatOnSphere } from '@lib/math/projectLongLatOnSphere';
+import GUI from "lil-gui";
+import { useEffect, useRef, useState } from "react";
+import { Scenario } from "@components";
+import { projectLongLatOnSphere } from "@lib/math";
 
 const radius = 10;
 
@@ -37,13 +37,13 @@ export function ScenarioProjectLongLatOnSphere() {
     };
 
     gui
-      .add(guiValues.current, 'longitude', 0, 2 * Math.PI)
-      .name('Longitude')
+      .add(guiValues.current, "longitude", 0, 2 * Math.PI)
+      .name("Longitude")
       .onChange(updateDirection);
 
     gui
-      .add(guiValues.current, 'latitude', 0, Math.PI)
-      .name('Latitude')
+      .add(guiValues.current, "latitude", 0, Math.PI)
+      .name("Latitude")
       .onChange(updateDirection);
 
     return () => {
