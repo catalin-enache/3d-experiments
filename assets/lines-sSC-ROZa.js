@@ -1,0 +1,1 @@
+import{S as e,Y as t,in as n}from"./index-C7TD34P6.js";function r(){return new e().setFromPoints([new n,new n])}function i(e,n,r){let i=e.geometry.attributes.position;i.setXYZ(0,n.x,n.y,n.z),i.setXYZ(1,r.x,r.y,r.z),i.needsUpdate=!0,e.geometry.computeBoundingSphere(),e.material instanceof t&&e.computeLineDistances()}export{i as n,r as t};
