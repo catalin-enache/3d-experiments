@@ -15,6 +15,7 @@
     "@react-three/fiber": "9.7.0",
     "@tweakpane/core": "2.0.5",
     "@tweakpane/plugin-essentials": "0.2.1",
+    "clsx": "^2.1.1",
     "fast-glob": "3.3.3",
     "gh-pages": "6.3.0",
     "lil-gui": "^0.21.0",
