@@ -28,7 +28,7 @@ interface PageProps {
   children?: ReactNode;
   background?: THREE.Color | THREE.Texture | null;
   orthographic?: boolean;
-  cameraProps?: CameraProps;
+  cameraProps?: Partial<CameraProps>;
   raycasterParams?: Partial<THREE.RaycasterParameters>;
   showStats?: boolean;
   showViewportGizmo?: boolean;
@@ -40,9 +40,7 @@ export const Page = ({
   children,
   background = new THREE.Color().setHex(0x000000),
   orthographic = false,
-  cameraProps = !orthographic
-    ? defaultPerspectiveCameraProps
-    : defaultOrthographicCameraProps,
+  cameraProps = {},
   raycasterParams = defaultRaycasterParams,
   showStats = true,
   showViewportGizmo = true,
@@ -66,7 +64,14 @@ export const Page = ({
 
   return (
     <Canvas
-      camera={cameraProps}
+      camera={
+        {
+          ...(!orthographic
+            ? defaultPerspectiveCameraProps
+            : defaultOrthographicCameraProps),
+          ...cameraProps
+        } as CameraProps
+      }
       orthographic={orthographic}
       shadows="percentage"
       scene={{
