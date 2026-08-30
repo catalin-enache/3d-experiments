@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { routesConfig } from "@src/constants/routesConfig";
 import classes from "./Menu.module.css";
+import clsx from "clsx";
 
 export function ExperimentsMenu() {
   const [open, setOpen] = useState(false);
@@ -33,7 +34,7 @@ export function ExperimentsMenu() {
   }, [open]);
 
   return (
-    <div ref={containerRef} className={classes.container}>
+    <div ref={containerRef} className={clsx("overflow", classes.container)}>
       {open && (
         <div className={classes.menu}>
           {Object.values(routesConfig).map(({ path, name }) => {
