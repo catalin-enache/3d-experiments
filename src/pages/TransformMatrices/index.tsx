@@ -3,7 +3,7 @@ import ScenarioTransformMatrices from "./ScenarioTransformMatrices";
 
 export default function MatrixInversePage() {
   return (
-    <Page>
+    <Page cameraProps={{ position: [0, 0, 5] }}>
       <ScenarioTransformMatrices />
     </Page>
   );

@@ -10,6 +10,7 @@ import {
   type PointerEvent,
   type WheelEvent
 } from "react";
+import clsx from "clsx";
 import { buildBindings } from "./buildBindings.ts";
 import classes from "./Inspector.module.css";
 
@@ -97,9 +98,14 @@ export function Inspector({ object }: InspectorProps) {
   });
 
   return (
-    <Html calculatePosition={() => [4, 4]} className={classes.html}>
+    <Html
+      calculatePosition={() => [4, 4]}
+      className={classes.html}
+      zIndexRange={[0, 0]}
+      style={{ zIndex: "1 !important" }}
+    >
       <div
-        className={classes.pane}
+        className={clsx(classes.pane, "overflow")}
         ref={setContainer}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}

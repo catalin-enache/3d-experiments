@@ -34,9 +34,9 @@ export function ExperimentsMenu() {
   }, [open]);
 
   return (
-    <div ref={containerRef} className={clsx("overflow", classes.container)}>
+    <div ref={containerRef} className={clsx(classes.container)}>
       {open && (
-        <div className={classes.menu}>
+        <div className={clsx(classes.menu, "overflow")}>
           {Object.values(routesConfig).map(({ path, name }) => {
             const isActive = location.pathname === path;
 

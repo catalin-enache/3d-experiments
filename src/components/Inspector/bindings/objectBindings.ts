@@ -1,20 +1,37 @@
 import * as THREE from "three";
-import type { Pane } from "tweakpane";
+import type { Pane, FolderApi } from "tweakpane";
+
+type Exclude =
+  | "position"
+  | "rotation"
+  | "scale"
+  | "visible"
+  | "castShadow"
+  | "receiveShadow";
 
 export const objectBindings = ({
   pane,
-  object
+  folder,
+  object,
+  exclude
 }: {
   pane: Pane;
+  folder?: FolderApi;
   object: THREE.Object3D;
+  exclude?: Exclude[];
 }) => {
-  const transformFolder = pane.addFolder({
-    title: "Object 3D"
-  });
+  const transformFolder =
+    folder ??
+    pane.addFolder({
+      title: "Object 3D"
+    });
 
-  transformFolder.addBinding(object, "position", {
-    label: "Position"
-  });
+  if (!exclude?.includes("position")) {
+    transformFolder.addBinding(object, "position", {
+      label: "Position",
+      format: (value) => value.toFixed(2)
+    });
+  }
 
   const rotation = {
     get x() {
@@ -39,21 +56,33 @@ export const objectBindings = ({
     }
   };
 
-  transformFolder.addBinding({ rotation }, "rotation", {
-    label: "Rotation"
-  });
+  if (!exclude?.includes("rotation")) {
+    transformFolder.addBinding({ rotation }, "rotation", {
+      label: "Rotation",
+      format: (value) => value.toFixed(2)
+    });
+  }
 
-  transformFolder.addBinding(object, "scale", {
-    label: "Scale"
-  });
+  if (!exclude?.includes("scale")) {
+    transformFolder.addBinding(object, "scale", {
+      label: "Scale",
+      format: (value) => value.toFixed(2)
+    });
+  }
 
-  transformFolder.addBinding(object, "visible", { label: "Visible" });
+  if (!exclude?.includes("visible")) {
+    transformFolder.addBinding(object, "visible", { label: "Visible" });
+  }
 
-  transformFolder.addBinding(object, "castShadow", {
-    label: "Cast Shadow"
-  });
+  if (!exclude?.includes("castShadow")) {
+    transformFolder.addBinding(object, "castShadow", {
+      label: "Cast Shadow"
+    });
+  }
 
-  transformFolder.addBinding(object, "receiveShadow", {
-    label: "Receive Shadow"
-  });
+  if (!exclude?.includes("receiveShadow")) {
+    transformFolder.addBinding(object, "receiveShadow", {
+      label: "Receive Shadow"
+    });
+  }
 };

@@ -28,6 +28,8 @@
   --accent: #7c8cff;
   --accent-hover: #9aa5ff;
 
+  /* Tweakpane vars */
+
   --tp-blade-value-width: 70%;
   --tp-base-background-opacity: 0.6;
   --tp-base-background-color: hsla(
@@ -36,6 +38,10 @@
     10%,
     var(--tp-base-background-opacity)
   );
+
+  --tp-base-border-radius: 0px;
+  --tp-blade-border-radius: 0px;
+  --bld-br: 0px;
 }
 
 * {
@@ -97,7 +103,6 @@ button {
 
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
 
   cursor: pointer;
 
@@ -123,7 +128,6 @@ textarea {
 
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
 }
 
 input:focus,
@@ -143,7 +147,6 @@ code {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   background: var(--surface);
-  border-radius: 4px;
 }
 
 pre {
@@ -152,7 +155,6 @@ pre {
 
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
 }
 
 pre code {

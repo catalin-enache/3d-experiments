@@ -1,0 +1,13 @@
+.htmlLabel {
+  pointer-events: none;
+  color: #ffffff;
+  font-size: 12px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  .content {
+    filter: drop-shadow(0 0 0.5px #888) drop-shadow(0 0 0.5px #888);
+    white-space: pre;
+    * {
+      white-space: pre;
+    }
+  }
+}

@@ -48,7 +48,8 @@ export default defineConfig([
         'warn',
         { allowConstantExport: true }
       ],
-      'react-hooks/immutability': 'off'
+      'react-hooks/immutability': 'off',
+      'react-dom/no-dangerously-set-innerhtml': 'off'
     }
   }
 ]);

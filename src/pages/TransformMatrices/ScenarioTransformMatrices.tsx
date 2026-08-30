@@ -1,15 +1,15 @@
 import * as THREE from "three";
 import { useEffect, useMemo, useRef } from "react";
-import { Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Pane } from "tweakpane";
-import { Scenario } from "@components";
+import { HtmlInfo, Scenario } from "@components";
 import { makeLineGeometry, setLinePoints } from "@lib/utils";
+import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
 
 function formatMatrix4(matrix: THREE.Matrix4) {
   /*
-   * THREE.Matrix4.elements is stored column-major internally.
-   * We display it in the familiar mathematical row layout.
+   * THREE.Matrix4.elements is stored column-major internally,
+   * but we display it in the usual mathematical row layout.
    */
   const e = matrix.elements;
 
@@ -36,9 +36,8 @@ export function ScenarioTransformMatrices() {
   const axisLineRef = useRef<THREE.Line>(null);
 
   const infoRef = useRef<HTMLPreElement>(null);
-  const paneContainerRef = useRef<HTMLDivElement>(null);
 
-  const cubeGeometry = useMemo(() => new THREE.BoxGeometry(0.6, 0.6, 0.6), []);
+  const cubeGeometry = useMemo(() => new THREE.BoxGeometry(0.8, 0.8, 0.8), []);
 
   const sphereGeometry = useMemo(
     () => new THREE.SphereGeometry(0.12, 24, 24),
@@ -48,17 +47,25 @@ export function ScenarioTransformMatrices() {
   const axisLineGeometry = useMemo(() => makeLineGeometry(), []);
 
   /*
-   * Parameters changed by Tweakpane.
+   * ---------------------------------------------------------
+   * USER PARAMETERS
+   * ---------------------------------------------------------
    *
-   * Translation is an extra world-space translation.
-   * Rotation is around the arbitrary A -> B axis.
-   * Scale acts on the cube in its own local space.
+   * These values are converted directly into:
+   *
+   * S = scale matrix
+   * R = arbitrary-axis rotation matrix
+   * T = translation matrix
+   *
+   * Final:
+   *
+   * M = T * R * S
    */
   const params = useMemo(
     () => ({
       translation: {
-        x: 0,
-        y: 0,
+        x: 2,
+        y: 1,
         z: 0
       },
 
@@ -75,54 +82,60 @@ export function ScenarioTransformMatrices() {
 
   const data = useMemo(
     () => ({
+      /*
+       * Axis points in world space.
+       */
       axisA: new THREE.Vector3(),
       axisB: new THREE.Vector3(),
 
+      /*
+       * Only the direction A -> B matters for rotation.
+       */
       axisDirection: new THREE.Vector3(),
 
       /*
-       * Individual matrices.
+       * Individual transform matrices.
        */
       scaleMatrix: new THREE.Matrix4(),
-      cubeStartMatrix: new THREE.Matrix4(),
-
-      translateAxisToOriginMatrix: new THREE.Matrix4(),
       rotationMatrix: new THREE.Matrix4(),
-      translateAxisBackMatrix: new THREE.Matrix4(),
-
-      userTranslationMatrix: new THREE.Matrix4(),
+      translationMatrix: new THREE.Matrix4(),
 
       /*
-       * Intermediate products.
+       * Intermediate result:
+       *
+       * R * S
        */
-      m1: new THREE.Matrix4(),
-      m2: new THREE.Matrix4(),
-      m3: new THREE.Matrix4(),
-      m4: new THREE.Matrix4(),
+      rotationScaleMatrix: new THREE.Matrix4(),
 
-      finalMatrix: new THREE.Matrix4()
+      /*
+       * Final:
+       *
+       * T * R * S
+       */
+      finalMatrix: new THREE.Matrix4(),
+
+      /*
+       * For displaying the final transformed basis.
+       */
+      transformedX: new THREE.Vector3(),
+      transformedY: new THREE.Vector3(),
+      transformedZ: new THREE.Vector3(),
+
+      finalPosition: new THREE.Vector3()
     }),
     []
   );
 
-  /*
-   * Cube's original position before our matrix experiment.
-   *
-   * We deliberately do NOT assign this to cube.position.
-   * It becomes part of the matrix multiplication.
-   */
-  const cubeStartPosition = useMemo(() => new THREE.Vector3(2, 1, 0), []);
-
   useEffect(() => {
-    // if (!paneContainerRef.current) {
-    //   return;
-    // }
-
     const pane = new Pane({
-      // container: paneContainerRef.current,
       title: "Transform matrices"
     });
 
+    /*
+     * ---------------------------------------------------------
+     * TRANSLATION
+     * ---------------------------------------------------------
+     */
     const translationFolder = pane.addFolder({
       title: "Translation"
     });
@@ -145,8 +158,17 @@ export function ScenarioTransformMatrices() {
       step: 0.01
     });
 
+    /*
+     * ---------------------------------------------------------
+     * ROTATION
+     * ---------------------------------------------------------
+     *
+     * The angle is applied around the direction defined by:
+     *
+     * normalize(B - A)
+     */
     const rotationFolder = pane.addFolder({
-      title: "Rotation around A → B"
+      title: "Rotation"
     });
 
     rotationFolder.addBinding(params, "rotationDegrees", {
@@ -156,6 +178,11 @@ export function ScenarioTransformMatrices() {
       step: 1
     });
 
+    /*
+     * ---------------------------------------------------------
+     * SCALE
+     * ---------------------------------------------------------
+     */
     const scaleFolder = pane.addFolder({
       title: "Scale"
     });
@@ -194,9 +221,20 @@ export function ScenarioTransformMatrices() {
     }
 
     /*
-     * ---------------------------------------------------------
-     * GET THE ARBITRARY ROTATION AXIS
-     * ---------------------------------------------------------
+     * =========================================================
+     * 1. GET ROTATION AXIS DIRECTION
+     * =========================================================
+     *
+     * The two spheres DO NOT define the rotation pivot anymore.
+     *
+     * They only define a direction:
+     *
+     *          B - A
+     * u = ----------------
+     *       | B - A |
+     *
+     * The resulting axis is conceptually moved to the cube's
+     * own local origin.
      */
 
     axisAObject.getWorldPosition(data.axisA);
@@ -206,9 +244,6 @@ export function ScenarioTransformMatrices() {
 
     const axisLength = data.axisDirection.length();
 
-    /*
-     * Avoid normalize() on a zero-length axis.
-     */
     if (axisLength < 0.00001) {
       return;
     }
@@ -216,64 +251,44 @@ export function ScenarioTransformMatrices() {
     data.axisDirection.normalize();
 
     /*
-     * Visualize the axis.
+     * Display the A -> B direction in the world.
+     *
+     * This line is only a visual reference.
+     * The cube does NOT rotate around this physical line.
      */
     setLinePoints(axisLine, data.axisA, data.axisB);
 
     /*
-     * ---------------------------------------------------------
-     * 1. SCALE MATRIX
-     * ---------------------------------------------------------
+     * =========================================================
+     * 2. SCALE MATRIX
+     * =========================================================
      *
-     *             sx  0   0   0
-     * S =          0 sy   0   0
-     *              0  0  sz   0
-     *              0  0   0   1
+     *        sx  0   0   0
+     * S =     0 sy   0   0
+     *         0  0  sz   0
+     *         0  0   0   1
      */
 
     data.scaleMatrix.makeScale(params.scale.x, params.scale.y, params.scale.z);
 
     /*
-     * ---------------------------------------------------------
-     * 2. INITIAL CUBE POSITION
-     * ---------------------------------------------------------
+     * =========================================================
+     * 3. ROTATION MATRIX
+     * =========================================================
      *
-     * This establishes where the cube starts in world space.
-     */
-
-    data.cubeStartMatrix.makeTranslation(
-      cubeStartPosition.x,
-      cubeStartPosition.y,
-      cubeStartPosition.z
-    );
-
-    /*
-     * ---------------------------------------------------------
-     * 3. MOVE ROTATION AXIS TO ORIGIN
-     * ---------------------------------------------------------
+     * Arbitrary axis rotation.
      *
-     * Rotation matrices rotate around an axis THROUGH THE ORIGIN.
+     * Axis:
      *
-     * But our arbitrary axis passes through sphere A.
+     * normalize(B - A)
      *
-     * So:
+     * IMPORTANT:
      *
-     * T(-A)
-     */
-
-    data.translateAxisToOriginMatrix.makeTranslation(
-      -data.axisA.x,
-      -data.axisA.y,
-      -data.axisA.z
-    );
-
-    /*
-     * ---------------------------------------------------------
-     * 4. ARBITRARY AXIS ROTATION
-     * ---------------------------------------------------------
+     * This rotation matrix rotates around an axis through
+     * the LOCAL ORIGIN.
      *
-     * Three.js makeRotationAxis() creates the Rodrigues
-     * axis-angle matrix we discussed.
+     * Since the cube geometry is centered around its local
+     * origin, it rotates around its own center.
      */
 
     const angleRadians = THREE.MathUtils.degToRad(params.rotationDegrees);
@@ -281,140 +296,202 @@ export function ScenarioTransformMatrices() {
     data.rotationMatrix.makeRotationAxis(data.axisDirection, angleRadians);
 
     /*
-     * ---------------------------------------------------------
-     * 5. MOVE ROTATION AXIS BACK
-     * ---------------------------------------------------------
+     * =========================================================
+     * 4. TRANSLATION MATRIX
+     * =========================================================
      *
-     * T(A)
+     * This is where the cube is finally placed in world space.
+     *
+     *         1 0 0 tx
+     * T =     0 1 0 ty
+     *         0 0 1 tz
+     *         0 0 0 1
      */
 
-    data.translateAxisBackMatrix.makeTranslation(
-      data.axisA.x,
-      data.axisA.y,
-      data.axisA.z
-    );
-
-    /*
-     * ---------------------------------------------------------
-     * 6. USER TRANSLATION
-     * ---------------------------------------------------------
-     */
-
-    data.userTranslationMatrix.makeTranslation(
+    data.translationMatrix.makeTranslation(
       params.translation.x,
       params.translation.y,
       params.translation.z
     );
 
     /*
-     * ---------------------------------------------------------
-     * MATRIX MULTIPLICATION
-     * ---------------------------------------------------------
+     * =========================================================
+     * 5. MATRIX MULTIPLICATION
+     * =========================================================
      *
-     * Column-vector convention:
+     * Column vector convention:
      *
      * p' = M p
      *
-     * Therefore the rightmost operation happens FIRST.
+     * Final matrix:
      *
+     * M = T * R * S
      *
-     * M =
+     * Operations happen right -> left:
      *
-     * Tuser
-     * × T(A)
-     * × R
-     * × T(-A)
-     * × Tcube
-     * × S
-     *
+     * p
+     * ↓
+     * S
+     * ↓
+     * R
+     * ↓
+     * T
+     * ↓
+     * p'
      */
 
-    data.m1.multiplyMatrices(data.cubeStartMatrix, data.scaleMatrix);
-
-    data.m2.multiplyMatrices(data.translateAxisToOriginMatrix, data.m1);
-
-    data.m3.multiplyMatrices(data.rotationMatrix, data.m2);
-
-    data.m4.multiplyMatrices(data.translateAxisBackMatrix, data.m3);
-
-    data.finalMatrix.multiplyMatrices(data.userTranslationMatrix, data.m4);
+    /*
+     * First:
+     *
+     * R * S
+     */
+    data.rotationScaleMatrix.multiplyMatrices(
+      data.rotationMatrix,
+      data.scaleMatrix
+    );
 
     /*
-     * ---------------------------------------------------------
-     * APPLY THE FINAL MATRIX DIRECTLY TO THE CUBE
-     * ---------------------------------------------------------
+     * Then:
      *
-     * This is important:
+     * T * (R * S)
      *
-     * We are NOT setting
+     * Therefore:
      *
-     * cube.position
-     * cube.rotation
-     * cube.scale
+     * M = T * R * S
+     */
+    data.finalMatrix.multiplyMatrices(
+      data.translationMatrix,
+      data.rotationScaleMatrix
+    );
+
+    /*
+     * =========================================================
+     * 6. APPLY FINAL MATRIX DIRECTLY
+     * =========================================================
      *
-     * independently.
+     * We deliberately do NOT do:
      *
-     * The cube receives exactly the matrix we calculated above.
+     * cube.position.set(...)
+     * cube.rotation.set(...)
+     * cube.scale.set(...)
+     *
+     * The matrix itself controls the cube.
      */
 
     cube.matrix.copy(data.finalMatrix);
+
     cube.matrixWorldNeedsUpdate = true;
 
     /*
-     * ---------------------------------------------------------
-     * INFORMATION PANEL
-     * ---------------------------------------------------------
+     * =========================================================
+     * 7. EXTRACT FINAL BASIS VECTORS
+     * =========================================================
+     *
+     * For a column-vector transform matrix:
+     *
+     * column 1 = transformed X basis
+     * column 2 = transformed Y basis
+     * column 3 = transformed Z basis
+     * column 4 = translation
+     *
+     * THREE stores Matrix4 elements column-major internally.
+     */
+
+    const e = data.finalMatrix.elements;
+
+    data.transformedX.set(e[0], e[1], e[2]);
+
+    data.transformedY.set(e[4], e[5], e[6]);
+
+    data.transformedZ.set(e[8], e[9], e[10]);
+
+    data.finalPosition.set(e[12], e[13], e[14]);
+
+    /*
+     * =========================================================
+     * 8. INFO PANEL
+     * =========================================================
      */
 
     if (infoRef.current) {
       infoRef.current.textContent = [
-        "ARBITRARY AXIS TRANSFORM",
+        "OBJECT TRANSFORM",
+        "",
+        "M = T × R × S",
+        "",
+        "Applied right → left:",
+        "",
+        "Local point",
+        "   ↓",
+        "Scale",
+        "   ↓",
+        "Rotate around cube center",
+        "   ↓",
+        "Translate",
+        "   ↓",
+        "World point",
+        "",
+        "======================================",
+        "ROTATION AXIS DIRECTION",
+        "======================================",
         "",
         `A = (${data.axisA.x.toFixed(2)}, ${data.axisA.y.toFixed(2)}, ${data.axisA.z.toFixed(2)})`,
         `B = (${data.axisB.x.toFixed(2)}, ${data.axisB.y.toFixed(2)}, ${data.axisB.z.toFixed(2)})`,
         "",
-        `axis = normalize(B - A)`,
-        `     = (${data.axisDirection.x.toFixed(3)}, ${data.axisDirection.y.toFixed(3)}, ${data.axisDirection.z.toFixed(3)})`,
+        "u = normalize(B - A)",
+        "",
+        `u = (${data.axisDirection.x.toFixed(3)}, ${data.axisDirection.y.toFixed(3)}, ${data.axisDirection.z.toFixed(3)})`,
         "",
         `angle = ${params.rotationDegrees.toFixed(1)}°`,
         "",
+        "NOTE:",
+        "A and B define only the rotation DIRECTION.",
+        "The cube rotates around a parallel axis",
+        "passing through its own center.",
+        "",
         "======================================",
-        "S",
+        "SCALE MATRIX  S",
         "======================================",
+        "",
         formatMatrix4(data.scaleMatrix),
         "",
         "======================================",
-        "T cube start",
+        "ROTATION MATRIX  R",
         "======================================",
-        formatMatrix4(data.cubeStartMatrix),
         "",
-        "======================================",
-        "T(-A)",
-        "======================================",
-        formatMatrix4(data.translateAxisToOriginMatrix),
-        "",
-        "======================================",
-        "R axis",
-        "======================================",
         formatMatrix4(data.rotationMatrix),
         "",
         "======================================",
-        "T(A)",
-        "======================================",
-        formatMatrix4(data.translateAxisBackMatrix),
-        "",
-        "======================================",
-        "T user",
-        "======================================",
-        formatMatrix4(data.userTranslationMatrix),
-        "",
-        "======================================",
-        "FINAL",
+        "R × S",
         "======================================",
         "",
-        "M = Tuser × T(A) × R × T(-A) × Tcube × S",
+        formatMatrix4(data.rotationScaleMatrix),
         "",
-        formatMatrix4(data.finalMatrix)
+        "======================================",
+        "TRANSLATION MATRIX  T",
+        "======================================",
+        "",
+        formatMatrix4(data.translationMatrix),
+        "",
+        "======================================",
+        "FINAL MATRIX",
+        "======================================",
+        "",
+        "M = T × R × S",
+        "",
+        formatMatrix4(data.finalMatrix),
+        "",
+        "======================================",
+        "FINAL MATRIX COLUMNS",
+        "======================================",
+        "",
+        `X' = (${data.transformedX.x.toFixed(3)}, ${data.transformedX.y.toFixed(3)}, ${data.transformedX.z.toFixed(3)})`,
+        "",
+        `Y' = (${data.transformedY.x.toFixed(3)}, ${data.transformedY.y.toFixed(3)}, ${data.transformedY.z.toFixed(3)})`,
+        "",
+        `Z' = (${data.transformedZ.x.toFixed(3)}, ${data.transformedZ.y.toFixed(3)}, ${data.transformedZ.z.toFixed(3)})`,
+        "",
+        `T  = (${data.finalPosition.x.toFixed(3)}, ${data.finalPosition.y.toFixed(3)}, ${data.finalPosition.z.toFixed(3)})`
       ].join("\n");
     }
   });
@@ -427,19 +504,23 @@ export function ScenarioTransformMatrices() {
 
           <directionalLight position={[5, 7, 5]} intensity={2} />
 
+          {/*
+           * ---------------------------------------------------
+           * WORLD COORDINATE SYSTEM
+           * ---------------------------------------------------
+           */}
           <gridHelper args={[14, 14, "#444444", "#222222"]} />
 
           <axesHelper args={[2]} />
 
           {/*
            * ---------------------------------------------------
-           * RESULT CUBE
+           * TRANSFORMED CUBE
            * ---------------------------------------------------
            *
-           * matrixAutoUpdate={false} is essential.
+           * This object is controlled ONLY by finalMatrix.
            *
-           * Otherwise Three.js would rebuild cube.matrix from
-           * position / quaternion / scale every frame.
+           * matrixAutoUpdate must therefore be false.
            */}
           <mesh
             ref={cubeRef}
@@ -447,69 +528,54 @@ export function ScenarioTransformMatrices() {
             geometry={cubeGeometry}
             matrixAutoUpdate={false}
           >
-            <meshStandardMaterial color="#55ff88" />
+            <meshStandardMaterial color="#44ee77" />
 
-            <axesHelper args={[0.8]} userData={{ noSelect: true }} />
-
-            <Html
-              center
-              className="htmlLabel"
-              style={{
-                pointerEvents: "none"
+            {/*
+             * This axesHelper is a CHILD of the cube.
+             *
+             * Therefore it shows the cube's transformed
+             * local coordinate system.
+             */}
+            <axesHelper
+              args={[1]}
+              userData={{
+                noSelect: true
+              }}
+            />
+            <HtmlLabel
+              textStyle={{
+                transform: "translateY(-62px)"
               }}
             >
-              <div
-                style={{
-                  transform: "translateY(-52px)"
-                }}
-              >
-                M × Cube
-              </div>
-            </Html>
+              M = T × R × S
+            </HtmlLabel>
           </mesh>
 
           {/*
-           * Arbitrary rotation axis line.
+           * ---------------------------------------------------
+           * AXIS DIRECTION VISUALIZATION
+           * ---------------------------------------------------
+           *
+           * IMPORTANT:
+           *
+           * This is NOT the physical pivot axis anymore.
+           *
+           * It merely visualizes the direction A -> B.
            */}
           <threeLine
             ref={axisLineRef}
             geometry={axisLineGeometry}
-            name="Rotation Axis"
+            name="Rotation Axis Direction"
           >
             <lineBasicMaterial color="#ffaa00" />
           </threeLine>
 
           {/*
-           * Matrix display.
+           * ---------------------------------------------------
+           * MATRIX INFO
+           * ---------------------------------------------------
            */}
-          <Html
-            calculatePosition={(_, __, { height }) => [12, height - 900]}
-            style={{
-              pointerEvents: "none"
-            }}
-          >
-            <pre
-              ref={infoRef}
-              className="htmlInfo"
-              style={{
-                fontSize: "11px",
-                lineHeight: 1.25,
-                minWidth: "430px"
-              }}
-            />
-          </Html>
-
-          {/*
-           * Tweakpane must receive pointer events.
-           */}
-          <Html calculatePosition={(_, __, { width }) => [width - 330, 20]}>
-            <div
-              ref={paneContainerRef}
-              style={{
-                width: "300px"
-              }}
-            />
-          </Html>
+          <HtmlInfo infoRef={infoRef} />
         </>
       }
 
@@ -522,21 +588,12 @@ export function ScenarioTransformMatrices() {
            */}
           <mesh
             ref={axisARef}
-            name="Axis A"
-            position={[-1, 0, 0]}
+            name="Axis Direction A"
+            position={[0, 0, 0]}
             geometry={sphereGeometry}
           >
             <meshStandardMaterial color="#ff5555" />
-
-            <Html
-              center
-              className="htmlLabel"
-              style={{
-                pointerEvents: "none"
-              }}
-            >
-              <div>A</div>
-            </Html>
+            <HtmlLabel>A</HtmlLabel>
           </mesh>
 
           {/*
@@ -546,21 +603,12 @@ export function ScenarioTransformMatrices() {
            */}
           <mesh
             ref={axisBRef}
-            name="Axis B"
-            position={[1, 1, 0]}
+            name="Axis Direction B"
+            position={[0, 1, 0]}
             geometry={sphereGeometry}
           >
             <meshStandardMaterial color="#5599ff" />
-
-            <Html
-              center
-              className="htmlLabel"
-              style={{
-                pointerEvents: "none"
-              }}
-            >
-              <div>B</div>
-            </Html>
+            <HtmlLabel>B</HtmlLabel>
           </mesh>
         </>
       }

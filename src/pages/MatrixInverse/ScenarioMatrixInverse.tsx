@@ -1,14 +1,14 @@
 import * as THREE from "three";
 import { useMemo, useRef } from "react";
-import { Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { Scenario } from "@components";
+import { HtmlInfo, Scenario } from "@components";
 import {
   makeLineGeometry,
   setLinePoints,
   formatEulerDeg,
   formatVector3
 } from "@lib/utils";
+import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
 
 export function ScenarioMatrixInverse() {
   const parentRef = useRef<THREE.Mesh>(null);
@@ -289,15 +289,13 @@ export function ScenarioMatrixInverse() {
 
             <axesHelper args={[0.5]} />
 
-            <Html center className="htmlLabel">
-              <div
-                style={{
-                  transform: "translateY(-46px)"
-                }}
-              >
-                C World
-              </div>
-            </Html>
+            <HtmlLabel
+              textStyle={{
+                transform: "translateY(-46px)"
+              }}
+            >
+              C World
+            </HtmlLabel>
           </mesh>
 
           {/*
@@ -316,9 +314,7 @@ export function ScenarioMatrixInverse() {
 
             <axesHelper args={[0.5]} userData={{ noSelect: true }} />
 
-            <Html center className="htmlLabel">
-              <div>Recovered Local</div>
-            </Html>
+            <HtmlLabel>Recovered Local</HtmlLabel>
           </mesh>
 
           {/* Parent origin -> C world position */}
@@ -343,14 +339,7 @@ export function ScenarioMatrixInverse() {
             />
           </threeLine>
 
-          <Html
-            calculatePosition={(_, __, { height }) => [12, height - 640]}
-            style={{
-              pointerEvents: "none"
-            }}
-          >
-            <pre ref={infoRef} className="htmlInfo" />
-          </Html>
+          <HtmlInfo infoRef={infoRef} />
         </>
       }
 
@@ -365,9 +354,7 @@ export function ScenarioMatrixInverse() {
         >
           <meshStandardMaterial color="#5599ff" />
 
-          <Html center className="htmlLabel">
-            <div>Parent</div>
-          </Html>
+          <HtmlLabel>Parent</HtmlLabel>
 
           {/*
            * Parent's local coordinate basis.
@@ -392,9 +379,7 @@ export function ScenarioMatrixInverse() {
 
             <axesHelper args={[0.5]} userData={{ noSelect: true }} />
 
-            <Html center className="htmlLabel">
-              <div>C</div>
-            </Html>
+            <HtmlLabel>C</HtmlLabel>
           </mesh>
         </mesh>
       }

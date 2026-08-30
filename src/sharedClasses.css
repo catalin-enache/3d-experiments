@@ -1,25 +1,23 @@
-.htmlLabel {
-  pointer-events: none;
-  color: #ffffff;
-  font-size: 12px;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  > * {
-    /*transform: translateY(-22px);*/
-  }
+.overflow {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #777 transparent;
 }
 
-.htmlInfo {
-  pointer-events: none;
-  margin: 0;
-  padding: 12px 14px;
-  min-width: 320px;
-  color: #eee;
-  background: rgba(20, 20, 20, 0.92);
-  border: 1px solid #444;
-  border-radius: 6px;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 12px;
-  line-height: 1.45;
-  white-space: pre-wrap;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+/* Chrome / Edge / Safari */
+.overflow::-webkit-scrollbar {
+  width: 4px;
+}
+
+.overflow::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow::-webkit-scrollbar-thumb {
+  background: #777;
+  border-radius: 0;
+}
+
+.overflow::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }

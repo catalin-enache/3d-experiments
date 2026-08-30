@@ -3,7 +3,7 @@ import ScenarioMatrixInverse from "./ScenarioMatrixInverse";
 
 export default function MatrixInversePage() {
   return (
-    <Page>
+    <Page cameraProps={{ position: [0, 0, 4] }}>
       <ScenarioMatrixInverse />
     </Page>
   );

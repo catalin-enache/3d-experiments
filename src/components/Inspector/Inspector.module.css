@@ -4,6 +4,7 @@
 
 .pane {
   width: 360px;
+  max-height: 60vh;
 }
 
 .pane :global(.tp-lblv_l) {

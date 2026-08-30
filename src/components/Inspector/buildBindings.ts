@@ -26,6 +26,12 @@ export function buildBindings({
   glBindings({ gl, pane, refresh });
 
   const cameraFolder = pane.addFolder({ title: "Camera", expanded: false });
+  objectBindings({
+    pane,
+    folder: cameraFolder,
+    object: camera,
+    exclude: ["scale", "castShadow", "receiveShadow", "visible"]
+  });
   cameraBindings({ object: camera, cameraFolder });
 
   if (!object) {

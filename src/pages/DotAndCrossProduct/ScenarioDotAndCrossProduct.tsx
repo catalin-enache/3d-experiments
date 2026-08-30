@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import { useEffect, useMemo, useRef } from "react";
-import { Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Scenario } from "@components";
+import { HtmlInfo, Scenario } from "@components";
 import { makeLineGeometry, setLinePoints } from "@lib/utils";
 import { EPSILON } from "@lib/constants";
+import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
 
 export function ScenarioDotAndCrossProduct() {
   const { scene, camera } = useThree();
@@ -239,23 +239,13 @@ export function ScenarioDotAndCrossProduct() {
           </threeLine>
           <mesh ref={dRef} name="D" geometry={sphereGeometry}>
             <meshStandardMaterial color="#ffd166" />
-            <Html center className="htmlLabel">
-              <div>D</div>
-            </Html>
+            <HtmlLabel>D</HtmlLabel>
           </mesh>
           <mesh ref={eRef} name="E" geometry={sphereGeometry} scale={0.65}>
             <meshStandardMaterial color="#00ff66" />
-
-            <Html center className="htmlLabel">
-              <div>E</div>
-            </Html>
+            <HtmlLabel>E</HtmlLabel>
           </mesh>
-          <Html
-            calculatePosition={(_, __, { height }) => [12, height - 550]}
-            style={{ pointerEvents: "none" }}
-          >
-            <pre ref={infoRef} className="htmlInfo" />
-          </Html>
+          <HtmlInfo infoRef={infoRef} />
         </>
       }
       selectableChildren={
@@ -267,9 +257,7 @@ export function ScenarioDotAndCrossProduct() {
             geometry={sphereGeometry}
           >
             <meshStandardMaterial color="#ff5555" />
-            <Html center className="htmlLabel">
-              <div>A</div>
-            </Html>
+            <HtmlLabel>A</HtmlLabel>
           </mesh>
           <mesh
             ref={bRef}
@@ -278,9 +266,7 @@ export function ScenarioDotAndCrossProduct() {
             geometry={sphereGeometry}
           >
             <meshStandardMaterial color="#55ff88" />
-            <Html center className="htmlLabel">
-              <div>B</div>
-            </Html>
+            <HtmlLabel>B</HtmlLabel>
           </mesh>
           <mesh
             ref={cRef}
@@ -289,9 +275,7 @@ export function ScenarioDotAndCrossProduct() {
             geometry={sphereGeometry}
           >
             <meshStandardMaterial color="#5599ff" />
-            <Html center className="htmlLabel">
-              <div>C</div>
-            </Html>
+            <HtmlLabel>C</HtmlLabel>
           </mesh>
         </>
       }

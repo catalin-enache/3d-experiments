@@ -7,3 +7,5 @@ export * from "./CameraControls";
 export * from "./ObjectTransformControls";
 export * from "./SelectableGroup";
 export * from "./CubeCamera";
+export * from "./HtmlInfo";
+export * from "./HtmlLabel";
