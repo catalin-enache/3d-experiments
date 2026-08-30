@@ -1,4 +1,4 @@
-import{t as e}from"./Texture-Bii7xIc6.js";import{a as t,cn as n,ln as r,m as i,r as a}from"./index-CzKUGHpr.js";import{t as o}from"./lil-gui.esm-BsdZdNnU.js";var s=r(n(),1),c=`varying vec2 vUv;
+import{t as e}from"./Texture-Cga3_1ou.js";import{dn as t,g as n,i as r,s as i,un as a}from"./index-BNeGMLFQ.js";import{t as o}from"./lil-gui.esm-BsdZdNnU.js";var s=t(a(),1),c=`varying vec2 vUv;
 
 void main() {
      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
@@ -60,4 +60,4 @@ void main() {
     vec3 normal = normalFromHeightMap(uHeightMap, vUv, uIntensity, uOffset);
     normal = normal * 0.5 + 0.5; 
     gl_FragColor = vec4(normal, 1.0);
-}`,u=i();function d(){let t=e(`textures/pbr/castle_brick_02/castle_brick_02_red_4k_disp.jpg`),n=(0,s.useRef)(null),r=(0,s.useMemo)(()=>({uHeightMap:{value:t},uIntensity:{value:2},uOffset:{value:.3}}),[t]);return(0,s.useEffect)(()=>{let e=new o;return e.add(n.current.uniforms.uIntensity,`value`,0,10,.1).name(`Intensity`),e.add(n.current.uniforms.uOffset,`value`,-1,1,.01).name(`Offset`),()=>{e.destroy()}},[n]),(0,u.jsx)(a,{useTransformControls:!1,useCameraControls:!1,unselectableChildren:(0,u.jsxs)(`mesh`,{position:[0,0,0],name:`mesh`,children:[(0,u.jsx)(`planeGeometry`,{args:[10,10,1,1]}),(0,u.jsx)(`shaderMaterial`,{ref:n,vertexShader:c,fragmentShader:l,wireframe:!1,side:2,transparent:!1,uniforms:r})]})})}function f(){return(0,u.jsx)(t,{cameraProps:{position:[0,0,10]},children:(0,u.jsx)(d,{})})}export{f as default};
+}`,u=n();function d(){let t=e(`textures/pbr/castle_brick_02/castle_brick_02_red_4k_disp.jpg`),n=(0,s.useRef)(null),i=(0,s.useMemo)(()=>({uHeightMap:{value:t},uIntensity:{value:2},uOffset:{value:.3}}),[t]);return(0,s.useEffect)(()=>{let e=new o;return e.add(n.current.uniforms.uIntensity,`value`,0,10,.1).name(`Intensity`),e.add(n.current.uniforms.uOffset,`value`,-1,1,.01).name(`Offset`),()=>{e.destroy()}},[n]),(0,u.jsx)(r,{useTransformControls:!1,useCameraControls:!1,unselectableChildren:(0,u.jsxs)(`mesh`,{position:[0,0,0],name:`mesh`,children:[(0,u.jsx)(`planeGeometry`,{args:[10,10,1,1]}),(0,u.jsx)(`shaderMaterial`,{ref:n,vertexShader:c,fragmentShader:l,wireframe:!1,side:2,transparent:!1,uniforms:i})]})})}function f(){return(0,u.jsx)(i,{cameraProps:{position:[0,0,10]},children:(0,u.jsx)(d,{})})}export{f as default};
