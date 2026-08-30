@@ -31,6 +31,11 @@ export const routesConfig = {
     name: "Matrix Inverse",
     component: lazy(() => import("@pages/MatrixInverse"))
   },
+  transformMatrices: {
+    path: "/transform-matrices",
+    name: "Transform Matrices",
+    component: lazy(() => import("@pages/TransformMatrices"))
+  },
   shaderShapes: {
     path: "/shaders/shapes",
     name: "Shader Shapes",
