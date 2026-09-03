@@ -6,11 +6,14 @@ import { Pane } from "tweakpane";
 import { HtmlInfo, Scenario } from "@components";
 import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
 import { makeLineGeometry, setLinePoints } from "@lib/utils";
+
 import {
-  lineIntersectLine2D,
-  lineIntersectLine3D,
+  intersectLineLine2D,
+  intersectLineLine3D,
+  intersectLinePlane,
   cross2D
 } from "@lib/math/intersections";
+
 /*
  * ============================================================
  * SCENARIO
@@ -20,7 +23,7 @@ import {
 export function ScenarioLineIntersections() {
   /*
    * ----------------------------------------------------------
-   * 2D POINTS
+   * 2D LINE / LINE
    * ----------------------------------------------------------
    */
 
@@ -36,7 +39,7 @@ export function ScenarioLineIntersections() {
 
   /*
    * ----------------------------------------------------------
-   * 3D POINTS
+   * 3D LINE / LINE
    * ----------------------------------------------------------
    */
 
@@ -49,6 +52,42 @@ export function ScenarioLineIntersections() {
   const line3DCDRef = useRef<THREE.Line>(null);
 
   const intersection3DRef = useRef<THREE.Mesh>(null);
+
+  /*
+   * ----------------------------------------------------------
+   * 3D LINE / PLANE
+   * ----------------------------------------------------------
+   *
+   * Line:
+   *
+   * L(t) = A + w*t
+   *
+   * w = B - A
+   *
+   *
+   * Plane:
+   *
+   * P(a,e) = O + u*a + v*e
+   *
+   * u = U - O
+   * v = V - O
+   */
+
+  const linePlaneARef = useRef<THREE.Mesh>(null);
+  const linePlaneBRef = useRef<THREE.Mesh>(null);
+
+  const planeOriginRef = useRef<THREE.Mesh>(null);
+  const planeURef = useRef<THREE.Mesh>(null);
+  const planeVRef = useRef<THREE.Mesh>(null);
+
+  const linePlaneLineRef = useRef<THREE.Line>(null);
+
+  const planeUVisualRef = useRef<THREE.Line>(null);
+  const planeVVisualRef = useRef<THREE.Line>(null);
+
+  const planeMeshRef = useRef<THREE.Mesh>(null);
+
+  const intersectionPlaneRef = useRef<THREE.Mesh>(null);
 
   /*
    * ----------------------------------------------------------
@@ -74,13 +113,55 @@ export function ScenarioLineIntersections() {
     []
   );
 
+  /*
+   * 2D line geometries
+   */
+
   const line2DABGeometry = useMemo(() => makeLineGeometry(), []);
 
   const line2DCDGeometry = useMemo(() => makeLineGeometry(), []);
 
+  /*
+   * 3D line geometries
+   */
+
   const line3DABGeometry = useMemo(() => makeLineGeometry(), []);
 
   const line3DCDGeometry = useMemo(() => makeLineGeometry(), []);
+
+  /*
+   * Line / plane visual geometries
+   */
+
+  const linePlaneLineGeometry = useMemo(() => makeLineGeometry(), []);
+
+  const planeUVisualGeometry = useMemo(() => makeLineGeometry(), []);
+
+  const planeVVisualGeometry = useMemo(() => makeLineGeometry(), []);
+
+  /*
+   * Plane quad.
+   *
+   * Four vertices:
+   *
+   * O - u - v
+   * O + u - v
+   * O + u + v
+   * O - u + v
+   */
+
+  const planeGeometry = useMemo(() => {
+    const geometry = new THREE.BufferGeometry();
+
+    geometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(new Float32Array(4 * 3), 3)
+    );
+
+    geometry.setIndex([0, 1, 2, 0, 2, 3]);
+
+    return geometry;
+  }, []);
 
   /*
    * ----------------------------------------------------------
@@ -90,7 +171,13 @@ export function ScenarioLineIntersections() {
 
   const params = useMemo(
     () => ({
-      intersectionType: "segment_segment" as const
+      intersectionType: "segment_segment" as const,
+
+      /*
+       * Only for displaying the plane larger than the
+       * raw O→U and O→V handles.
+       */
+      planeVisualScale: 1.5
     }),
     []
   );
@@ -99,18 +186,14 @@ export function ScenarioLineIntersections() {
    * ----------------------------------------------------------
    * REUSABLE DATA
    * ----------------------------------------------------------
-   *
-   * We keep these vectors around instead of allocating new
-   * vectors every frame.
    */
 
   const data = useMemo(
     () => ({
       /*
-       * 2D world positions.
-       *
-       * The actual meshes are Vector3 because we're rendering
-       * them in Three.js, but intersection math uses x/y only.
+       * ======================================================
+       * 2D
+       * ======================================================
        */
 
       A2World: new THREE.Vector3(),
@@ -123,16 +206,14 @@ export function ScenarioLineIntersections() {
       C2: new THREE.Vector2(),
       D2: new THREE.Vector2(),
 
-      /*
-       * Useful for displaying t/s.
-       */
-
       v2: new THREE.Vector2(),
       u2: new THREE.Vector2(),
       c2: new THREE.Vector2(),
 
       /*
-       * 3D positions.
+       * ======================================================
+       * 3D LINE / LINE
+       * ======================================================
        */
 
       A3: new THREE.Vector3(),
@@ -145,11 +226,44 @@ export function ScenarioLineIntersections() {
       c3: new THREE.Vector3(),
 
       /*
-       * Intersection results.
+       * ======================================================
+       * LINE / PLANE
+       * ======================================================
        */
 
-      intersection2D: new THREE.Vector2(),
-      intersection3D: new THREE.Vector3()
+      linePlaneA: new THREE.Vector3(),
+      linePlaneB: new THREE.Vector3(),
+
+      planeOrigin: new THREE.Vector3(),
+      planeUPoint: new THREE.Vector3(),
+      planeVPoint: new THREE.Vector3(),
+
+      /*
+       * w = line direction
+       *
+       * planeU = first plane spanning vector
+       * planeV = second plane spanning vector
+       */
+
+      w: new THREE.Vector3(),
+      planeU: new THREE.Vector3(),
+      planeV: new THREE.Vector3(),
+
+      planeNormal: new THREE.Vector3(),
+
+      planePointMinusA: new THREE.Vector3(),
+
+      /*
+       * Plane visualization corners
+       */
+
+      planeCorner0: new THREE.Vector3(),
+      planeCorner1: new THREE.Vector3(),
+      planeCorner2: new THREE.Vector3(),
+      planeCorner3: new THREE.Vector3(),
+
+      tempPlaneU: new THREE.Vector3(),
+      tempPlaneV: new THREE.Vector3()
     }),
     []
   );
@@ -162,10 +276,14 @@ export function ScenarioLineIntersections() {
 
   useEffect(() => {
     const pane = new Pane({
-      title: "Line intersections"
+      title: "Intersections"
     });
 
-    pane.addBinding(params, "intersectionType", {
+    const lineLineFolder = pane.addFolder({
+      title: "Line / Line"
+    });
+
+    lineLineFolder.addBinding(params, "intersectionType", {
       label: "type",
       options: {
         "Segment / Segment": "segment_segment",
@@ -173,6 +291,17 @@ export function ScenarioLineIntersections() {
         "Segment / Line": "segment_line",
         "Line / Segment": "line_segment"
       }
+    });
+
+    const planeFolder = pane.addFolder({
+      title: "Line / Plane"
+    });
+
+    planeFolder.addBinding(params, "planeVisualScale", {
+      label: "plane size",
+      min: 0.5,
+      max: 4,
+      step: 0.1
     });
 
     return () => {
@@ -187,6 +316,12 @@ export function ScenarioLineIntersections() {
    */
 
   useFrame(() => {
+    /*
+     * ========================================================
+     * GET REFERENCES
+     * ========================================================
+     */
+
     const A2Object = point2DARef.current;
     const B2Object = point2DBRef.current;
     const C2Object = point2DCRef.current;
@@ -204,7 +339,32 @@ export function ScenarioLineIntersections() {
     const line3DCD = line3DCDRef.current;
 
     const intersection2DObject = intersection2DRef.current;
+
     const intersection3DObject = intersection3DRef.current;
+
+    /*
+     * Line / plane
+     */
+
+    const linePlaneAObject = linePlaneARef.current;
+
+    const linePlaneBObject = linePlaneBRef.current;
+
+    const planeOriginObject = planeOriginRef.current;
+
+    const planeUObject = planeURef.current;
+
+    const planeVObject = planeVRef.current;
+
+    const linePlaneLine = linePlaneLineRef.current;
+
+    const planeUVisual = planeUVisualRef.current;
+
+    const planeVVisual = planeVVisualRef.current;
+
+    const planeMesh = planeMeshRef.current;
+
+    const intersectionPlaneObject = intersectionPlaneRef.current;
 
     if (
       !A2Object ||
@@ -220,7 +380,17 @@ export function ScenarioLineIntersections() {
       !line3DAB ||
       !line3DCD ||
       !intersection2DObject ||
-      !intersection3DObject
+      !intersection3DObject ||
+      !linePlaneAObject ||
+      !linePlaneBObject ||
+      !planeOriginObject ||
+      !planeUObject ||
+      !planeVObject ||
+      !linePlaneLine ||
+      !planeUVisual ||
+      !planeVVisual ||
+      !planeMesh ||
+      !intersectionPlaneObject
     ) {
       return;
     }
@@ -235,14 +405,6 @@ export function ScenarioLineIntersections() {
     B2Object.getWorldPosition(data.B2World);
     C2Object.getWorldPosition(data.C2World);
     D2Object.getWorldPosition(data.D2World);
-
-    /*
-     * We deliberately ignore Z.
-     *
-     * The mathematical 2D world is:
-     *
-     *     (x, y)
-     */
 
     data.A2.set(data.A2World.x, data.A2World.y);
 
@@ -271,7 +433,7 @@ export function ScenarioLineIntersections() {
      * ========================================================
      */
 
-    const result2D = lineIntersectLine2D({
+    const result2D = intersectLineLine2D({
       A: data.A2,
       B: data.B2,
       C: data.C2,
@@ -294,7 +456,9 @@ export function ScenarioLineIntersections() {
      */
 
     data.v2.subVectors(data.B2, data.A2);
+
     data.u2.subVectors(data.D2, data.C2);
+
     data.c2.subVectors(data.C2, data.A2);
 
     const denominator2D = cross2D(data.v2, data.u2);
@@ -310,7 +474,7 @@ export function ScenarioLineIntersections() {
 
     /*
      * ========================================================
-     * 4. READ 3D POINTS
+     * 4. READ 3D LINE / LINE POINTS
      * ========================================================
      */
 
@@ -324,8 +488,6 @@ export function ScenarioLineIntersections() {
     setLinePoints(line3DCD, data.C3, data.D3);
 
     /*
-     * Directions:
-     *
      * v = B - A
      * u = D - C
      */
@@ -338,11 +500,11 @@ export function ScenarioLineIntersections() {
 
     /*
      * ========================================================
-     * 5. TEST 3D INTERSECTION
+     * 5. TEST 3D LINE / LINE
      * ========================================================
      */
 
-    const result3D = lineIntersectLine3D({
+    const result3D = intersectLineLine3D({
       p: data.A3,
       v: data.v3,
       q: data.C3,
@@ -352,6 +514,7 @@ export function ScenarioLineIntersections() {
 
     if (result3D) {
       intersection3DObject.visible = true;
+
       intersection3DObject.position.copy(result3D);
     } else {
       intersection3DObject.visible = false;
@@ -369,6 +532,7 @@ export function ScenarioLineIntersections() {
 
     let t3: number | null = null;
     let s3: number | null = null;
+
     let skewDistance: number | null = null;
 
     if (nLengthSq3 > 1e-12) {
@@ -385,25 +549,220 @@ export function ScenarioLineIntersections() {
 
     /*
      * ========================================================
-     * 7. INFO
+     * 7. READ LINE / PLANE POINTS
+     * ========================================================
+     */
+
+    linePlaneAObject.getWorldPosition(data.linePlaneA);
+
+    linePlaneBObject.getWorldPosition(data.linePlaneB);
+
+    planeOriginObject.getWorldPosition(data.planeOrigin);
+
+    planeUObject.getWorldPosition(data.planeUPoint);
+
+    planeVObject.getWorldPosition(data.planeVPoint);
+
+    /*
+     * Line direction:
+     *
+     * w = B - A
+     */
+
+    data.w.subVectors(data.linePlaneB, data.linePlaneA);
+
+    /*
+     * Plane spanning vectors:
+     *
+     * u = U - O
+     * v = V - O
+     */
+
+    data.planeU.subVectors(data.planeUPoint, data.planeOrigin);
+
+    data.planeV.subVectors(data.planeVPoint, data.planeOrigin);
+
+    /*
+     * ========================================================
+     * 8. DRAW LINE / PLANE VISUALS
+     * ========================================================
+     */
+
+    setLinePoints(linePlaneLine, data.linePlaneA, data.linePlaneB);
+
+    setLinePoints(planeUVisual, data.planeOrigin, data.planeUPoint);
+
+    setLinePoints(planeVVisual, data.planeOrigin, data.planeVPoint);
+
+    /*
+     * Plane normal:
+     *
+     * n = u × v
+     */
+
+    data.planeNormal.crossVectors(data.planeU, data.planeV);
+
+    /*
+     * ========================================================
+     * 9. UPDATE PLANE QUAD
+     * ========================================================
+     *
+     * The draggable U/V points define the plane basis.
+     *
+     * We scale those basis vectors slightly for easier
+     * visualization.
+     */
+
+    data.tempPlaneU.copy(data.planeU).multiplyScalar(params.planeVisualScale);
+
+    data.tempPlaneV.copy(data.planeV).multiplyScalar(params.planeVisualScale);
+
+    /*
+     * corner 0 = O - u - v
+     */
+
+    data.planeCorner0
+      .copy(data.planeOrigin)
+      .sub(data.tempPlaneU)
+      .sub(data.tempPlaneV);
+
+    /*
+     * corner 1 = O + u - v
+     */
+
+    data.planeCorner1
+      .copy(data.planeOrigin)
+      .add(data.tempPlaneU)
+      .sub(data.tempPlaneV);
+
+    /*
+     * corner 2 = O + u + v
+     */
+
+    data.planeCorner2
+      .copy(data.planeOrigin)
+      .add(data.tempPlaneU)
+      .add(data.tempPlaneV);
+
+    /*
+     * corner 3 = O - u + v
+     */
+
+    data.planeCorner3
+      .copy(data.planeOrigin)
+      .sub(data.tempPlaneU)
+      .add(data.tempPlaneV);
+
+    const positionAttribute = planeGeometry.getAttribute(
+      "position"
+    ) as THREE.BufferAttribute;
+
+    positionAttribute.setXYZ(
+      0,
+      data.planeCorner0.x,
+      data.planeCorner0.y,
+      data.planeCorner0.z
+    );
+
+    positionAttribute.setXYZ(
+      1,
+      data.planeCorner1.x,
+      data.planeCorner1.y,
+      data.planeCorner1.z
+    );
+
+    positionAttribute.setXYZ(
+      2,
+      data.planeCorner2.x,
+      data.planeCorner2.y,
+      data.planeCorner2.z
+    );
+
+    positionAttribute.setXYZ(
+      3,
+      data.planeCorner3.x,
+      data.planeCorner3.y,
+      data.planeCorner3.z
+    );
+
+    positionAttribute.needsUpdate = true;
+
+    planeGeometry.computeVertexNormals();
+
+    /*
+     * ========================================================
+     * 10. LINE / PLANE INTERSECTION
+     * ========================================================
+     */
+
+    const resultPlane = intersectLinePlane({
+      A: data.linePlaneA,
+      w: data.w,
+
+      planePoint: data.planeOrigin,
+
+      planeU: data.planeU,
+
+      planeV: data.planeV
+    });
+
+    if (resultPlane) {
+      intersectionPlaneObject.visible = true;
+
+      intersectionPlaneObject.position.copy(resultPlane);
+    } else {
+      intersectionPlaneObject.visible = false;
+    }
+
+    /*
+     * ========================================================
+     * 11. CALCULATE LINE / PLANE t FOR DISPLAY
+     * ========================================================
+     *
+     * n = u × v
+     *
+     * t =
+     *
+     *     n · (O - A)
+     *     -----------
+     *        n · w
+     */
+
+    let tPlane: number | null = null;
+
+    let linePlaneDenominator: number | null = null;
+
+    if (data.planeNormal.lengthSq() > 1e-12) {
+      data.planePointMinusA.subVectors(data.planeOrigin, data.linePlaneA);
+
+      linePlaneDenominator = data.planeNormal.dot(data.w);
+
+      if (Math.abs(linePlaneDenominator) > 1e-8) {
+        tPlane =
+          data.planeNormal.dot(data.planePointMinusA) / linePlaneDenominator;
+      }
+    }
+
+    /*
+     * ========================================================
+     * 12. INFO
      * ========================================================
      */
 
     if (infoRef.current) {
       infoRef.current.textContent = [
-        "LINE INTERSECTION",
-        "",
-        `mode = ${params.intersectionType}`,
+        "INTERSECTIONS",
         "",
 
         "======================================",
-        "2D INTERSECTION",
+        "2D LINE / LINE",
         "======================================",
         "",
 
         `A = (${data.A2.x.toFixed(2)}, ${data.A2.y.toFixed(2)})`,
         `B = (${data.B2.x.toFixed(2)}, ${data.B2.y.toFixed(2)})`,
         "",
+
         `C = (${data.C2.x.toFixed(2)}, ${data.C2.y.toFixed(2)})`,
         `D = (${data.D2.x.toFixed(2)}, ${data.D2.y.toFixed(2)})`,
         "",
@@ -413,7 +772,9 @@ export function ScenarioLineIntersections() {
         "",
 
         `t = ${t2 === null ? "undefined" : t2.toFixed(4)}`,
+
         `s = ${s2 === null ? "undefined" : s2.toFixed(4)}`,
+
         "",
 
         result2D
@@ -423,13 +784,14 @@ export function ScenarioLineIntersections() {
         "",
 
         "======================================",
-        "3D INTERSECTION",
+        "3D LINE / LINE",
         "======================================",
         "",
 
         `A = (${data.A3.x.toFixed(2)}, ${data.A3.y.toFixed(2)}, ${data.A3.z.toFixed(2)})`,
         `B = (${data.B3.x.toFixed(2)}, ${data.B3.y.toFixed(2)}, ${data.B3.z.toFixed(2)})`,
         "",
+
         `C = (${data.C3.x.toFixed(2)}, ${data.C3.y.toFixed(2)}, ${data.C3.z.toFixed(2)})`,
         `D = (${data.D3.x.toFixed(2)}, ${data.D3.y.toFixed(2)}, ${data.D3.z.toFixed(2)})`,
         "",
@@ -439,7 +801,9 @@ export function ScenarioLineIntersections() {
         "",
 
         `t = ${t3 === null ? "undefined" : t3.toFixed(4)}`,
+
         `s = ${s3 === null ? "undefined" : s3.toFixed(4)}`,
+
         "",
 
         `skew distance = ${
@@ -450,6 +814,63 @@ export function ScenarioLineIntersections() {
 
         result3D
           ? `INTERSECTION = (${result3D.x.toFixed(3)}, ${result3D.y.toFixed(3)}, ${result3D.z.toFixed(3)})`
+          : "INTERSECTION = none",
+
+        "",
+
+        "======================================",
+        "3D LINE / PLANE",
+        "======================================",
+        "",
+
+        `A = (${data.linePlaneA.x.toFixed(2)}, ${data.linePlaneA.y.toFixed(2)}, ${data.linePlaneA.z.toFixed(2)})`,
+
+        `B = (${data.linePlaneB.x.toFixed(2)}, ${data.linePlaneB.y.toFixed(2)}, ${data.linePlaneB.z.toFixed(2)})`,
+
+        "",
+
+        `w = B - A`,
+        `w = (${data.w.x.toFixed(2)}, ${data.w.y.toFixed(2)}, ${data.w.z.toFixed(2)})`,
+
+        "",
+
+        `Plane O = (${data.planeOrigin.x.toFixed(2)}, ${data.planeOrigin.y.toFixed(2)}, ${data.planeOrigin.z.toFixed(2)})`,
+
+        "",
+
+        `u = (${data.planeU.x.toFixed(2)}, ${data.planeU.y.toFixed(2)}, ${data.planeU.z.toFixed(2)})`,
+
+        `v = (${data.planeV.x.toFixed(2)}, ${data.planeV.y.toFixed(2)}, ${data.planeV.z.toFixed(2)})`,
+
+        "",
+
+        `n = u × v`,
+        `n = (${data.planeNormal.x.toFixed(2)}, ${data.planeNormal.y.toFixed(2)}, ${data.planeNormal.z.toFixed(2)})`,
+
+        "",
+
+        "L(t) = A + w*t",
+
+        "P(a,e) = O + u*a + v*e",
+
+        "",
+
+        "t = n·(O-A) / n·w",
+
+        "",
+
+        `n · w = ${
+          linePlaneDenominator === null
+            ? "undefined"
+            : linePlaneDenominator.toFixed(4)
+        }`,
+
+        `t = ${tPlane === null ? "undefined" : tPlane.toFixed(4)}`,
+
+        "",
+
+        resultPlane
+          ? `INTERSECTION H = (${resultPlane.x.toFixed(3)}, ${resultPlane.y.toFixed(3)}, ${resultPlane.z.toFixed(3)})`
           : "INTERSECTION = none"
       ].join("\n");
     }
@@ -475,7 +896,7 @@ export function ScenarioLineIntersections() {
 
           {/*
            * ==================================================
-           * 2D LINES
+           * 2D LINE / LINE
            * ==================================================
            */}
 
@@ -505,7 +926,7 @@ export function ScenarioLineIntersections() {
 
           {/*
            * ==================================================
-           * 3D LINES
+           * 3D LINE / LINE
            * ==================================================
            */}
 
@@ -533,6 +954,82 @@ export function ScenarioLineIntersections() {
             </HtmlLabel>
           </mesh>
 
+          {/*
+           * ==================================================
+           * LINE / PLANE
+           * ==================================================
+           */}
+
+          <threeLine
+            ref={linePlaneLineRef}
+            geometry={linePlaneLineGeometry}
+            name="Line Plane - Line"
+          >
+            <lineBasicMaterial color="#ffffff" />
+          </threeLine>
+
+          {/*
+           * Plane basis vector u
+           */}
+
+          <threeLine
+            ref={planeUVisualRef}
+            geometry={planeUVisualGeometry}
+            name="Plane U"
+          >
+            <lineBasicMaterial color="#ff5555" />
+          </threeLine>
+
+          {/*
+           * Plane basis vector v
+           */}
+
+          <threeLine
+            ref={planeVVisualRef}
+            geometry={planeVVisualGeometry}
+            name="Plane V"
+          >
+            <lineBasicMaterial color="#5555ff" />
+          </threeLine>
+
+          {/*
+           * Actual plane surface
+           */}
+
+          <mesh
+            ref={planeMeshRef}
+            geometry={planeGeometry}
+            name="Intersection Plane"
+          >
+            <meshStandardMaterial
+              color="#8844cc"
+              transparent
+              opacity={0.35}
+              side={THREE.DoubleSide}
+              depthWrite={false}
+            />
+          </mesh>
+
+          {/*
+           * Line / plane intersection H
+           */}
+
+          <mesh
+            ref={intersectionPlaneRef}
+            geometry={intersectionGeometry}
+            visible={false}
+          >
+            <meshStandardMaterial color="#44ff44" />
+
+            <HtmlLabel
+              textStyle={{
+                transform: "translateY(-45px)"
+              }}
+            >
+              H
+            </HtmlLabel>
+          </mesh>
+
           <HtmlInfo infoRef={infoRef} />
         </>
       }
@@ -542,13 +1039,6 @@ export function ScenarioLineIntersections() {
           {/*
            * ==================================================
            * 2D POINTS
-           *
-           * Initial values are exactly your previous example:
-           *
-           * A = (1, 4)
-           * B = (7, 0.5)
-           * C = (0, 0)
-           * D = (7, 5)
            * ==================================================
            */}
 
@@ -594,21 +1084,7 @@ export function ScenarioLineIntersections() {
 
           {/*
            * ==================================================
-           * 3D POINTS
-           *
-           * These initially intersect at:
-           *
-           * (2, 2, 3)
-           *
-           * AB:
-           *
-           * A = (-1, 2, 3)
-           * B = (5, 2, 3)
-           *
-           * CD:
-           *
-           * C = (2, -1, 0)
-           * D = (2, 5, 6)
+           * 3D LINE / LINE POINTS
            * ==================================================
            */}
 
@@ -650,6 +1126,82 @@ export function ScenarioLineIntersections() {
           >
             <meshStandardMaterial color="#44ffff" />
             <HtmlLabel>3D D</HtmlLabel>
+          </mesh>
+
+          {/*
+           * ==================================================
+           * LINE / PLANE POINTS
+           *
+           * Initial plane:
+           *
+           * O = (-5, 1, -2)
+           *
+           * u = (3, 0, 0)
+           * v = (0, 3, 2)
+           *
+           * Line passes through the plane.
+           * ==================================================
+           */}
+
+          <mesh
+            ref={planeOriginRef}
+            name="Plane O"
+            position={[-5, 1, -2]}
+            geometry={pointGeometry}
+          >
+            <meshStandardMaterial color="#ffff55" />
+
+            <HtmlLabel>Plane O</HtmlLabel>
+          </mesh>
+
+          <mesh
+            ref={planeURef}
+            name="Plane U"
+            position={[-2, 1, -2]}
+            geometry={pointGeometry}
+          >
+            <meshStandardMaterial color="#ff5555" />
+
+            <HtmlLabel>Plane U</HtmlLabel>
+          </mesh>
+
+          <mesh
+            ref={planeVRef}
+            name="Plane V"
+            position={[-5, 4, -2]}
+            geometry={pointGeometry}
+          >
+            <meshStandardMaterial color="#5555ff" />
+
+            <HtmlLabel>Plane V</HtmlLabel>
+          </mesh>
+
+          {/*
+           * Line:
+           *
+           * A -> B
+           */}
+
+          <mesh
+            ref={linePlaneARef}
+            name="Line Plane A"
+            position={[-6, 4, 2]}
+            geometry={pointGeometry}
+          >
+            <meshStandardMaterial color="#ffffff" />
+
+            <HtmlLabel>LP A</HtmlLabel>
+          </mesh>
+
+          <mesh
+            ref={linePlaneBRef}
+            name="Line Plane B"
+            position={[-1.75, 0.43, -7]}
+            geometry={pointGeometry}
+          >
+            <meshStandardMaterial color="#ffffff" />
+
+            <HtmlLabel>LP B</HtmlLabel>
           </mesh>
         </>
       }

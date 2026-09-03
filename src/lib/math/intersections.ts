@@ -22,7 +22,7 @@ export function cross2D(a: THREE.Vector2, b: THREE.Vector2): number {
 t = uPerp dot c / uPerp dot v = (c × u) / (v × u)
 s = vPerp dot c / uPerp dot v = (c × v) / (v × u)
 * */
-export function lineIntersectLine2D({
+export function intersectLineLine2D({
   A,
   B,
   C,
@@ -106,7 +106,7 @@ export function lineIntersectLine2D({
  * ============================================================
  */
 
-export function lineIntersectLine3D({
+export function intersectLineLine3D({
   p,
   v,
   q,
@@ -190,4 +190,108 @@ export function lineIntersectLine3D({
   }
 
   return p.clone().addScaledVector(v, t);
+}
+
+/*
+ * Line: A + w*t
+ *
+ * Plane: B + v*a + u*e
+ *
+ * Intersection: A + w*t = B + v*a + u*e | A + w*t = planePoint + planeV*a + planeU*e
+ */
+export function intersectLinePlane({
+  A,
+  w,
+  planePoint,
+  planeU,
+  planeV,
+  epsilon = 1e-8
+}: {
+  A: THREE.Vector3;
+  w: THREE.Vector3;
+
+  // Any known point B on the plane
+  planePoint: THREE.Vector3;
+
+  // Two non-parallel vectors spanning the plane
+  planeU: THREE.Vector3;
+  planeV: THREE.Vector3;
+
+  epsilon?: number;
+}): THREE.Vector3 | null {
+  /*
+   * Plane normal:
+   *
+   * n = u × v
+   */
+  const n = new THREE.Vector3().crossVectors(planeU, planeV);
+
+  const nLength = n.length();
+
+  /*
+   * If u and v are parallel (or one is zero),
+   * they do not define a valid plane.
+   */
+  if (nLength < epsilon) {
+    return null;
+  }
+
+  /*
+   * denominator = n · w
+   *
+   * If n · w = 0, w is perpendicular to n,
+   * therefore w is parallel to the plane.
+   */
+  const denominator = n.dot(w);
+
+  /*
+  n · w = 0
+
+  1. Line parallel to plane, outside plane
+   → no intersection
+
+  2. Line lies inside plane
+   → infinitely many intersections
+ */
+  if (Math.abs(denominator) < epsilon) {
+    return null;
+  }
+
+  /*
+   * Start from:
+   *
+   * A + w*t = B + v*a + u*e
+   *
+   * Dot with n:
+   *
+   * n·A + t(n·w)
+   * =
+   * n·B + a(n·v) + e(n·u)
+   *
+   * Since:
+   *
+   * n·v = 0
+   * n·u = 0
+   *
+   * we get:
+   *
+   * n·A + t(n·w) = n·B
+   *
+   * t(n·w) = n·(B - A)
+   *
+   *             n·(B - A)
+   * t = -------------------------
+   *                 n·w
+   */
+
+  const planePointMinusA = new THREE.Vector3().subVectors(planePoint, A);
+
+  const t = n.dot(planePointMinusA) / denominator;
+
+  /*
+   * Intersection:
+   *
+   * H = A + w*t
+   */
+  return A.clone().addScaledVector(w, t);
 }
