@@ -36,6 +36,11 @@ export const routesConfig = {
     name: "Transform Matrices",
     component: lazy(() => import("@pages/TransformMatrices"))
   },
+  linesIntersections: {
+    path: "/lines-intersections",
+    name: "Lines Intersections",
+    component: lazy(() => import("@pages/LineIntersections"))
+  },
   shaderShapes: {
     path: "/shaders/shapes",
     name: "Shader Shapes",
