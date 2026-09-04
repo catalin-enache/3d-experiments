@@ -1,11 +1,10 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as THREE from "three/webgpu";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { Inspector } from "three/addons/inspector/Inspector.js";
 
 export function scenarioHome(container: HTMLElement) {
-  // Scene
   const scene = new THREE.Scene();
 
-  // Camera
   const camera = new THREE.PerspectiveCamera(
     75,
     container.clientWidth / container.clientHeight,
@@ -15,17 +14,20 @@ export function scenarioHome(container: HTMLElement) {
 
   camera.position.z = 5;
 
-  // Renderer
-  const renderer = new THREE.WebGLRenderer({
-    antialias: true
+  const renderer = new THREE.WebGPURenderer({
+    antialias: true,
+    forceWebGL: false
   });
 
+  renderer.inspector = new Inspector();
+
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
   container.appendChild(renderer.domElement);
 
-  // Orbit controls
   const controls = new OrbitControls(camera, renderer.domElement);
 
   controls.enableDamping = true;
@@ -38,11 +40,11 @@ export function scenarioHome(container: HTMLElement) {
 
   scene.add(cube);
 
-  // Animation
-  let animationId: number;
+  const timer = new THREE.Timer();
+  timer.connect(document);
 
-  function animate() {
-    animationId = requestAnimationFrame(animate);
+  function tick() {
+    timer.update();
 
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
@@ -52,9 +54,8 @@ export function scenarioHome(container: HTMLElement) {
     renderer.render(scene, camera);
   }
 
-  animate();
+  void renderer.setAnimationLoop(tick);
 
-  // Resize
   function handleResize() {
     const width = container.clientWidth;
     const height = container.clientHeight;
@@ -65,20 +66,19 @@ export function scenarioHome(container: HTMLElement) {
     renderer.setSize(width, height);
   }
 
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
 
   // Cleanup
   // React calls this when leaving the page
   return () => {
-    cancelAnimationFrame(animationId);
-
-    window.removeEventListener('resize', handleResize);
+    window.removeEventListener("resize", handleResize);
 
     controls.dispose();
 
     geometry.dispose();
     material.dispose();
     renderer.dispose();
+    timer.dispose();
 
     renderer.domElement.remove();
   };
