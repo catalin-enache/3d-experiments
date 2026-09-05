@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import GUI from "lil-gui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Environment, useTexture } from "@react-three/drei";
@@ -110,12 +110,12 @@ const backgroundTexturesMap: Record<
 export function MaterialTest() {
   const [meshType, setMeshType] = useState<MeshType>("sphere");
   const [platformMaterialType, setPlatformMaterialType] =
-    useState<PlatformMaterialType>("default");
+    useState<PlatformMaterialType>("mirror");
   const [materialType, setMaterialType] = useState<MaterialType>(
     "MeshStandardMaterial"
   );
   const [sceneBackgroundName, setSceneBackgroundName] =
-    useState<SceneBackgroundName>("None");
+    useState<SceneBackgroundName>("Pisa");
   const [tessellation, setTessellation] = useState(80);
   const [showPlatform, setShowPlatform] = useState(true);
 
@@ -260,15 +260,24 @@ export function MaterialTest() {
     name: sceneBackgroundName
   });
 
-  useFrame(() => {
+  const clockDeltaRef = useRef(0);
+
+  useFrame((_, delta) => {
     if (platformMaterialType !== "mirror" || !platformRef.current) {
       updateCubeCamera();
       return;
     }
+
     const updateParams = {
       listOfObjectsToHideDuringUpdate: [platformRef.current]
     };
-    updateCubeCamera(updateParams);
+
+    clockDeltaRef.current += delta;
+
+    if (clockDeltaRef.current > 0.5) {
+      updateCubeCamera(updateParams);
+      clockDeltaRef.current = 0;
+    }
   });
 
   return (

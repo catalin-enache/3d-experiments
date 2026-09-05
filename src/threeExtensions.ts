@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { extend } from "@react-three/fiber";
 
 // TS DOM conflict workaround

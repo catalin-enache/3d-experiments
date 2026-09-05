@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { useEffect, useRef, useMemo } from "react";
 import GUI from "lil-gui";
 import { useTexture } from "@react-three/drei";

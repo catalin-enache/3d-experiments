@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import type { FolderApi } from "tweakpane";
 
 export const cameraBindings = ({

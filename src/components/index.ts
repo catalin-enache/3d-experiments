@@ -9,3 +9,4 @@ export * from "./SelectableGroup";
 export * from "./CubeCamera";
 export * from "./HtmlInfo";
 export * from "./HtmlLabel";
+export * from "./CustomAnimationLoop";

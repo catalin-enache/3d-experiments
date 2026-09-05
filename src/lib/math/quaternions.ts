@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 
 export function getAxisAngle(q: THREE.Quaternion): {
   axis: THREE.Vector3;

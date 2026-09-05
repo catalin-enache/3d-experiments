@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { useEffect } from "react";
 import GUI from "lil-gui";
 import { Scenario } from "@components";

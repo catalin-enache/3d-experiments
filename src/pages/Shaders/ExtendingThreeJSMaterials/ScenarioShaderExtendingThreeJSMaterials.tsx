@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { useEffect, useMemo } from "react";
 import { Environment, useGLTF } from "@react-three/drei";
 import { Pane } from "tweakpane";

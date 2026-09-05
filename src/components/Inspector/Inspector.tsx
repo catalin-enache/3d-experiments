@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import { Pane } from "tweakpane";
@@ -46,7 +46,13 @@ export function Inspector({ object }: InspectorProps) {
     });
     paneRef.current = pane;
 
-    buildBindings({ pane, object, gl, refresh, camera });
+    buildBindings({
+      pane,
+      object,
+      gl,
+      refresh,
+      camera
+    });
 
     container.querySelectorAll(".tp-lblv_l").forEach((element) => {
       const htmlElement = element as HTMLElement;

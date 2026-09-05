@@ -1,4 +1,6 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
+import * as THREE_WEBGL from "three";
+import { Inspector as ThreeInspector } from "three/addons/inspector/Inspector.js";
 import {
   Suspense,
   type ReactNode,
@@ -6,6 +8,7 @@ import {
   useCallback,
   useEffect
 } from "react";
+import { CustomAnimationLoop } from "@components";
 import { type CameraProps, Canvas } from "@react-three/fiber";
 import { GizmoViewport, Stats, GizmoHelper, Grid } from "@react-three/drei";
 import classes from "./Page.module.css";
@@ -24,12 +27,25 @@ const defaultOrthographicCameraProps: CameraProps = {
   zoom: 25
 };
 
+interface WebGLParams {
+  useWebGpu?: false;
+  rendererParams?: Partial<THREE_WEBGL.WebGLRendererParameters>;
+}
+
+interface WebGPUParams {
+  useWebGpu: true;
+  rendererParams?: Partial<THREE.WebGPURendererParameters>;
+}
+
+type RendererParams = WebGLParams | WebGPUParams;
+
 interface PageProps {
   children?: ReactNode;
   background?: THREE.Color | THREE.Texture | null;
   orthographic?: boolean;
   cameraProps?: Partial<CameraProps>;
   raycasterParams?: Partial<THREE.RaycasterParameters>;
+  rendererParams?: RendererParams;
   showStats?: boolean;
   showViewportGizmo?: boolean;
   showGrid?: boolean;
@@ -42,12 +58,14 @@ export const Page = ({
   orthographic = false,
   cameraProps = {},
   raycasterParams = defaultRaycasterParams,
+  rendererParams: _rendererParams = {},
   showStats = true,
   showViewportGizmo = true,
   showGrid = false,
   axesSize = null
 }: PageProps) => {
   const [showWidgets, setShowWidgets] = useState(showGrid || axesSize !== null);
+  const { useWebGpu, rendererParams } = _rendererParams;
 
   const onKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.code === "KeyG") {
@@ -64,6 +82,33 @@ export const Page = ({
 
   return (
     <Canvas
+      frameloop="never"
+      gl={async (props) => {
+        if (!useWebGpu) {
+          const renderer = new THREE_WEBGL.WebGLRenderer({
+            ...props,
+            ...rendererParams
+          });
+          renderer.info.autoReset = false;
+          return renderer;
+        }
+        const renderer = new THREE.WebGPURenderer({
+          ...(props as THREE.WebGPURendererParameters),
+          ...rendererParams
+        });
+        renderer.info.autoReset = false;
+        renderer.inspector = new ThreeInspector();
+
+        /* eslint-disable */
+        // patch for <GizmoViewport>, capabilities were moved on backend
+        // @ts-ignore
+        renderer.capabilities = renderer.backend.capabilities;
+        /* eslint-enable */
+
+        await renderer.init();
+        return renderer;
+      }}
+
       camera={
         {
           ...(!orthographic
@@ -84,6 +129,7 @@ export const Page = ({
         }
       }}
     >
+      <CustomAnimationLoop />
       {axesSize !== null && showWidgets && <axesHelper args={[axesSize]} />}
       {showGrid && showWidgets && (
         <Grid

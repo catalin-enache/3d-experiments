@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { HtmlInfo, Scenario } from "@components";

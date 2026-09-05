@@ -3,15 +3,8 @@
  * We add a tweak to force new CubeRenderer
  * */
 
-import * as THREE from "three";
-import {
-  HalfFloatType,
-  Fog,
-  FogExp2,
-  WebGLCubeRenderTarget,
-  Texture,
-  Group
-} from "three";
+import * as THREE from "three/webgpu";
+import * as THREE_WEBGL from "three";
 import { useEffect, useMemo, useCallback, useRef, type ReactNode } from "react";
 import { type ThreeElements, useFrame, useThree } from "@react-three/fiber";
 
@@ -25,7 +18,7 @@ export interface CubeCameraOptions {
   /** Custom environment map that is temporarily set as the scenes background */
   envMap?: THREE.Texture;
   /** Custom fog that is temporarily set as the scenes fog */
-  fog?: Fog | FogExp2;
+  fog?: THREE.Fog | THREE.FogExp2;
   /** Name of the CubeRenderer texture, useful for forcing a new CubeRenderer */
   name: string;
 }
@@ -41,15 +34,23 @@ export function useCubeCamera(
     name
   }: CubeCameraOptions = {} as CubeCameraOptions
 ) {
-  const gl = useThree(({ gl }) => gl);
+  const gl = useThree(({ gl }) => gl) as
+    THREE.WebGPURenderer | THREE_WEBGL.WebGLRenderer;
+
   const scene = useThree(({ scene }) => scene);
 
   const fbo = useMemo(() => {
-    const fbo = new WebGLCubeRenderTarget(resolution);
-    fbo.texture.type = HalfFloatType;
+    if (gl instanceof THREE_WEBGL.WebGLRenderer) {
+      const fbo = new THREE_WEBGL.WebGLCubeRenderTarget(resolution);
+      fbo.texture.type = THREE.HalfFloatType;
+      fbo.texture.name = name;
+      return fbo;
+    }
+    const fbo = new THREE.CubeRenderTarget(resolution);
+    fbo.texture.type = THREE.HalfFloatType;
     fbo.texture.name = name;
     return fbo;
-  }, [resolution, name]);
+  }, [resolution, name, gl]);
 
   useEffect(() => {
     return () => {
@@ -98,7 +99,7 @@ export function useCubeCamera(
 
 export type CubeCameraProps = Omit<ThreeElements["group"], "children"> & {
   /** The contents of CubeCamera will be hidden when filming the cube */
-  children?: (tex: Texture) => ReactNode;
+  children?: (tex: THREE.Texture) => ReactNode;
   /** Number of frames to render, Infinity */
   frames?: number;
 } & CubeCameraOptions;
@@ -114,7 +115,7 @@ export function CubeCamera({
   name,
   ...props
 }: CubeCameraProps) {
-  const ref = useRef<Group>(null);
+  const ref = useRef<THREE.Group>(null);
   const { fbo, camera, update } = useCubeCamera({
     resolution,
     near,

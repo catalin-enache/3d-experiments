@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import checker from "vite-plugin-checker";
 import glsl from "vite-plugin-glsl";
+import { staticBuildExtension, linkBuildExtension } from "wesl-plugin";
+import viteWesl from "wesl-plugin/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,6 +12,7 @@ export default defineConfig({
     glsl({
       root: "/"
     }),
+    viteWesl({ extensions: [staticBuildExtension, linkBuildExtension] }),
     checker({
       typescript: true,
       eslint: {

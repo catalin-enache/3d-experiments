@@ -1,6 +1,6 @@
 import { type CSSProperties, type ReactNode } from "react";
 import { Html } from "@react-three/drei";
-import { type Camera, type Object3D } from "three";
+import { type Camera, type Object3D } from "three/webgpu";
 
 import classes from "./HtmlLabel.module.css";
 import clsx from "clsx";

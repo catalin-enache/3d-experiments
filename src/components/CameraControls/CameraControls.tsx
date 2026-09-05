@@ -1,5 +1,8 @@
-import * as THREE from "three";
-import { OrbitControls } from "@react-three/drei";
+import * as THREE from "three/webgpu";
+import {
+  OrbitControls
+  // CameraControls as DCameraControls // check this sometime
+} from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useCallback } from "react";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";

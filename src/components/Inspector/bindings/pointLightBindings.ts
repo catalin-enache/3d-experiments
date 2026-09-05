@@ -1,4 +1,5 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
+import * as THREE_WEBGL from "three";
 import { type FolderApi } from "tweakpane";
 
 const mapSizeOptions = Object.fromEntries(
@@ -15,7 +16,7 @@ export const pointLightBindings = ({
 }: {
   object: THREE.PointLight;
   lightFolder: FolderApi;
-  gl: THREE.WebGLRenderer;
+  gl: THREE.WebGPURenderer | THREE_WEBGL.WebGLRenderer;
 }) => {
   const shadowMapSize = {
     get value() {

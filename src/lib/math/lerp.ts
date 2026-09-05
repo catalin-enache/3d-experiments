@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
 
 export const lerp = (a: number, b: number, t: number) => {
   return a + t * (b - a);

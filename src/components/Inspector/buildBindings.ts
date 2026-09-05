@@ -1,4 +1,5 @@
-import * as THREE from "three";
+import * as THREE from "three/webgpu";
+import * as THREE_WEBGL from "three";
 import type { Pane } from "tweakpane";
 import { glBindings } from "@src/components/Inspector/bindings/glBindings";
 import { objectBindings } from "@src/components/Inspector/bindings/objectBindings";
@@ -19,7 +20,7 @@ export function buildBindings({
 }: {
   pane: Pane;
   object?: THREE.Object3D | null;
-  gl: THREE.WebGLRenderer;
+  gl: THREE.WebGPURenderer | THREE_WEBGL.WebGLRenderer;
   refresh: () => void;
   camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
 }) {
