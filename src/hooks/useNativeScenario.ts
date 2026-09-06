@@ -1,16 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
+import type { ScenarioParams } from "@appTypes";
 
-export type NativeScenario = (
-  container: HTMLElement
-) => (() => void) | undefined;
+export interface NativeScenarioProps {
+  nativeScenario: (props: ScenarioParams) => (() => void) | undefined;
+  options?: Omit<ScenarioParams, "container">;
+}
 
-export function useNativeScenario(nativeScenario: NativeScenario) {
+export function useNativeScenario({
+  nativeScenario,
+  options
+}: NativeScenarioProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
-    return nativeScenario(containerRef.current);
-  }, [nativeScenario]);
+    return nativeScenario({ container: containerRef.current, ...options });
+  }, [nativeScenario, options]);
 
   return containerRef;
 }

@@ -1,6 +1,18 @@
-import { NativePage } from '@components';
-import { scenarioHome } from './scenarioHome';
+import { NativePage } from "@components";
+import { ScenarioHome } from "./ScenarioHome";
 
 export default function HomePage() {
-  return <NativePage nativeScenario={scenarioHome} />;
+  return (
+    <NativePage
+      nativeScenario={ScenarioHome}
+      options={{
+        rendererParams: {
+          useWebGpu: true,
+          options: {
+            forceWebGL: false
+          }
+        }
+      }}
+    />
+  );
 }

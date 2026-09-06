@@ -1,6 +1,20 @@
+.page {
+  /* -------------- Three builtin Inspector ---------------*/
+
+  :global(.three-inspector) {
+    :global(.profiler-toggle) {
+      top: unset !important;
+      right: unset !important;
+      bottom: 4px !important;
+      left: 215px !important;
+      z-index: 2 !important;
+    }
+  }
+}
 .stats {
   position: fixed;
   top: unset !important;
   left: 120px !important;
   bottom: 4px;
+  z-index: 1 !important;
 }

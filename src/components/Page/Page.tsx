@@ -12,6 +12,7 @@ import { CustomAnimationLoop } from "@components";
 import { type CameraProps, Canvas } from "@react-three/fiber";
 import { GizmoViewport, Stats, GizmoHelper, Grid } from "@react-three/drei";
 import classes from "./Page.module.css";
+import type { RendererParams } from "@appTypes";
 
 const defaultRaycasterParams = new THREE.Raycaster().params;
 defaultRaycasterParams.Line.threshold = 0.1;
@@ -26,18 +27,6 @@ const defaultOrthographicCameraProps: CameraProps = {
   position: [0, 0, 24],
   zoom: 25
 };
-
-interface WebGLParams {
-  useWebGpu?: false;
-  rendererParams?: Partial<THREE_WEBGL.WebGLRendererParameters>;
-}
-
-interface WebGPUParams {
-  useWebGpu: true;
-  rendererParams?: Partial<THREE.WebGPURendererParameters>;
-}
-
-type RendererParams = WebGLParams | WebGPUParams;
 
 interface PageProps {
   children?: ReactNode;
@@ -65,7 +54,8 @@ export const Page = ({
   axesSize = null
 }: PageProps) => {
   const [showWidgets, setShowWidgets] = useState(showGrid || axesSize !== null);
-  const { useWebGpu, rendererParams } = _rendererParams;
+
+  const { useWebGpu, options } = _rendererParams;
 
   const onKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.code === "KeyG") {
@@ -83,18 +73,19 @@ export const Page = ({
   return (
     <Canvas
       frameloop="never"
+      className={classes.page}
       gl={async (props) => {
         if (!useWebGpu) {
           const renderer = new THREE_WEBGL.WebGLRenderer({
             ...props,
-            ...rendererParams
+            ...options
           });
           renderer.info.autoReset = false;
           return renderer;
         }
         const renderer = new THREE.WebGPURenderer({
           ...(props as THREE.WebGPURendererParameters),
-          ...rendererParams
+          ...options
         });
         renderer.info.autoReset = false;
         renderer.inspector = new ThreeInspector();
