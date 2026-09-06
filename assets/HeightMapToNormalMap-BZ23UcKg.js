@@ -1,4 +1,4 @@
-import{t as e}from"./Texture-DgXmKVqj.js";import{g as t,hn as n,i as r,mn as i,s as a}from"./index-DACYGU7l.js";import{t as o}from"./lil-gui.esm-BsdZdNnU.js";var s=n(i(),1),c=`varying vec2 vUv;
+import{t as e}from"./Texture-Cgx5ukY3.js";import{g as t,hn as n,i as r,mn as i,s as a}from"./index-DuWcl8jk.js";import{t as o}from"./lil-gui.esm-BsdZdNnU.js";var s=n(i(),1),c=`varying vec2 vUv;
 
 void main() {
      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
