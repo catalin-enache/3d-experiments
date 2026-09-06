@@ -11,11 +11,7 @@ export const routesConfig = {
     name: "Project Long Lat On Sphere",
     component: lazy(() => import("@pages/ProjectLongLatOnSphere"))
   },
-  heighMapToNormalMap: {
-    path: "/heigh-map-to-normal-map",
-    name: "Heigh Map To Normal Map",
-    component: lazy(() => import("@pages/HeightMapToNormalMap"))
-  },
+
   materialTest: {
     path: "/material-test",
     name: "Material Test",
@@ -60,5 +56,10 @@ export const routesConfig = {
     path: "/shaders/extending-three-js-materials",
     name: "Shader Extending Three JS Materials",
     component: lazy(() => import("@pages/Shaders/ExtendingThreeJSMaterials"))
+  },
+  heighMapToNormalMap: {
+    path: "/shaders/heigh-map-to-normal-map",
+    name: "Shader Heigh Map To Normal Map",
+    component: lazy(() => import("@pages/Shaders/HeightMapToNormalMap"))
   }
 };
