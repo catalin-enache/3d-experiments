@@ -25,6 +25,8 @@
     "paths": {
       "@src/*": ["./src/*"],
       "@components": ["./src/components/index.ts"],
+      "@native/*": ["./src/native/*"],
+      "@appTypes": ["./src/appTypes/index.ts"],
       "@pages/*": ["./src/pages/*"],
       "@hooks": ["./src/hooks/index.ts"],
       "@lib/*": ["./src/lib/*"]
