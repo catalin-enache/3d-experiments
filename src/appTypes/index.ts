@@ -16,4 +16,6 @@ export type RendererParams = WebGLParams | WebGPUParams;
 export interface ScenarioParams {
   container: HTMLElement;
   rendererParams?: RendererParams;
+  axesSize?: number | null;
+  gridConfig?: { size?: number; divisions?: number };
 }

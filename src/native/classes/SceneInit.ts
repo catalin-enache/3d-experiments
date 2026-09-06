@@ -13,6 +13,8 @@ interface SceneInitParams extends ScenarioParams {
 export function SceneInit({
   container,
   rendererParams: _rendererParams = {},
+  axesSize,
+  gridConfig,
   tick: _tick = () => {
     /* pass */
   }
@@ -64,6 +66,19 @@ export function SceneInit({
     zIndex: "0"
   });
   container.appendChild(stats.dom);
+
+  if (axesSize) {
+    const axesHelper = new THREE.AxesHelper(axesSize);
+    scene.add(axesHelper);
+  }
+
+  if (gridConfig) {
+    const gridHelper = new THREE.GridHelper(
+      gridConfig.size ?? 10,
+      gridConfig.divisions ?? 10
+    );
+    scene.add(gridHelper);
+  }
 
   const controls = new OrbitControls(camera, renderer.domElement);
 

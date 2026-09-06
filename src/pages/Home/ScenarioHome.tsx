@@ -5,7 +5,9 @@ import { isWebGPURenderer } from "@lib/utils";
 
 export function ScenarioHome({
   container,
-  rendererParams: _rendererParams = {}
+  rendererParams: _rendererParams = {},
+  axesSize,
+  gridConfig
 }: ScenarioParams) {
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshNormalMaterial();
@@ -19,6 +21,8 @@ export function ScenarioHome({
   const { cleanUp, scene, renderer, inspector } = SceneInit({
     container,
     rendererParams: _rendererParams,
+    axesSize,
+    gridConfig,
     tick
   });
 

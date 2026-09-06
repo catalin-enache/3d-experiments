@@ -11,7 +11,9 @@ export default function HomePage() {
           options: {
             forceWebGL: false
           }
-        }
+        },
+        axesSize: 3,
+        gridConfig: {}
       }}
     />
   );
