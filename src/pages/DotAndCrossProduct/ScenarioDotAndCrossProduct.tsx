@@ -192,10 +192,6 @@ export function ScenarioDotAndCrossProduct() {
         <>
           <ambientLight intensity={1.5} />
           <directionalLight position={[4, 6, 5]} intensity={2.5} />
-          <gridHelper
-            args={[10, 10, "#444444", "#222222"]}
-            position={[0, -2.5, 0]}
-          />
           {/* TS DOM conflict workaround */}
           {/* https://github.com/pmndrs/react-three-fiber/issues/34 */}
           <threeLine ref={lineABRef} geometry={lineABGeometry} name="AB">

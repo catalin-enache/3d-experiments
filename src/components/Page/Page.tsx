@@ -10,7 +10,7 @@ import {
 } from "react";
 import { CustomAnimationLoop } from "@components";
 import { type CameraProps, Canvas } from "@react-three/fiber";
-import { GizmoViewport, Stats, GizmoHelper, Grid } from "@react-three/drei";
+import { GizmoViewport, Stats, GizmoHelper } from "@react-three/drei";
 import classes from "./Page.module.css";
 import type { RendererParams } from "@appTypes";
 
@@ -37,7 +37,13 @@ interface PageProps {
   rendererParams?: RendererParams;
   showStats?: boolean;
   showViewportGizmo?: boolean;
-  showGrid?: boolean;
+  gridConfig?: {
+    size?: number;
+    divisions?: number;
+    color1?: string;
+    color2?: string;
+    position?: [number, number, number];
+  };
   axesSize?: number | null;
 }
 
@@ -50,10 +56,12 @@ export const Page = ({
   rendererParams: _rendererParams = {},
   showStats = true,
   showViewportGizmo = true,
-  showGrid = false,
+  gridConfig,
   axesSize = null
 }: PageProps) => {
-  const [showWidgets, setShowWidgets] = useState(showGrid || axesSize !== null);
+  const [showWidgets, setShowWidgets] = useState(
+    !!gridConfig || axesSize !== null
+  );
 
   const { useWebGpu, options } = _rendererParams;
 
@@ -122,16 +130,15 @@ export const Page = ({
     >
       <CustomAnimationLoop />
       {axesSize !== null && showWidgets && <axesHelper args={[axesSize]} />}
-      {showGrid && showWidgets && (
-        <Grid
-          args={[10, 10]}
-          cellSize={1}
-          cellThickness={1}
-          sectionSize={5}
-          sectionThickness={1}
-          infiniteGrid
-          fadeDistance={300}
-          fadeStrength={1}
+      {gridConfig && showWidgets && (
+        <gridHelper
+          args={[
+            gridConfig.size ?? 10,
+            gridConfig.divisions ?? 10,
+            gridConfig.color1 ?? "#444444",
+            gridConfig.color2 ?? "#222222"
+          ]}
+          position={gridConfig.position ?? [0, 0, 0]}
         />
       )}
       {showStats && <Stats className={classes.stats} />}

@@ -8,6 +8,7 @@ export default function DotAndCrossProductsPage() {
         position: [0, 0, 10]
       }}
       rendererParams={{ useWebGpu: true }}
+      gridConfig={{ position: [0, -2.5, 0] }}
     >
       <ScenarioDotAndCrossProduct />
     </Page>
