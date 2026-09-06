@@ -12,6 +12,7 @@ export default function MaterialTestPage() {
           threshold: 1
         }
       }}
+      rendererParams={{ useWebGpu: true }}
     >
       <ScenarioLinesIntersections />
     </Page>

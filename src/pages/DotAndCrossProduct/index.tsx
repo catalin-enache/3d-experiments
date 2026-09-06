@@ -7,6 +7,7 @@ export default function DotAndCrossProductsPage() {
       cameraProps={{
         position: [0, 0, 10]
       }}
+      rendererParams={{ useWebGpu: true }}
     >
       <ScenarioDotAndCrossProduct />
     </Page>

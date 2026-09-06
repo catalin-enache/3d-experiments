@@ -1,9 +1,9 @@
-import { Page } from '@components';
-import ScenarioProjectLongLatOnSphere from './ScenarioProjectLongLatOnSphere.tsx';
+import { Page } from "@components";
+import ScenarioProjectLongLatOnSphere from "./ScenarioProjectLongLatOnSphere.tsx";
 
 export default function ProjectLongLatOnSpherePage() {
   return (
-    <Page orthographic>
+    <Page orthographic rendererParams={{ useWebGpu: true }}>
       <ScenarioProjectLongLatOnSphere />
     </Page>
   );
