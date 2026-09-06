@@ -18,7 +18,11 @@ export const glBindings = ({
   };
 
   const glFolder = pane.addFolder({
-    title: "GL",
+    title:
+      "GL" +
+      (gl instanceof THREE_WEBGL.WebGLRenderer
+        ? " (WebGL)"
+        : ` (WebGPU) ${gl.backend instanceof THREE.WebGPUBackend ? "(WebGPU backend)" : "(WebGL backend)"} `),
     expanded: false
   });
 
