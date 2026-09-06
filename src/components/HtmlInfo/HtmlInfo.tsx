@@ -14,7 +14,7 @@ export function HtmlInfo({ infoRef }: HtmlInfoProps) {
     <Html
       calculatePosition={(_, __, ___) => [0, 0]}
       className={classes.htmlInfo}
-      zIndexRange={[1, 1]}
+      zIndexRange={[2, 2]}
     >
       <div className={classes.htmlInfoPanel}>
         <button

@@ -2,7 +2,6 @@
   --bottom-margin: 120px;
   left: 4px;
   bottom: calc(-100vh + var(--bottom-margin));
-  z-index: 0;
 
   .htmlInfoPanel {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;

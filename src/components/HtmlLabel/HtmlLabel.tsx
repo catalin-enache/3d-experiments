@@ -29,6 +29,7 @@ export const HtmlLabel = ({
     <Html
       center
       className={clsx(classes.htmlLabel, htmlClassName)}
+      zIndexRange={[0, 0]}
       style={htmlStyle}
     >
       <div className={clsx(classes.content, textClassName)} style={textStyle}>
