@@ -107,8 +107,7 @@ export function Inspector({ object }: InspectorProps) {
     <Html
       calculatePosition={() => [4, 4]}
       className={classes.html}
-      zIndexRange={[0, 0]}
-      style={{ zIndex: "1 !important" }}
+      zIndexRange={[1, 1]}
     >
       <div
         className={clsx(classes.pane, "overflow")}
