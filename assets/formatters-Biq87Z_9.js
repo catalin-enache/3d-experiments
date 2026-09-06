@@ -1,0 +1,2 @@
+import{pt as e}from"./index-DACYGU7l.js";function t(e){return`(${e.x.toFixed(3)}, ${e.y.toFixed(3)}, ${e.z.toFixed(3)})`}function n(t){return`(${e.radToDeg(t.x).toFixed(2)}°, ${e.radToDeg(t.y).toFixed(2)}°, ${e.radToDeg(t.z).toFixed(2)}°)`}function r(e){let t=e.elements;return[[t[0],t[4],t[8],t[12]],[t[1],t[5],t[9],t[13]],[t[2],t[6],t[10],t[14]],[t[3],t[7],t[11],t[15]]].map(e=>`[ ${e.map(e=>e.toFixed(3).padStart(7)).join(` `)} ]`).join(`
+`)}export{r as n,t as r,n as t};
