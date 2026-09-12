@@ -1,5 +1,7 @@
 ## RUN
 
+### Python 3.12.10
+
 python -m venv .venv
 source .venv/bin/activate
 
