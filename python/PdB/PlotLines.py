@@ -10,35 +10,30 @@ pygame.init()
 
 screen_width = 1000
 screen_height = 800
-ortho_width = 640
-ortho_height = 480
+
+ortho_x1 = 0
+ortho_x2 = 4
+ortho_y1 = -1
+ortho_y2 = 1
 
 screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF | OPENGL)
 pygame.display.set_caption('Graphs in PyOpenGL')
 
 
-def init_ortho():
+def init_ortho(x0, x1, y0, y1):
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluOrtho2D(0, ortho_width, 0, ortho_height)
+    gluOrtho2D(x0, x1, y0, y1)
 
 
 def point_map(p: tuple[float, float]) -> tuple[float, float]:
     return (
-        map_value(0, screen_width, 0, ortho_width, p[0]),
-        map_value(0, screen_height, ortho_height, 0, p[1])
+        map_value(0, screen_width, ortho_x1, ortho_x2, p[0]),
+        map_value(0, screen_height, ortho_y2, ortho_y1, p[1])
     )
 
 
-def plot_points():
-    glBegin(GL_POINTS)
-    for p in points:
-        mp = point_map(p)
-        glVertex2f(mp[0], mp[1])
-    glEnd()
-
-
-def plot_lines():
+def draw_lines():
     # glBegin(GL_LINES)
     # glBegin(GL_LINE_LOOP)
     # glBegin(GL_LINE_STRIP)
@@ -50,8 +45,16 @@ def plot_lines():
         glEnd()
 
 
+def plot_graph():
+    glBegin(GL_LINE_STRIP)
+    for px in np.arange(0, 4, 0.005):
+        py = math.exp(-px) * math.cos(2 * math.pi * px)
+        glVertex2f(px, py)
+    glEnd()
+
+
 done = False
-init_ortho()
+init_ortho(ortho_x1, ortho_x2, ortho_y1, ortho_y2)
 glPointSize(5)
 
 points: list[list[tuple[int, int]]] = []
@@ -79,7 +82,8 @@ while not done:
             p = pygame.mouse.get_pos()
             line.append(p)
 
-    plot_lines()
+    plot_graph()
+    draw_lines()
 
     pygame.display.flip()
     # pygame.time.wait(100)
