@@ -13,8 +13,8 @@ screen_width = 800
 screen_height = 800
 ortho_left = -400
 ortho_right = 400
-ortho_top = -400
-ortho_bottom = 400
+ortho_top = 0
+ortho_bottom = 800
 
 screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF | OPENGL)
 pygame.display.set_caption('Turtle Graphics')
@@ -22,12 +22,19 @@ pygame.display.set_caption('Turtle Graphics')
 position = (0, 0)
 direction = np.array([0, 1, 0])
 
-axiom = "F"
+axiom = "X" # "F"
 rules = {
-    "F": "F[+F]F"
+    # ---
+    # "F": "F[+F][-F]F"
+    # ---
+    # "F": "FF[+F][--FF][-F+F]"
+    # ---
+    "F": "FF",
+    "X": "F+[-F-XF-X][+FF][--XF[+X]][++F-X]"
+    # ---
 }
 draw_length = 10
-angle = 90
+angle = 25
 stack = []
 rule_run_number = 5
 instructions = ""
