@@ -22,6 +22,30 @@ pygame.display.set_caption('Turtle Graphics')
 position = (0, 0)
 direction = np.array([0, 1, 0])
 
+axiom = "F"
+rules = {
+    "F": "F[+F]F"
+}
+draw_length = 10
+angle = 90
+stack = []
+rule_run_number = 5
+instructions = ""
+
+def run_rule(run_count):
+    global instructions
+    instructions = axiom
+    for loops in range(run_count):
+        old_system = instructions
+        instructions = ""
+        for c in range(0, len(old_system)):
+            if old_system[c] in rules:
+                instructions += rules[old_system[c]]
+            else:
+                instructions += old_system[c]
+    print("Rule")
+    print(instructions)
+
 def line_to(x, y):
     global position
     glBegin(GL_LINE_STRIP)
@@ -32,9 +56,9 @@ def line_to(x, y):
     position = (x, y)
 
 
-def move_to(x, y):
+def move_to(pos):
     global position
-    position = (x, y)
+    position = (pos[0], pos[1])
 
 
 def reset_turtle():
@@ -45,9 +69,20 @@ def reset_turtle():
 
 
 def draw_turtle():
-    for i in range(20):
-        forward(200)
-        rotate(170)
+    global direction
+    for c in range(0, len(instructions)):
+        if instructions[c] == "F":
+            forward(draw_length)
+        elif instructions[c] == "+":
+            rotate(angle)
+        elif instructions[c] == "-":
+            rotate(-angle)
+        elif instructions[c] == "[":
+            stack.append((position, direction))
+        elif instructions[c] == "]":
+            pos, dir = stack.pop()
+            move_to(pos)
+            direction = dir
 
 
 def forward(draw_length):
@@ -68,7 +103,8 @@ def init_ortho():
 
 
 init_ortho()
-glLineWidth(5)
+glLineWidth(1)
+run_rule(rule_run_number)
 
 done = False
 while not done:
