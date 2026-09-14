@@ -3,6 +3,8 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from Cube import *
+from LoadMesh import *
+
 
 pygame.init()
 
@@ -15,7 +17,7 @@ drawing_color = (1, 1, 1, 1)
 screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF | OPENGL)
 pygame.display.set_caption('OpenGL in Python')
 
-cube = Cube(draw_type=GL_LINE_LOOP)
+mesh = LoadMesh("../objects/donut.obj", draw_type=GL_LINE_LOOP)
 
 def initialise():
     glClearColor(background_color[0], background_color[1], background_color[2], background_color[3])
@@ -39,7 +41,7 @@ def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glRotatef(0.1, 10, 0, 1)
     glPushMatrix()
-    cube.draw()
+    mesh.draw()
     glPopMatrix()
 
 
