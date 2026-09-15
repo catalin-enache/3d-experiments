@@ -26,7 +26,7 @@ def initialise():
     # projection
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(60, (screen_width / screen_height), 0.1, 100.0)
+    gluPerspective(60, (screen_width / screen_height), 0.1, 1000.0)
 
     # modelview
     glMatrixMode(GL_MODELVIEW)
@@ -34,7 +34,7 @@ def initialise():
     glLoadIdentity()
     glViewport(0, 0, screen.get_width(), screen.get_height())
     glEnable(GL_DEPTH_TEST)
-    glTranslate(0, 0, -2)
+    glTranslate(0, 0, -10)
 
 
 def display():
