@@ -5,8 +5,11 @@ from OpenGL.GLU import *
 from Cube import *
 from LoadMesh import *
 from Camera import *
+import os
 
 
+win_pos = (100, 100)
+os.environ['SDL_VIDEO_WINDOW_POS'] = f"{win_pos[0]},{win_pos[1]}"
 
 
 pygame.init()
