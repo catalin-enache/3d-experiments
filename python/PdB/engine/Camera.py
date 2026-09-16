@@ -22,9 +22,12 @@ class Camera:
             self.pitch = 89.0
         if self.pitch < -89.0:
             self.pitch = -89.0
-        self.forward.x = cos(radians(self.yaw)) * cos(radians(self.pitch))
-        self.forward.y = sin(radians(self.pitch))
-        self.forward.z = sin(radians(self.yaw)) * cos(radians(self.pitch))
+        _pitch = radians(self.pitch)
+        _yaw = radians(self.yaw)
+        p = cos(_pitch) # projection of the forward vector on the XZ plane
+        self.forward.x = cos(_yaw) * p
+        self.forward.y = sin(_pitch)
+        self.forward.z = sin(_yaw) * p
         self.forward = self.forward.normalize()
         self.right = self.forward.cross(pygame.math.Vector3(0, 1, 0)).normalize()
         self.up = self.right.cross(self.forward).normalize()
