@@ -3,7 +3,12 @@ import pygame
 from Mesh import *
 
 class Cube(Mesh):
-    def __init__(self, draw_type=GL_LINE_LOOP, position=pygame.math.Vector3(0, 0, 0)):
+    def __init__(self,
+                 draw_type=GL_LINE_LOOP,
+                 position=pygame.math.Vector3(0, 0, 0),
+                 rotation=Rotation(),
+                 scale=pygame.math.Vector3(1, 1, 1)
+                 ):
         vertices = [(0.5, -0.5, 0.5),
             (-0.5, -0.5, 0.5),
             (0.5, 0.5, 0.5),
@@ -35,6 +40,6 @@ class Cube(Mesh):
                          triangles=triangles,
                          draw_type=draw_type,
                          translation=position,
-                         rotation=(0, 0, 0),
-                         scale=(1, 1, 1)
+                         rotation=rotation,
+                         scale=scale
                          )

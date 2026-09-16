@@ -24,9 +24,19 @@ screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF | OPEN
 pygame.display.set_caption('OpenGL in Python')
 
 # mesh = LoadMesh("../objects/teapot.obj", draw_type=GL_LINE_LOOP)
-mesh = Cube()
+mesh = Cube(
+    position=pygame.math.Vector3(2,0,0),
+    rotation=Rotation(45, pygame.math.Vector3(0, 1, 0)),
+    scale=pygame.math.Vector3(.5, .5, .5)
+)
+mesh2 = Cube(
+    position=pygame.math.Vector3(2,0,0),
+    rotation=Rotation(45, pygame.math.Vector3(0, 1, 0)),
+    scale=pygame.math.Vector3(2, 2, 2)
+)
 
 camera = Camera(mouse_sensitivity=0.05, key_sensitivity=0.05)
+
 
 def initialise():
     glClearColor(background_color[0], background_color[1], background_color[2], background_color[3])
@@ -37,6 +47,7 @@ def initialise():
     glLoadIdentity()
     gluPerspective(60, (screen_width / screen_height), 0.1, 1000.0)
 
+
 def camera_init():
     # modelview
     glMatrixMode(GL_MODELVIEW)
@@ -44,6 +55,7 @@ def camera_init():
     glViewport(0, 0, screen.get_width(), screen.get_height())
     glEnable(GL_DEPTH_TEST)
     camera.update(screen.get_width(), screen.get_height())
+
 
 def draw_world_axes():
     glLineWidth(3)
@@ -62,6 +74,7 @@ def draw_world_axes():
     glVertex3f(0, 0, 1000)
     glEnd()
 
+
 def reset_gl():
     glLineWidth(1)
     glColor3f(1, 1, 1)
@@ -70,11 +83,11 @@ def reset_gl():
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     camera_init()
-    glPushMatrix()
     draw_world_axes()
     reset_gl()
+    glRotatef(45, 0, 0, 1)
     mesh.draw()
-    glPopMatrix()
+    mesh2.draw()
 
 
 done = False

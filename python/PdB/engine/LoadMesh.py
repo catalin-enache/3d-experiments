@@ -4,7 +4,12 @@ import pygame
 
 class LoadMesh(Mesh):
 
-    def __init__(self, filename, draw_type=GL_LINE_LOOP, position=pygame.math.Vector3(0, 0, 0)):
+    def __init__(self,
+                 filename,
+                 draw_type=GL_LINE_LOOP,
+                 position=pygame.math.Vector3(0, 0, 0),
+                 rotation=Rotation(),
+                 scale=pygame.math.Vector3(1, 1, 1)):
         self.filename = filename
         vertices, triangles = self.load_drawing()
         super().__init__(
@@ -12,8 +17,8 @@ class LoadMesh(Mesh):
             triangles=triangles,
             draw_type=draw_type,
             translation=position,
-            rotation=(0, 0, 0),
-            scale=(1, 1, 1)
+            rotation=rotation,
+            scale=scale
         )
 
     def load_drawing(self):
