@@ -2,20 +2,26 @@ from OpenGL.GL import *
 import pygame
 
 class Mesh:
-    def __init__(self):
-        self.vertices = [(0.5, -0.5, 0.5),
-            (-0.5, -0.5, 0.5),
-            (0.5, 0.5, 0.5),
-            (-0.5, 0.5, 0.5),
-            (0.5, 0.5, -0.5),
-            (-0.5, 0.5, -0.5)]
-        self.triangles = [0, 2, 3, 0, 3, 1]
-        self.draw_type = GL_LINE_LOOP
+    def __init__(self,
+                 vertices=None,
+                 triangles=None,
+                 draw_type=GL_LINE_LOOP,
+                 translation=(0, 0, 0),
+                 rotation=(0, 0, 0),
+                 scale=(1, 1, 1)
+                 ):
+        self.vertices = vertices
+        self.triangles = triangles
+        self.draw_type = draw_type
+        self.translation = translation
 
     def draw(self):
+        glPushMatrix()
+        glTranslatef(self.translation[0], self.translation[1], self.translation[2])
         for t in range(0, len(self.triangles), 3):
             glBegin(self.draw_type)
             glVertex3fv(self.vertices[self.triangles[t]])
             glVertex3fv(self.vertices[self.triangles[t + 1]])
             glVertex3fv(self.vertices[self.triangles[t + 2]])
             glEnd()
+        glPopMatrix()

@@ -23,9 +23,10 @@ drawing_color = (1, 1, 1, 1)
 screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF | OPENGL)
 pygame.display.set_caption('OpenGL in Python')
 
-mesh = LoadMesh("../objects/teapot.obj", draw_type=GL_LINE_LOOP)
+# mesh = LoadMesh("../objects/teapot.obj", draw_type=GL_LINE_LOOP)
+mesh = Cube()
 
-camera = Camera()
+camera = Camera(mouse_sensitivity=0.05, key_sensitivity=0.05)
 
 def initialise():
     glClearColor(background_color[0], background_color[1], background_color[2], background_color[3])

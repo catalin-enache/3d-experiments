@@ -3,7 +3,7 @@ from OpenGL.GLU import *
 from math import *
 
 class Camera:
-    def __init__(self):
+    def __init__(self, mouse_sensitivity=0.5, key_sensitivity=0.5):
         self.eye = pygame.math.Vector3(0, 0, 0)
         self.up = pygame.math.Vector3(0, 1, 0)
         self.right = pygame.math.Vector3(1, 0, 0)
@@ -12,9 +12,8 @@ class Camera:
         self.yaw = -90
         self.pitch = 0
         self.last_mouse = pygame.math.Vector2(0, 0)
-        self.mouse_sensitivityX = 0.5
-        self.mouse_sensitivityY = 0.5
-        self.key_sensitivity = 0.5
+        self.mouse_sensitivity = mouse_sensitivity
+        self.key_sensitivity = key_sensitivity
 
     def rotate(self, yaw, pitch):
         self.yaw += yaw
@@ -42,8 +41,8 @@ class Camera:
         self.last_mouse = pygame.math.Vector2(pygame.mouse.get_pos())
 
         self.rotate(
-            -mouse_change.x * self.mouse_sensitivityX,
-            mouse_change.y * self.mouse_sensitivityY
+            -mouse_change.x * self.mouse_sensitivity,
+            mouse_change.y * self.mouse_sensitivity
         )
 
         keys = pygame.key.get_pressed()
