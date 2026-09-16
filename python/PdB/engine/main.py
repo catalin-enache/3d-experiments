@@ -41,11 +41,34 @@ def camera_init():
     glEnable(GL_DEPTH_TEST)
     camera.update(screen.get_width(), screen.get_height())
 
+def draw_world_axes():
+    glLineWidth(3)
+    glBegin(GL_LINES)
+    # X axis in red
+    glColor3f(1, 0, 0)
+    glVertex3f(0, 0, 0)
+    glVertex3f(1000, 0, 0)
+    # Y axis in green
+    glColor3f(0, 1, 0)
+    glVertex3f(0, 0, 0)
+    glVertex3f(0, 1000, 0)
+    # Z axis in blue
+    glColor3f(0, 0, 1)
+    glVertex3f(0, 0, 0)
+    glVertex3f(0, 0, 1000)
+    glEnd()
+
+def reset_gl():
+    glLineWidth(1)
+    glColor3f(1, 1, 1)
+
 
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     camera_init()
     glPushMatrix()
+    draw_world_axes()
+    reset_gl()
     mesh.draw()
     glPopMatrix()
 
