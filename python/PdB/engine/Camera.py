@@ -46,14 +46,18 @@ class Camera:
         )
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_DOWN]:
+        if keys[pygame.K_s]:
             self.eye -= self.forward * self.key_sensitivity
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_w]:
             self.eye += self.forward * self.key_sensitivity
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_d]:
             self.eye += self.right * self.key_sensitivity
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             self.eye -= self.right * self.key_sensitivity
+        if keys[pygame.K_e]:
+            self.eye += self.up * self.key_sensitivity
+        if keys[pygame.K_q]:
+            self.eye -= self.up * self.key_sensitivity
 
         self.look = self.eye + self.forward
         gluLookAt(self.eye.x, self.eye.y, self.eye.z,
