@@ -6,7 +6,7 @@ python -m venv .venv
 
 source .venv/bin/activate
 
-python -m pip install requests flask
+python -m pip install imgui-bundle numpy pygame PyOpenGL
 
 python -m pip freeze > requirements.txt
 
