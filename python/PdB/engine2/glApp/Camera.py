@@ -22,6 +22,7 @@ class Camera:
             self.pitch = 89.0
         if self.pitch < -89.0:
             self.pitch = -89.0
+        # https://www.udemy.com/course/learn-opengl-with-python-for-graphics-and-games/learn/lecture/31087160#reviews
         _pitch = radians(self.pitch)
         _yaw = radians(self.yaw)
         p = cos(_pitch) # projection of the forward vector on the XZ plane
