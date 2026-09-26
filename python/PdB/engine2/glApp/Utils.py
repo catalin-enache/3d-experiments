@@ -1,6 +1,11 @@
 from OpenGL.GL import *
 
 def compile_shader(shader_type, shader_source):
+    print("At compile time:")
+    print("OpenGL:", glGetString(GL_VERSION))
+    print("GLSL:", glGetString(GL_SHADING_LANGUAGE_VERSION))
+    print("Shader source:", repr(shader_source[:100]))
+
     shader = glCreateShader(shader_type)
     glShaderSource(shader, shader_source)
     glCompileShader(shader)

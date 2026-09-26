@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from .Camera import *
+from .camera import *
 import os
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -11,12 +11,22 @@ class PyOGApp():
         self.screen_width = screen_width
         self.screen_height = screen_height
         pygame.init()
+
+        # comment out the following 3 lines if you want to use OpenGL 2.1
+        pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLEBUFFERS, 1)
+        pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES, 4)
+
+        ###################### NOT NEEDED ON PC #########################
+        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
+        ################################################################
+
         self.screen = pygame.display.set_mode((screen_width, screen_height), DOUBLEBUF | OPENGL)
         pygame.display.set_caption('OpenGL in Python')
         self.camera = Camera()
+        self.program_id = 0
 
     def draw_world_axes(self):
-        glLineWidth(1)
+        glLineWidth(4)
         glBegin(GL_LINES)
         glColor(1, 0, 0)
         glVertex3d(-1000, 0, 0)
