@@ -93,6 +93,9 @@ def display():
 done = False
 initialise()
 
+pygame.mouse.set_visible(False)
+pygame.event.set_grab(True)
+
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
