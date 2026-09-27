@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from .camera import *
+from .Camera import *
 import os
 from OpenGL.GL import *
 from OpenGL.GLU import *
