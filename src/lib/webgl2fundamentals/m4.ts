@@ -1,3 +1,5 @@
+// copied from https://github.com/gfxfundamentals/webgl2-fundamentals
+
 /*
  * Copyright 2021, GFXFundamentals.
  * All rights reserved.
