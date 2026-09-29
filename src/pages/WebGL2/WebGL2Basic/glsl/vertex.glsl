@@ -2,12 +2,13 @@
 
 // an attribute is an input (in) to a vertex shader.
 // It will receive data from a buffer
-in vec4 a_position;
+in vec2 a_position;
+uniform mat3 u_matrix;
 
 // all shaders have a main function
 void main() {
 
-  // gl_Position is a special variable a vertex shader
-  // is responsible for setting
-  gl_Position = a_position;
+  vec3 transformedPosition = u_matrix * vec3(a_position, 1.0);
+
+  gl_Position = vec4(transformedPosition.xy, 0.0, 1.0);
 }

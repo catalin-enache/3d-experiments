@@ -1,5 +1,6 @@
 import type { ScenarioParams } from "@appTypes";
-import { createProgram, init, loop } from "@lib/utils/webgl";
+import { createProgram, init, loop, type Timer } from "@lib/utils/webgl";
+import * as m3 from "@lib/webgl2fundamentals/m3";
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
@@ -15,6 +16,8 @@ export async function WebGL2Basic({ container }: ScenarioParams) {
 
   // look up where the vertex data needs to go.
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+
+  const matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
   // Create a buffer and put three 2d clip space points in it
   const positionBuffer = gl.createBuffer();
@@ -55,7 +58,7 @@ export async function WebGL2Basic({ container }: ScenarioParams) {
     offset
   );
 
-  function tick() {
+  function tick({ timer }: { timer: Timer }) {
     // Clear the canvas
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -64,6 +67,10 @@ export async function WebGL2Basic({ container }: ScenarioParams) {
     gl.useProgram(program);
     // Bind the attribute/buffer set we want.
     gl.bindVertexArray(vao);
+
+    const now = timer.getElapsed();
+    const matrix = m3.rotation(now);
+    gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
     // draw
     const primitiveType = gl.TRIANGLES;
