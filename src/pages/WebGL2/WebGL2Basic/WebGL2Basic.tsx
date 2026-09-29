@@ -1,55 +1,17 @@
 import type { ScenarioParams } from "@appTypes";
-import {
-  createShader,
-  createProgram,
-  resizeCanvasToDisplaySize
-} from "@lib/utils/webgl";
+import { createProgram, init, loop } from "@lib/utils/webgl";
 
-const vertexShaderSource = `#version 300 es
+import vertexShaderSource from "./glsl/vertex.glsl";
+import fragmentShaderSource from "./glsl/fragment.glsl";
 
-// an attribute is an input (in) to a vertex shader.
-// It will receive data from a buffer
-in vec4 a_position;
+export async function WebGL2Basic({ container }: ScenarioParams) {
+  const { gl, cleanUp } = init({ container });
 
-// all shaders have a main function
-void main() {
-
-  // gl_Position is a special variable a vertex shader
-  // is responsible for setting
-  gl_Position = a_position;
-}
-`;
-
-const fragmentShaderSource = `#version 300 es
-
-// fragment shaders don't have a default precision so we need
-// to pick one. highp is a good default. It means "high precision"
-precision highp float;
-
-// we need to declare an output for the fragment shader
-out vec4 outColor;
-
-void main() {
-  // Just set the output to a constant redish-purple
-  outColor = vec4(1, 0, 0.5, 1);
-}
-`;
-
-export function WebGL2Basic({ container }: ScenarioParams) {
-  const canvas = document.createElement("canvas");
-  container.appendChild(canvas);
-  const gl: WebGL2RenderingContext = canvas.getContext("webgl2")!;
-
-  // create GLSL shaders, upload the GLSL source, compile the shaders
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource)!;
-  const fragmentShader = createShader(
+  const program = await createProgram({
     gl,
-    gl.FRAGMENT_SHADER,
+    vertexShaderSource,
     fragmentShaderSource
-  )!;
-
-  // Link the two shaders into a program
-  const program = createProgram(gl, vertexShader, fragmentShader)!;
+  });
 
   // look up where the vertex data needs to go.
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
@@ -60,7 +22,12 @@ export function WebGL2Basic({ container }: ScenarioParams) {
   // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-  const positions = [0, 0, 0, 0.5, 0.7, 0];
+  // prettier-ignore
+  const positions = [
+    0, 0,
+    0, 0.5,
+    1, 0
+  ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
   // Create a vertex array object (attribute state)
@@ -88,14 +55,7 @@ export function WebGL2Basic({ container }: ScenarioParams) {
     offset
   );
 
-  const handleResize = () => {
-    resizeCanvasToDisplaySize({
-      gl,
-      container
-    });
-  };
-
-  function main() {
+  function tick() {
     // Clear the canvas
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -110,16 +70,10 @@ export function WebGL2Basic({ container }: ScenarioParams) {
     const _offset = 0;
     const count = 3;
     gl.drawArrays(primitiveType, _offset, count);
-    requestAnimationFrame(main);
   }
 
-  handleResize();
-  main();
-
-  window.addEventListener("resize", handleResize);
-
-  return () => {
-    window.removeEventListener("resize", handleResize);
-    container.innerHTML = "";
-  };
+  return loop({
+    tick,
+    cleanUp
+  });
 }
