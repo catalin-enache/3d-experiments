@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioProjectLongLatOnSphere from "./ScenarioProjectLongLatOnSphere.tsx";
+import ScenarioProjectLongLatOnSphere from "./ScenarioProjectLongLatOnSphere";
 
 export default function ProjectLongLatOnSpherePage() {
   return (

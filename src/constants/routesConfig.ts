@@ -37,10 +37,10 @@ export const routesConfig = {
     name: "Lines Intersections",
     component: lazy(() => import("@pages/LineIntersections"))
   },
-  webGlRawBasic: {
-    path: "/web-gl-raw-basic",
-    name: "WebGL Raw Basic",
-    component: lazy(() => import("@pages/WebGLRaw/WebGLRawBasic"))
+  webGl2Basic: {
+    path: "/web-gl-2-basic",
+    name: "WebGL 2 Basic",
+    component: lazy(() => import("@pages/WebGL2/WebGL2Basic"))
   },
   shaderShapes: {
     path: "/shaders/shapes",
