@@ -20,6 +20,10 @@ export default defineConfig({
       }
     })
   ],
+  server: {
+    port: 5175,
+    strictPort: false
+  },
   // base: process.env.NODE_ENV === 'production' ? '/3d-experiments/' : './'
   base: "/3d-experiments/",
   assetsInclude: [],
