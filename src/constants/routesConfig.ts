@@ -37,6 +37,11 @@ export const routesConfig = {
     name: "Lines Intersections",
     component: lazy(() => import("@pages/LineIntersections"))
   },
+  webGlRawBasic: {
+    path: "/web-gl-raw-basic",
+    name: "WebGL Raw Basic",
+    component: lazy(() => import("@pages/WebGLRaw/WebGLRawBasic"))
+  },
   shaderShapes: {
     path: "/shaders/shapes",
     name: "Shader Shapes",
@@ -57,7 +62,7 @@ export const routesConfig = {
     name: "Shader Extending Three JS Materials",
     component: lazy(() => import("@pages/Shaders/ExtendingThreeJSMaterials"))
   },
-  heighMapToNormalMap: {
+  shaderHeighMapToNormalMap: {
     path: "/shaders/heigh-map-to-normal-map",
     name: "Shader Heigh Map To Normal Map",
     component: lazy(() => import("@pages/Shaders/HeightMapToNormalMap"))
