@@ -24,6 +24,7 @@ export async function WebGL2Basic({
     "u_resolution"
   );
   const matrixLocation = gl.getUniformLocation(program, "u_matrix");
+  const colorLocation = gl.getUniformLocation(program, "u_color");
 
   // Create a buffer and put three 2d clip space points in it
   const positionBuffer = gl.createBuffer();
@@ -32,16 +33,7 @@ export async function WebGL2Basic({
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
   // prettier-ignore
-  // const positions = [
-  //   10, 20,
-  //   80, 20,
-  //   10, 30,
-  //   10, 30,
-  //   80, 20,
-  //   80, 30
-  // ];
-  // prettier-ignore
-  const positions = [
+  const positions1 = [
     -35, -5,
     35, -5,
     -35, 5,
@@ -49,7 +41,19 @@ export async function WebGL2Basic({
     35, -5,
     35, 5
   ];
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+  const positionsFloat32Array1 = new Float32Array(positions1);
+  // gl.bufferData(gl.ARRAY_BUFFER, positionsFloat32Array1, gl.STATIC_DRAW);
+
+  // prettier-ignore
+  const positions2 = [
+    -35, -35,
+    35, -35,
+    -35, 35,
+    -35, 35,
+    35, -35,
+    35, 35
+  ];
+  const positionsFloat32Array2 = new Float32Array(positions2);
 
   // Create a vertex array object (attribute state)
   const vao = gl.createVertexArray();
@@ -76,18 +80,19 @@ export async function WebGL2Basic({
     offset
   );
 
+  const color1 = [Math.random(), Math.random(), Math.random(), 1];
+  const color2 = [Math.random(), Math.random(), Math.random(), 1];
+
   function tick({ timer }: { timer: Timer }) {
     // Clear the canvas
     gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
     // Bind the attribute/buffer set we want.
     gl.bindVertexArray(vao);
 
-    // Pass in the canvas resolution so we can convert from
-    // pixels to clip space in the shader
     gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
     const now = timer.getElapsed();
@@ -98,12 +103,20 @@ export async function WebGL2Basic({
       m3.rotation(now * 0.75)
     );
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
+    gl.uniform4f(colorLocation, color1[0], color1[1], color1[2], color1[3]);
+    gl.bufferData(gl.ARRAY_BUFFER, positionsFloat32Array1, gl.STATIC_DRAW);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    // draw
-    const primitiveType = gl.TRIANGLES;
-    const _offset = 0;
-    const count = 6;
-    gl.drawArrays(primitiveType, _offset, count);
+    //  ============
+
+    const matrix2 = m3.multiply(
+      m3.translation(gl.canvas.width / 2, gl.canvas.height / 2),
+      m3.rotation(-now * 0.35)
+    );
+    gl.uniformMatrix3fv(matrixLocation, false, matrix2);
+    gl.uniform4f(colorLocation, color2[0], color2[1], color2[2], color2[3]);
+    gl.bufferData(gl.ARRAY_BUFFER, positionsFloat32Array2, gl.STATIC_DRAW);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
   return loop({
