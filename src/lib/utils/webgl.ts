@@ -38,10 +38,13 @@ export const handleResize =
     });
   };
 
-export function init({ container }: ScenarioParams) {
+export function init({ container, webglContextAttributes }: ScenarioParams) {
   const canvas = document.createElement("canvas");
   container.appendChild(canvas);
-  const gl: WebGL2RenderingContext = canvas.getContext("webgl2")!;
+  const gl: WebGL2RenderingContext = canvas.getContext(
+    "webgl2",
+    webglContextAttributes
+  )!;
 
   const handleResizeCallback = handleResize({ gl, container });
 

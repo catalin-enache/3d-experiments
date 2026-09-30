@@ -5,8 +5,11 @@ import * as m3 from "@lib/webgl2fundamentals/m3";
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
 
-export async function WebGL2Basic({ container }: ScenarioParams) {
-  const { gl, cleanUp } = init({ container });
+export async function WebGL2Basic({
+  container,
+  webglContextAttributes
+}: ScenarioParams) {
+  const { gl, cleanUp } = init({ container, webglContextAttributes });
 
   const program = await createProgram({
     gl,
