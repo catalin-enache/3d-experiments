@@ -19,7 +19,10 @@ export async function WebGL2Basic({
 
   // look up where the vertex data needs to go.
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-
+  const resolutionUniformLocation = gl.getUniformLocation(
+    program,
+    "u_resolution"
+  );
   const matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
   // Create a buffer and put three 2d clip space points in it
@@ -29,10 +32,22 @@ export async function WebGL2Basic({
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
   // prettier-ignore
+  // const positions = [
+  //   10, 20,
+  //   80, 20,
+  //   10, 30,
+  //   10, 30,
+  //   80, 20,
+  //   80, 30
+  // ];
+  // prettier-ignore
   const positions = [
-    0, 0,
-    0, 0.5,
-    1, 0
+    -35, -5,
+    35, -5,
+    -35, 5,
+    -35, 5,
+    35, -5,
+    35, 5
   ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
@@ -71,14 +86,23 @@ export async function WebGL2Basic({
     // Bind the attribute/buffer set we want.
     gl.bindVertexArray(vao);
 
+    // Pass in the canvas resolution so we can convert from
+    // pixels to clip space in the shader
+    gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+
     const now = timer.getElapsed();
-    const matrix = m3.rotation(now);
+    // const matrix = m3.rotation(now * 0.99);
+    // const matrix = m3.translation(gl.canvas.width / 2, gl.canvas.height / 2);
+    const matrix = m3.multiply(
+      m3.translation(100, 100),
+      m3.rotation(now * 0.75)
+    );
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
     // draw
     const primitiveType = gl.TRIANGLES;
     const _offset = 0;
-    const count = 3;
+    const count = 6;
     gl.drawArrays(primitiveType, _offset, count);
   }
 

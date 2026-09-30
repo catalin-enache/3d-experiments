@@ -232,6 +232,12 @@ export function rotation(angleInRadians: number, dst?: Matrix3): Matrix3 {
 
   dst = dst ?? new MatType(9);
 
+  /*
+  [c, -s, 0,
+   s,  c, 0,
+   0,  0, 1]
+  */
+
   dst[0] = c;
   dst[1] = -s;
   dst[2] = 0;
