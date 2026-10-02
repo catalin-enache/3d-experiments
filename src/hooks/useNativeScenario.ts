@@ -21,14 +21,22 @@ export function useNativeScenario({
     });
 
     let cleanup: (() => void) | undefined;
+    let disposed = false;
     if (typeof res === "function") {
       cleanup = res;
     } else if (res instanceof Promise) {
       void res.then((_cleanup) => {
-        cleanup = _cleanup;
+        // The effect may have been cleaned up (e.g. StrictMode double-mount)
+        // before the async scenario finished initializing.
+        if (disposed) {
+          _cleanup();
+        } else {
+          cleanup = _cleanup;
+        }
       });
     }
     return () => {
+      disposed = true;
       if (cleanup) {
         cleanup();
       }

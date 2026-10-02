@@ -70,16 +70,19 @@ export function loop({
   const timer = new Timer();
   timer.connect(document);
 
+  let rafId = 0;
+
   function render() {
     timer.update();
     tick({ timer });
 
-    requestAnimationFrame(render);
+    rafId = requestAnimationFrame(render);
   }
 
-  requestAnimationFrame(render);
+  rafId = requestAnimationFrame(render);
 
   return () => {
+    cancelAnimationFrame(rafId);
     timer.dispose();
     if (cleanUp) cleanUp();
   };

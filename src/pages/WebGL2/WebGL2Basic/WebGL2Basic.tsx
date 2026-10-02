@@ -1,3 +1,4 @@
+import GUI from "lil-gui";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop, type Timer } from "@lib/utils/webgl";
 import * as m3 from "@lib/webgl2fundamentals/m3";
@@ -79,6 +80,26 @@ export async function WebGL2Basic({
   const color1 = [Math.random(), Math.random(), Math.random(), 1];
   const color2 = [Math.random(), Math.random(), Math.random(), 1];
 
+  const transform1 = {
+    translationX: 200,
+    translationY: 200,
+    rotation: 0, // degrees
+    rotationSpeed: 0.75, // radians per second
+    scaleX: 1,
+    scaleY: 1
+  };
+
+  const gui = new GUI({ title: "Triangle transform" });
+  const translationFolder = gui.addFolder("Translation");
+  translationFolder.add(transform1, "translationX", -2000, 2000, 1).name("x");
+  translationFolder.add(transform1, "translationY", -2000, 2000, 1).name("y");
+  const rotationFolder = gui.addFolder("Rotation");
+  rotationFolder.add(transform1, "rotation", -360, 360, 1).name("angle (deg)");
+  rotationFolder.add(transform1, "rotationSpeed", -5, 5, 0.01).name("speed");
+  const scaleFolder = gui.addFolder("Scale");
+  scaleFolder.add(transform1, "scaleX", -5, 5, 0.01).name("x");
+  scaleFolder.add(transform1, "scaleY", -5, 5, 0.01).name("y");
+
   function tick({ timer }: { timer: Timer }) {
     // Clear the canvas
     gl.clearColor(0, 0, 0, 0);
@@ -95,8 +116,13 @@ export async function WebGL2Basic({
     // const matrix = m3.rotation(now * 0.99);
     // const matrix = m3.translation(gl.canvas.width / 2, gl.canvas.height / 2);
     const matrix = m3.multiply(
-      m3.translation(200, 200),
-      m3.multiply(m3.rotation(now * 0.75), m3.scaling(1, 1))
+      m3.translation(transform1.translationX, transform1.translationY),
+      m3.multiply(
+        m3.rotation(
+          m3.degToRad(transform1.rotation) + now * transform1.rotationSpeed
+        ),
+        m3.scaling(transform1.scaleX, transform1.scaleY)
+      )
     );
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
     gl.uniform4f(colorLocation, color1[0], color1[1], color1[2], color1[3]);
@@ -117,6 +143,9 @@ export async function WebGL2Basic({
 
   return loop({
     tick,
-    cleanUp
+    cleanUp: () => {
+      gui.destroy();
+      cleanUp();
+    }
   });
 }
