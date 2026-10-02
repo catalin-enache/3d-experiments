@@ -68,13 +68,19 @@ export function setDefaultType(Ctor: MatConstructor): MatConstructor {
 }
 
 /**
- * Takes two Matrix3, a and b, and computes the product in the order
- * that pre-composes b with a.  In other words, the matrix returned will
- * @param {module:webgl-2d-math.Matrix3} a A matrix.
- * @param {module:webgl-2d-math.Matrix3} b A matrix.
- * @param {module:webgl-2d-math.Matrix3} [dst] optional matrix to store result
- * @return {module:webgl-2d-math.Matrix3} the result.
- * @memberOf module:webgl-2d-math
+ * Multiplies two 3-by-3 matrices and returns a * b.
+ *
+ * This pre-composes b with a. When the resulting matrix is
+ * applied to a column vector, b transforms the vector first,
+ * followed by a:
+ *
+ *     (a * b) * v = a * (b * v)
+ *
+ * Matrices use the column-major layout expected by WebGL.
+ * @param {Matrix3} a A matrix.
+ * @param {Matrix3} b A matrix.
+ * @param {Matrix3} [dst] optional matrix to store result
+ * @return {Matrix3} the result.
  */
 export function multiply(a: Matrix3, b: Matrix3, dst?: Matrix3): Matrix3 {
   dst = dst ?? new MatType(9);
@@ -145,6 +151,12 @@ export function projection(
 ): Matrix3 {
   dst = dst ?? new MatType(9);
   // Note: This matrix flips the Y axis so 0 is at the top.
+
+  /*
+   [2/width,       0,         0,
+    0,             -2/height, 0,
+   -1,             1,         1]
+  */
 
   dst[0] = 2 / width;
   dst[1] = 0;

@@ -34,13 +34,9 @@ export async function WebGL2Basic({
 
   // prettier-ignore
   const positions1 = [
-    -35, -5,
-    35, -5,
-    -35, 5,
-    -35, 5,
-    35, -5,
-    35, 5
-  ];
+    0, -100,
+    150, 125,
+    -175, 100];
   const positionsFloat32Array1 = new Float32Array(positions1);
   // gl.bufferData(gl.ARRAY_BUFFER, positionsFloat32Array1, gl.STATIC_DRAW);
 
@@ -99,19 +95,19 @@ export async function WebGL2Basic({
     // const matrix = m3.rotation(now * 0.99);
     // const matrix = m3.translation(gl.canvas.width / 2, gl.canvas.height / 2);
     const matrix = m3.multiply(
-      m3.translation(100, 100),
-      m3.rotation(now * 0.75)
+      m3.translation(200, 200),
+      m3.multiply(m3.rotation(now * 0.75), m3.scaling(1, 1))
     );
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
     gl.uniform4f(colorLocation, color1[0], color1[1], color1[2], color1[3]);
     gl.bufferData(gl.ARRAY_BUFFER, positionsFloat32Array1, gl.STATIC_DRAW);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     //  ============
 
     const matrix2 = m3.multiply(
       m3.translation(gl.canvas.width / 2, gl.canvas.height / 2),
-      m3.rotation(-now * 0.35)
+      m3.multiply(m3.rotation(-now * 0.35), m3.scaling(8, 1))
     );
     gl.uniformMatrix3fv(matrixLocation, false, matrix2);
     gl.uniform4f(colorLocation, color2[0], color2[1], color2[2], color2[3]);
