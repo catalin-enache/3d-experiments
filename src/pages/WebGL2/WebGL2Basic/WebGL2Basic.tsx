@@ -118,7 +118,7 @@ export async function WebGL2Basic({
       gl.ARRAY_BUFFER,
       new Float32Array([
         // 6 colors for 6 vertices
-        0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1
+        0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1
       ]),
       gl.STATIC_DRAW
     );
@@ -139,7 +139,7 @@ export async function WebGL2Basic({
       gl.ARRAY_BUFFER,
       new Float32Array([
         // 6 colors for 6 vertices
-        0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1
+        0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1
       ]),
       gl.STATIC_DRAW
     );
