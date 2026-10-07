@@ -74,6 +74,11 @@ export const routesConfig: RouteNode[] = [
         segment: "basic",
         name: "Basic",
         component: lazy(() => import("@pages/WebGL2/WebGL2Basic"))
+      },
+      {
+        segment: "image-processing",
+        name: "Image Processing",
+        component: lazy(() => import("@pages/WebGL2/ImageProcessing"))
       }
     ]
   },
