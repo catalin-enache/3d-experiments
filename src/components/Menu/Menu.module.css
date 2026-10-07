@@ -1,4 +1,5 @@
 .container {
+  --depth: 0;
   position: absolute;
   bottom: 4px;
   right: 4px;
@@ -50,14 +51,19 @@
 
 .link {
   display: block;
+  width: 100%;
 
-  padding: 4px 12px;
+  padding: 4px 12px 4px calc(12px + var(--depth, 0) * 12px);
+
+  font: inherit;
+  text-align: left;
 
   color: #ccc;
   background: transparent;
 
   text-decoration: none;
 
+  border: none;
   border-top: 1px solid #2d2d2d;
 }
 
@@ -71,4 +77,12 @@
   background: rgba(255, 255, 255, 0.1);
 
   font-weight: 600;
+}
+
+.group {
+  cursor: pointer;
+}
+
+.activeGroup {
+  color: #fff;
 }
