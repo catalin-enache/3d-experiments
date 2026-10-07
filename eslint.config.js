@@ -44,6 +44,7 @@ export default defineConfig([
         { argsIgnorePattern: "^_" }
       ],
       "@typescript-eslint/prefer-promise-reject-errors": "off",
+      "@typescript-eslint/prefer-for-of": "off",
       // React rules
       "react-refresh/only-export-components": [
         "warn",
