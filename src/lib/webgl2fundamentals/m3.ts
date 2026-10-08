@@ -200,6 +200,12 @@ export function project(
 export function translation(tx: number, ty: number, dst?: Matrix3): Matrix3 {
   dst = dst ?? new MatType(9);
 
+  /*
+  [ 1,  0, 0,
+    0,  1, 0,
+   tx, ty, 1]
+  */
+
   dst[0] = 1;
   dst[1] = 0;
   dst[2] = 0;
@@ -289,6 +295,12 @@ export function rotate(
  */
 export function scaling(sx: number, sy: number, dst?: Matrix3): Matrix3 {
   dst = dst ?? new MatType(9);
+
+  /*
+  [sx, 0, 0,
+   0, sy, 0,
+   0,  0, 1]
+  */
 
   dst[0] = sx;
   dst[1] = 0;
