@@ -79,6 +79,11 @@ export const routesConfig: RouteNode[] = [
         segment: "image-processing",
         name: "Image Processing",
         component: lazy(() => import("@pages/WebGL2/ImageProcessing"))
+      },
+      {
+        segment: "draw-images-in-rectangles",
+        name: "Draw Images In Rectangles",
+        component: lazy(() => import("@pages/WebGL2/DrawImagesInRectangles"))
       }
     ]
   },
