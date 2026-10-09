@@ -84,6 +84,11 @@ export const routesConfig: RouteNode[] = [
         segment: "draw-images-in-rectangles",
         name: "Draw Images In Rectangles",
         component: lazy(() => import("@pages/WebGL2/DrawImagesInRectangles"))
+      },
+      {
+        segment: "matrix-stack-squares",
+        name: "Matrix Stack Squares",
+        component: lazy(() => import("@pages/WebGL2/MatrixStackSquares"))
       }
     ]
   },

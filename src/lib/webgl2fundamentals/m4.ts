@@ -52,7 +52,7 @@ type Vector4 = number[] | TypedArray;
 /**
  * An array or typed array with 16 values.
  */
-type Matrix4 = number[] | TypedArray;
+export type Matrix4 = number[] | TypedArray;
 
 /**
  * A constructor for the type this library creates, e.g. `Float32Array` or `Array`.
