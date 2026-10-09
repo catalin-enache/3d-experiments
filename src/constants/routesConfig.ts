@@ -89,6 +89,11 @@ export const routesConfig: RouteNode[] = [
         segment: "matrix-stack-squares",
         name: "Matrix Stack Squares",
         component: lazy(() => import("@pages/WebGL2/MatrixStackSquares"))
+      },
+      {
+        segment: "orthographic-3d",
+        name: "Orthographic 3D",
+        component: lazy(() => import("@pages/WebGL2/Orthographic3D"))
       }
     ]
   },
