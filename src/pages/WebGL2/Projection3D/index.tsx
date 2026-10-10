@@ -1,10 +1,10 @@
 import { NativePage } from "@components";
-import { Orthographic3D } from "./Orthographic3D.tsx";
+import { Projection3D } from "./Projection3D.tsx";
 
 export default function HomePage() {
   return (
     <NativePage
-      nativeScenario={Orthographic3D}
+      nativeScenario={Projection3D}
       options={{
         webglContextAttributes: {
           preserveDrawingBuffer: false

@@ -15,7 +15,7 @@ function degToRad(degrees: number) {
   return (degrees * Math.PI) / 180;
 }
 
-export async function Orthographic3D({
+export async function Projection3D({
   container,
   webglContextAttributes
 }: ScenarioParams) {
@@ -56,18 +56,25 @@ export async function Orthographic3D({
   );
 
   const params = {
-    translation: { x: gl.canvas.width / 2, y: gl.canvas.height / 2, z: 0 },
+    projection: "orthographic" as "perspective" | "orthographic",
+    translation: { x: 0, y: 0, z: -950 },
     // in degrees
     rotation: { x: 40, y: 25, z: 325 },
     scale: { x: 1, y: 1, z: 1 }
   };
 
-  const depth = 400;
+  const depth = 2000;
 
   const pane = new Pane({ title: "Transform" });
+  pane.addBinding(params, "projection", {
+    options: {
+      Perspective: "perspective",
+      Orthographic: "orthographic"
+    }
+  });
   pane.addBinding(params, "translation", {
-    x: { min: 0, max: gl.canvas.width, step: 1 },
-    y: { min: 0, max: gl.canvas.height, step: 1 },
+    x: { min: -gl.canvas.width / 2, max: gl.canvas.width / 2, step: 1 },
+    y: { min: -gl.canvas.height / 2, max: gl.canvas.height / 2, step: 1 },
     z: { min: -depth, max: depth, step: 1 }
   });
   pane.addBinding(params, "rotation", {
@@ -95,17 +102,26 @@ export async function Orthographic3D({
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    const { translation, rotation, scale } = params;
+    const { projection, translation, rotation, scale } = params;
 
-    // converts from pixels to clip space, z goes from depth to -depth
-    let matrix = m4.orthographic(
-      0,
-      gl.canvas.width,
-      gl.canvas.height,
-      0,
-      depth,
-      -depth
-    );
+    let matrix =
+      projection === "orthographic"
+        ? // centered on the canvas, y up and looking down -z like perspective,
+          // so it keeps the same handedness (winding order / depth direction)
+          m4.orthographic(
+            -gl.canvas.width / 2,
+            gl.canvas.width / 2,
+            -gl.canvas.height / 2,
+            gl.canvas.height / 2,
+            -depth,
+            depth
+          )
+        : m4.perspective(
+            degToRad(60),
+            gl.canvas.width / gl.canvas.height,
+            1,
+            2000
+          );
     matrix = m4.translate(matrix, translation.x, translation.y, translation.z);
     matrix = m4.xRotate(matrix, degToRad(rotation.x));
     matrix = m4.yRotate(matrix, degToRad(rotation.y));

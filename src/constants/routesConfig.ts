@@ -91,9 +91,9 @@ export const routesConfig: RouteNode[] = [
         component: lazy(() => import("@pages/WebGL2/MatrixStackSquares"))
       },
       {
-        segment: "orthographic-3d",
-        name: "Orthographic 3D",
-        component: lazy(() => import("@pages/WebGL2/Orthographic3D"))
+        segment: "projection-3d",
+        name: "Projection 3D",
+        component: lazy(() => import("@pages/WebGL2/Projection3D"))
       }
     ]
   },
