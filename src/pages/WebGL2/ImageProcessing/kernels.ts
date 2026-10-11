@@ -1,3 +1,4 @@
+// https://docs.gimp.org/2.6/en/plug-in-convmatrix.html
 export const kernels = {
   // prettier-ignore
   normal: [
