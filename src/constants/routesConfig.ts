@@ -99,6 +99,11 @@ export const routesConfig: RouteNode[] = [
         segment: "camera-3d",
         name: "Camera 3D",
         component: lazy(() => import("@pages/WebGL2/Camera3D"))
+      },
+      {
+        segment: "heads-looking-at",
+        name: "Heads Looking At",
+        component: lazy(() => import("@pages/WebGL2/HeadsLookingAt"))
       }
     ]
   },
