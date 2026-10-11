@@ -1,7 +1,7 @@
 import { NativePage } from "@components";
 import { Projection3D } from "./Projection3D.tsx";
 
-export default function HomePage() {
+export default function Projection3DPage() {
   return (
     <NativePage
       nativeScenario={Projection3D}

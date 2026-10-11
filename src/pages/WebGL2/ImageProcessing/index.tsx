@@ -1,7 +1,7 @@
 import { NativePage } from "@components";
 import { ImageProcessing } from "./ImageProcessing";
 
-export default function HomePage() {
+export default function ImageProcessingPage() {
   return (
     <NativePage
       nativeScenario={ImageProcessing}

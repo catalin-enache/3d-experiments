@@ -1,7 +1,7 @@
 import { NativePage } from "@components";
 import { DrawImagesInRectangles } from "./DrawImagesInRectangles.tsx";
 
-export default function HomePage() {
+export default function DrawImagesInRectanglesPage() {
   return (
     <NativePage
       nativeScenario={DrawImagesInRectangles}
