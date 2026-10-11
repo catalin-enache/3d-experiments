@@ -4,7 +4,7 @@ import { createProgram, init, loop } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
 import { degToRad } from "@lib/webgl2fundamentals/m3";
 import {
-  letterF3D,
+  letterF3DPositions,
   letterF3DColors,
   letterF3DVertexCount
 } from "@lib/geometries";
@@ -34,7 +34,7 @@ export async function Projection3D({
 
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  letterF3D(gl);
+  letterF3DPositions(gl);
   gl.enableVertexAttribArray(positionAttributeLocation);
   gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 

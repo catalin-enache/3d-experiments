@@ -1,138 +1,269 @@
-import * as m4 from "@lib/webgl2fundamentals/m4";
-
+// The F is centered around the origin with +Y up (+Z towards the viewer).
 // Triangles are wound so that with CULL_FACE enabled
 // only the faces pointing toward the viewer are drawn
 export const letterF3DVertices =
   // prettier-ignore
   new Float32Array([
     // left column front
-    0, 0, 0,
-    0, 150, 0,
-    30, 0, 0,
-    0, 150, 0,
-    30, 150, 0,
-    30, 0, 0,
+    -50, 75, 15,
+    -50, -75, 15,
+    -20, 75, 15,
+    -50, -75, 15,
+    -20, -75, 15,
+    -20, 75, 15,
 
     // top rung front
-    30, 0, 0,
-    30, 30, 0,
-    100, 0, 0,
-    30, 30, 0,
-    100, 30, 0,
-    100, 0, 0,
+    -20, 75, 15,
+    -20, 45, 15,
+    50, 75, 15,
+    -20, 45, 15,
+    50, 45, 15,
+    50, 75, 15,
 
     // middle rung front
-    30, 60, 0,
-    30, 90, 0,
-    67, 60, 0,
-    30, 90, 0,
-    67, 90, 0,
-    67, 60, 0,
+    -20, 15, 15,
+    -20, -15, 15,
+    17, 15, 15,
+    -20, -15, 15,
+    17, -15, 15,
+    17, 15, 15,
 
     // left column back
-    0, 0, 30,
-    30, 0, 30,
-    0, 150, 30,
-    0, 150, 30,
-    30, 0, 30,
-    30, 150, 30,
+    -50, 75, -15,
+    -20, 75, -15,
+    -50, -75, -15,
+    -50, -75, -15,
+    -20, 75, -15,
+    -20, -75, -15,
 
     // top rung back
-    30, 0, 30,
-    100, 0, 30,
-    30, 30, 30,
-    30, 30, 30,
-    100, 0, 30,
-    100, 30, 30,
+    -20, 75, -15,
+    50, 75, -15,
+    -20, 45, -15,
+    -20, 45, -15,
+    50, 75, -15,
+    50, 45, -15,
 
     // middle rung back
-    30, 60, 30,
-    67, 60, 30,
-    30, 90, 30,
-    30, 90, 30,
-    67, 60, 30,
-    67, 90, 30,
+    -20, 15, -15,
+    17, 15, -15,
+    -20, -15, -15,
+    -20, -15, -15,
+    17, 15, -15,
+    17, -15, -15,
 
     // top
-    0, 0, 0,
-    100, 0, 0,
-    100, 0, 30,
-    0, 0, 0,
-    100, 0, 30,
-    0, 0, 30,
+    -50, 75, 15,
+    50, 75, 15,
+    50, 75, -15,
+    -50, 75, 15,
+    50, 75, -15,
+    -50, 75, -15,
 
     // top rung right
-    100, 0, 0,
-    100, 30, 0,
-    100, 30, 30,
-    100, 0, 0,
-    100, 30, 30,
-    100, 0, 30,
+    50, 75, 15,
+    50, 45, 15,
+    50, 45, -15,
+    50, 75, 15,
+    50, 45, -15,
+    50, 75, -15,
 
     // under top rung
-    30, 30, 0,
-    30, 30, 30,
-    100, 30, 30,
-    30, 30, 0,
-    100, 30, 30,
-    100, 30, 0,
+    -20, 45, 15,
+    -20, 45, -15,
+    50, 45, -15,
+    -20, 45, 15,
+    50, 45, -15,
+    50, 45, 15,
 
     // between top rung and middle
-    30, 30, 0,
-    30, 60, 30,
-    30, 30, 30,
-    30, 30, 0,
-    30, 60, 0,
-    30, 60, 30,
+    -20, 45, 15,
+    -20, 15, -15,
+    -20, 45, -15,
+    -20, 45, 15,
+    -20, 15, 15,
+    -20, 15, -15,
 
     // top of middle rung
-    30, 60, 0,
-    67, 60, 30,
-    30, 60, 30,
-    30, 60, 0,
-    67, 60, 0,
-    67, 60, 30,
+    -20, 15, 15,
+    17, 15, -15,
+    -20, 15, -15,
+    -20, 15, 15,
+    17, 15, 15,
+    17, 15, -15,
 
     // right of middle rung
-    67, 60, 0,
-    67, 90, 30,
-    67, 60, 30,
-    67, 60, 0,
-    67, 90, 0,
-    67, 90, 30,
+    17, 15, 15,
+    17, -15, -15,
+    17, 15, -15,
+    17, 15, 15,
+    17, -15, 15,
+    17, -15, -15,
 
     // bottom of middle rung.
-    30, 90, 0,
-    30, 90, 30,
-    67, 90, 30,
-    30, 90, 0,
-    67, 90, 30,
-    67, 90, 0,
+    -20, -15, 15,
+    -20, -15, -15,
+    17, -15, -15,
+    -20, -15, 15,
+    17, -15, -15,
+    17, -15, 15,
 
     // right of bottom
-    30, 90, 0,
-    30, 150, 30,
-    30, 90, 30,
-    30, 90, 0,
-    30, 150, 0,
-    30, 150, 30,
+    -20, -15, 15,
+    -20, -75, -15,
+    -20, -15, -15,
+    -20, -15, 15,
+    -20, -75, 15,
+    -20, -75, -15,
 
     // bottom
-    0, 150, 0,
-    0, 150, 30,
-    30, 150, 30,
-    0, 150, 0,
-    30, 150, 30,
-    30, 150, 0,
+    -50, -75, 15,
+    -50, -75, -15,
+    -20, -75, -15,
+    -50, -75, 15,
+    -20, -75, -15,
+    -20, -75, 15,
 
     // left side
-    0, 0, 0,
-    0, 0, 30,
-    0, 150, 30,
-    0, 0, 0,
-    0, 150, 30,
-    0, 150, 0
+    -50, 75, 15,
+    -50, 75, -15,
+    -50, -75, -15,
+    -50, 75, 15,
+    -50, -75, -15,
+    -50, -75, 15
   ]);
+
+export const _letterF3DNormals =
+  // prettier-ignore
+  new Float32Array([
+    // left column front
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+
+    // top rung front
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+
+    // middle rung front
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+    0, 0, 1,
+
+    // left column back
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+
+    // top rung back
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+
+    // middle rung back
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+    0, 0, -1,
+
+    // top
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+
+    // top rung right
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+
+    // under top rung
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+
+    // between top rung and middle
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+
+    // top of middle rung
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+    0, 1, 0,
+
+    // right of middle rung
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+
+    // bottom of middle rung.
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+
+    // right of bottom
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+    1, 0, 0,
+
+    // bottom
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+    0, -1, 0,
+
+    // left side
+    -1, 0, 0,
+    -1, 0, 0,
+    -1, 0, 0,
+    -1, 0, 0,
+    -1, 0, 0,
+    -1, 0, 0,
+]);
 
 export const letterF3DVertexCount = letterF3DVertices.length / 3;
 
@@ -269,32 +400,14 @@ export const letterF3DVertexColors =
     160, 160, 220
   ]);
 
-export function letterF3D(gl: WebGL2RenderingContext) {
+export function letterF3DPositions(gl: WebGL2RenderingContext) {
   gl.bufferData(gl.ARRAY_BUFFER, letterF3DVertices, gl.STATIC_DRAW);
+}
+
+export function letterF3DNormals(gl: WebGL2RenderingContext) {
+  gl.bufferData(gl.ARRAY_BUFFER, _letterF3DNormals, gl.STATIC_DRAW);
 }
 
 export function letterF3DColors(gl: WebGL2RenderingContext) {
   gl.bufferData(gl.ARRAY_BUFFER, letterF3DVertexColors, gl.STATIC_DRAW);
-}
-
-// Center the F around the origin and flip it so +Y is up.
-// Done once at init time rather than at draw time.
-export function centeredLetterF3D(gl: WebGL2RenderingContext) {
-  const positions = new Float32Array(letterF3DVertices);
-  let matrix = m4.xRotation(Math.PI);
-  matrix = m4.translate(matrix, -50, -75, -15);
-
-  for (let i = 0; i < positions.length; i += 3) {
-    const vector = m4.transformVector(matrix, [
-      positions[i + 0],
-      positions[i + 1],
-      positions[i + 2],
-      1
-    ]);
-    positions[i + 0] = vector[0];
-    positions[i + 1] = vector[1];
-    positions[i + 2] = vector[2];
-  }
-
-  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 }
