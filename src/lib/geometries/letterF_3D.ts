@@ -1,3 +1,5 @@
+import * as m4 from "@lib/webgl2fundamentals/m4";
+
 // Triangles are wound so that with CULL_FACE enabled
 // only the faces pointing toward the viewer are drawn
 export const letterF3DVertices =
@@ -273,4 +275,26 @@ export function letterF3D(gl: WebGL2RenderingContext) {
 
 export function letterF3DColors(gl: WebGL2RenderingContext) {
   gl.bufferData(gl.ARRAY_BUFFER, letterF3DVertexColors, gl.STATIC_DRAW);
+}
+
+// Center the F around the origin and flip it so +Y is up.
+// Done once at init time rather than at draw time.
+export function centeredLetterF3D(gl: WebGL2RenderingContext) {
+  const positions = new Float32Array(letterF3DVertices);
+  let matrix = m4.xRotation(Math.PI);
+  matrix = m4.translate(matrix, -50, -75, -15);
+
+  for (let i = 0; i < positions.length; i += 3) {
+    const vector = m4.transformVector(matrix, [
+      positions[i + 0],
+      positions[i + 1],
+      positions[i + 2],
+      1
+    ]);
+    positions[i + 0] = vector[0];
+    positions[i + 1] = vector[1];
+    positions[i + 2] = vector[2];
+  }
+
+  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 }

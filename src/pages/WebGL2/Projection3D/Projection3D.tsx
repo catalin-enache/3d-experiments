@@ -2,6 +2,7 @@ import { Pane } from "tweakpane";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
+import { degToRad } from "@lib/webgl2fundamentals/m3";
 import {
   letterF3D,
   letterF3DColors,
@@ -10,10 +11,6 @@ import {
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
-
-function degToRad(degrees: number) {
-  return (degrees * Math.PI) / 180;
-}
 
 export async function Projection3D({
   container,

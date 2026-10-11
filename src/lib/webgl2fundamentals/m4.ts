@@ -357,6 +357,13 @@ export function lookAt(
   const xAxis = normalize(cross(up, zAxis));
   const yAxis = normalize(cross(zAxis, xAxis));
 
+  /*
+  [ xAxis[0], xAxis[1], xAxis[2], 0,
+    yAxis[0], yAxis[1], yAxis[2], 0,
+    zAxis[0], zAxis[1], zAxis[2], 0,
+    cameraPosition[0], cameraPosition[1], cameraPosition[2], 1 ]
+  */
+
   dst[0] = xAxis[0];
   dst[1] = xAxis[1];
   dst[2] = xAxis[2];
