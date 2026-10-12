@@ -7,6 +7,7 @@ import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
 import { squares, type Square } from "./squares";
 
+// https://webgl2fundamentals.org/webgl/lessons/webgl-2d-matrix-stack.html
 export async function MatrixStackSquares({
   container,
   webglContextAttributes

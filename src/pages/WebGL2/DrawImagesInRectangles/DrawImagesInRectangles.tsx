@@ -80,6 +80,7 @@ function loadImageAndCreateTextureInfo(
   return textureInfo;
 }
 
+// https://webgl2fundamentals.org/webgl/lessons/webgl-2d-drawimage.html
 export async function DrawImagesInRectangles({
   container,
   webglContextAttributes

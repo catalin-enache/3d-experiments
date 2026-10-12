@@ -12,6 +12,7 @@ import {
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
 
+// https://webgl2fundamentals.org/webgl/lessons/webgl-3d-perspective.html
 export async function Projection3D({
   container,
   webglContextAttributes

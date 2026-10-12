@@ -8,6 +8,7 @@ import { head3D, head3DColors, headVertexCount } from "@lib/geometries";
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
 
+// https://webgl2fundamentals.org/webgl/lessons/webgl-3d-camera.html
 export async function HeadsLookingAt({
   container,
   webglContextAttributes

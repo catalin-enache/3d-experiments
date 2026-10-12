@@ -54,6 +54,7 @@ function createAndSetupTexture(gl: WebGL2RenderingContext) {
   return texture;
 }
 
+// https://webgl2fundamentals.org/webgl/lessons/webgl-image-processing-continued.html
 export async function ImageProcessing({
   container,
   webglContextAttributes
