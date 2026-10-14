@@ -55,6 +55,17 @@ export async function LightingPoint({
   );
   // the light marker is drawn with its plain color, without any lighting
   const unlitLocation = gl.getUniformLocation(program, "u_unlit");
+  // the specular highlight depends on where the camera is
+  const viewWorldPositionLocation = gl.getUniformLocation(
+    program,
+    "u_viewWorldPosition"
+  );
+  const shininessLocation = gl.getUniformLocation(program, "u_shininess");
+  const lightColorLocation = gl.getUniformLocation(program, "u_lightColor");
+  const specularColorLocation = gl.getUniformLocation(
+    program,
+    "u_specularColor"
+  );
 
   // one VAO per geometry, each holding its own positions and normals
   function createVao(
@@ -117,7 +128,11 @@ export async function LightingPoint({
     lightY: 80,
     lightZ: 120,
     // DIFFERENT: distance at which the light is at half its brightness
-    falloffDistance: 200
+    falloffDistance: 200,
+    // 0..1 per channel
+    lightColor: { r: 1, g: 1, b: 1 },
+    specularColor: { r: 1, g: 1, b: 1 },
+    shininess: 150
   };
 
   const pane = new Pane({ title: "Lighting Point" });
@@ -144,6 +159,15 @@ export async function LightingPoint({
     max: 1000,
     step: 1
   });
+  lightFolder.addBinding(params, "lightColor", {
+    label: "light color",
+    color: { type: "float" }
+  });
+  lightFolder.addBinding(params, "specularColor", {
+    label: "specular color",
+    color: { type: "float" }
+  });
+  lightFolder.addBinding(params, "shininess", { min: 1, max: 500, step: 1 });
 
   const camera = [100, 150, 250];
   const target = [0, 0, 0];
@@ -184,6 +208,19 @@ export async function LightingPoint({
     gl.uniform3fv(lightWorldPositionLocation, lightPosition);
     gl.uniform1f(falloffDistanceLocation, params.falloffDistance);
     gl.uniform1i(unlitLocation, 0);
+    gl.uniform3fv(viewWorldPositionLocation, camera);
+    gl.uniform1f(shininessLocation, params.shininess);
+    const { lightColor, specularColor } = params;
+    gl.uniform3fv(lightColorLocation, [
+      lightColor.r,
+      lightColor.g,
+      lightColor.b
+    ]);
+    gl.uniform3fv(specularColorLocation, [
+      specularColor.r,
+      specularColor.g,
+      specularColor.b
+    ]);
 
     for (const { vao, vertexCount, position, size, color } of objects) {
       // move each object to its place, rotate it around its own center
@@ -225,7 +262,7 @@ export async function LightingPoint({
       gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
     }
 
-    // a small white sphere where the light is.
+    // a small sphere where the light is.
     // It is unlit: the light is inside it, so lighting it would make it dark
     const markerMatrix = m4.scale(
       m4.translation(lightPosition[0], lightPosition[1], lightPosition[2]),
@@ -244,7 +281,8 @@ export async function LightingPoint({
       false,
       m4.transpose(m4.inverse(markerMatrix))
     );
-    gl.uniform4fv(colorLocation, [1, 1, 1, 1]);
+    // the marker shows the light color
+    gl.uniform4fv(colorLocation, [lightColor.r, lightColor.g, lightColor.b, 1]);
     gl.uniform1i(unlitLocation, 1);
     gl.bindVertexArray(sphereVao);
     gl.drawArrays(gl.TRIANGLES, 0, sphereVertexCount);

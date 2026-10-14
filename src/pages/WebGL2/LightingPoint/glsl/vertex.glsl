@@ -8,6 +8,9 @@ in vec3 a_normal;
 // DIFFERENT from the directional light: the light has a position
 // instead of a direction, in world space
 uniform vec3 u_lightWorldPosition;
+// where the camera (the eye) is in world space, needed for the specular
+// highlight which depends on where it is looked at from
+uniform vec3 u_viewWorldPosition;
 
 // DIFFERENT: the world matrix is needed too, to know where each vertex
 // is in the world (the directional light didn't care where the surface was)
@@ -23,6 +26,8 @@ out vec3 v_normal;
 // with a point light every point of the surface sees the light
 // from a different direction
 out vec3 v_surfaceToLight;
+// the vector from the surface to the camera, same idea as v_surfaceToLight
+out vec3 v_surfaceToView;
 
 void main() {
   gl_Position = u_worldViewProjection * a_position;
@@ -40,4 +45,7 @@ void main() {
   // vertices gives the right direction at every pixel, normalizing first
   // would give wrong in-between directions
   v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
+
+  // the vector from the surface to the camera, not normalized for the same reason
+  v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
 }

@@ -6,12 +6,19 @@ in vec3 v_normal;
 // DIFFERENT from the directional light: the direction toward the light
 // comes per pixel from the vertex shader instead of one uniform for everything
 in vec3 v_surfaceToLight;
+in vec3 v_surfaceToView;
 
 uniform vec4 u_color;
 // DIFFERENT: distance at which the light is at half its brightness
 uniform float u_falloffDistance;
 // true for the light marker, which shows its plain color
 uniform bool u_unlit;
+// how focused the specular highlight is, the bigger the smaller and sharper
+uniform float u_shininess;
+// color of the light, tints the diffuse part (the surface color is multiplied by it)
+uniform vec3 u_lightColor;
+// color of the highlight, added on top of the diffuse part
+uniform vec3 u_specularColor;
 
 out vec4 outColor;
 
@@ -30,11 +37,28 @@ void main() {
   // here every pixel has its own direction toward the light
   // so it is normalized per pixel
   vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+  vec3 surfaceToViewDirection = normalize(v_surfaceToView);
+
+  // the half vector points halfway between the light and the eye.
+  // When the normal points that way the surface is tilted just right to
+  // mirror the light into the eye, which is where the highlight shows up
+  vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
   // same as the directional light: the dot product of the normal
   // and the direction toward the light.
   // Faces pointing away from the light give a negative value, clamp it to 0
   float light = max(dot(normal, surfaceToLightDirection), 0.0);
+
+  // specular (Blinn-Phong): 1 when the normal matches the half vector,
+  // going down as they move apart. Raising it to the shininess power
+  // keeps the peak at 1 but makes it fall off faster around it:
+  // low shininess = wide soft highlight, high shininess = small sharp spot.
+  // Only where the light actually reaches the surface, otherwise the half
+  // vector could still give a highlight on a side facing away from the light
+  float specular = 0.0;
+  if (light > 0.0) {
+    specular = pow(max(dot(normal, halfVector), 0.0), u_shininess);
+  }
 
   // DIFFERENT: fade with distance (attenuation).
   // A directional light is infinitely far away so the distance is the same
@@ -47,10 +71,18 @@ void main() {
   float distanceToLight = length(v_surfaceToLight);
   float d = distanceToLight / u_falloffDistance;
   float attenuation = 1.0 / (1.0 + d * d);
+  // the farther the light the dimmer both the diffuse and the highlight
   light *= attenuation;
+  specular *= attenuation;
 
   outColor = u_color;
 
-  // multiply just the color portion (not the alpha) by the light
-  outColor.rgb *= light;
+  // diffuse: the surface color tinted by the light color.
+  // Multiplying means a surface only reflects the colors the light has,
+  // a green surface under a red light gets dark
+  outColor.rgb *= light * u_lightColor;
+
+  // specular: added on top with its own color, not the surface color,
+  // like the white highlight on a colored plastic
+  outColor.rgb += specular * u_specularColor;
 }
