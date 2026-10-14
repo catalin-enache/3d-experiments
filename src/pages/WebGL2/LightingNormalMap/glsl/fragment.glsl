@@ -2,7 +2,7 @@
 precision highp float;
 
 in vec3 v_normal;
-in vec3 v_tangent;
+in vec4 v_tangent;
 in vec2 v_texcoord;
 
 uniform sampler2D u_normalMap;
@@ -15,8 +15,12 @@ void main() {
   // the surface frame (tangent space) in world space:
   // tangent = +u, bitangent = +v, normal = out of the surface
   vec3 normal = normalize(v_normal);
-  vec3 tangent = normalize(v_tangent);
-  vec3 bitangent = cross(normal, tangent);
+  // Gram–Schmidt: after interpolation and the world transform the tangent may
+  // no longer be exactly perpendicular to the normal, so remove the part
+  // of it that lies along the normal
+  vec3 tangent = normalize(v_tangent.xyz - dot(v_tangent.xyz, normal) * normal);
+  // w flips the bitangent when the uvs are mirrored
+  vec3 bitangent = cross(normal, tangent) * v_tangent.w;
   mat3 tbn = mat3(tangent, bitangent, normal);
 
   // the normal map stores tangent space normals as colors,

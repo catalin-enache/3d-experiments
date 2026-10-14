@@ -62,7 +62,7 @@ export async function LightingNormalMap({
   const attributes = [
     { location: positionAttributeLocation, size: 3, setData: cubePositions },
     { location: normalAttributeLocation, size: 3, setData: cubeNormals },
-    { location: tangentAttributeLocation, size: 3, setData: cubeTangents },
+    { location: tangentAttributeLocation, size: 4, setData: cubeTangents },
     { location: texcoordAttributeLocation, size: 2, setData: cubeTexcoords }
   ];
   for (const { location, size, setData } of attributes) {
@@ -92,8 +92,8 @@ export async function LightingNormalMap({
     scaleZ: 1,
     // where the light comes from, in degrees:
     // horizontal goes left (-) / right (+), vertical goes bottom (-) / top (+)
-    lightHorizontal: 30,
-    lightVertical: 30
+    lightHorizontalYaw: 30,
+    lightVerticalPitch: 30
   };
 
   const pane = new Pane({ title: "Lighting Normal Map" });
@@ -106,13 +106,13 @@ export async function LightingNormalMap({
     cubeFolder.addBinding(params, key, { min: 0.1, max: 3, step: 0.1 });
   }
   const lightFolder = pane.addFolder({ title: "Light" });
-  lightFolder.addBinding(params, "lightHorizontal", {
+  lightFolder.addBinding(params, "lightHorizontalYaw", {
     label: "left/right",
     min: -180,
     max: 180,
     step: 1
   });
-  lightFolder.addBinding(params, "lightVertical", {
+  lightFolder.addBinding(params, "lightVerticalPitch", {
     label: "bottom/top",
     min: -90,
     max: 90,
@@ -171,13 +171,62 @@ export async function LightingNormalMap({
     );
     const worldInverseTransposeMatrix = m4.transpose(m4.inverse(worldMatrix));
 
-    // direction pointing toward the light, 0/0 means straight from the front (+Z)
-    const horizontal = degToRad(params.lightHorizontal);
-    const vertical = degToRad(params.lightVertical);
+    // Direction pointing toward the light, built from 2 angles
+    // (like longitude / latitude on a globe), 0/0 means straight from the front (+Z).
+    //
+    // The basic trick: on a circle of radius 1, a point at angle "a" is
+    // (cos(a), sin(a)). cos tells how much of the length goes "along" the
+    // starting direction, sin how much goes "sideways". cos² + sin² = 1 always.
+    //
+    // Step 1, verticalPitch angle (bottom/top), seen from the side:
+    //
+    //        y
+    //        |    * light
+    //        |   /
+    //        |  /  length 1
+    //        | / ) verticalPitch
+    //        +-------------- flat ground (x/z)
+    //
+    //   - sin(verticalPitch) of the length goes up: that is y
+    //   - cos(verticalPitch) of the length stays flat on the ground: that is
+    //     xzProjectionRadius, the length of the shadow the arrow would cast
+    //     on the XZ plane if the sun was straight above it
+    //   at 0° the light is at the horizon (y = 0, all of it flat),
+    //   at 90° it is straight above (y = 1, nothing left flat)
+    //
+    // Step 2, horizontalYaw angle (left/right), seen from above,
+    // turning that flat part around the Y axis starting from +Z.
+    // With the pitch fixed, changing the yaw moves the light along a circle
+    // of radius xzProjectionRadius (like a latitude line on a globe):
+    //
+    //        x (right)
+    //        |    * light
+    //        |   /
+    //        |  /  radius xzProjectionRadius
+    //        | / ) horizontalYaw
+    //        +-------------- z (toward the viewer)
+    //
+    //   - xzProjectionRadius times sin(horizontalYaw) goes right: that is x
+    //   - xzProjectionRadius times cos(horizontalYaw) goes forward: that is z
+    //   at 0° the light is in front (+Z),
+    //   at 90° on the right (+X),
+    //   at 180° behind (-Z),
+    //   at -90° on the left (-X)
+    //
+    // The result already has length 1, no normalize needed:
+    // x² + y² + z² = cos²(v) * (sin²(h) + cos²(h)) + sin²(v) = cos²(v) + sin²(v) = 1
+    const horizontalYaw = degToRad(params.lightHorizontalYaw);
+    const verticalPitch = degToRad(params.lightVerticalPitch);
+    // length of the projection of the light direction on the XZ plane
+    // (the flat part of step 1), which is also the radius of the circle
+    // the yaw moves the light along (step 2).
+    // It shrinks as the light goes up: 1 at the horizon, 0 straight above,
+    // so the higher the light the less is left for x and z
+    const xzProjectionRadius = Math.cos(verticalPitch);
     const reverseLightDirection = [
-      Math.cos(vertical) * Math.sin(horizontal),
-      Math.sin(vertical),
-      Math.cos(vertical) * Math.cos(horizontal)
+      xzProjectionRadius * Math.sin(horizontalYaw),
+      Math.sin(verticalPitch),
+      xzProjectionRadius * Math.cos(horizontalYaw)
     ];
 
     gl.uniformMatrix4fv(
