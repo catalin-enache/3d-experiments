@@ -25,7 +25,7 @@ void main() {
   // must lean away from that axis  (to stay perpendicular to the flatter surface)
   // instead of being stretched with it.
   // tangents lie along the surface so they transform in the same way as the surface itself
-  v_normal = mat3(u_worldInverseTranspose) * a_normal;
-  v_tangent = vec4(mat3(u_world) * a_tangent.xyz, a_tangent.w);
+  v_normal = mat3(u_worldInverseTranspose) * a_normal; // a_normal [local] -> v_normal [world]
+  v_tangent = vec4(mat3(u_world) * a_tangent.xyz, a_tangent.w); // a_tangent [local] -> v_tangent [world]
   v_texcoord = a_texcoord;
 }
