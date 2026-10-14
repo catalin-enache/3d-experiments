@@ -8,6 +8,8 @@ in vec2 a_texcoord;
 
 uniform mat4 u_worldViewProjection;
 uniform mat4 u_world;
+// u_worldInverseTranspose is also called the normalMatrix,
+// it transforms normals from local space to world space
 uniform mat4 u_worldInverseTranspose;
 
 out vec3 v_normal;
@@ -18,7 +20,11 @@ void main() {
   gl_Position = u_worldViewProjection * a_position;
 
   // normals are perpendicular to the surface so they need the inverse transpose,
-  // tangents lie along the surface so they move with the surface itself
+  // which keeps the rotation as is but inverts the scale (1 / scale):
+  // stretching a surface along an axis flattens it there, so its normal
+  // must lean away from that axis  (to stay perpendicular to the flatter surface)
+  // instead of being stretched with it.
+  // tangents lie along the surface so they transform in the same way as the surface itself
   v_normal = mat3(u_worldInverseTranspose) * a_normal;
   v_tangent = vec4(mat3(u_world) * a_tangent.xyz, a_tangent.w);
   v_texcoord = a_texcoord;
