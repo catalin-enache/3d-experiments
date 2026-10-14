@@ -111,6 +111,11 @@ export const routesConfig: RouteNode[] = [
         component: lazy(() => import("@pages/WebGL2/LightingDirectional"))
       },
       {
+        segment: "lighting-point",
+        name: "Lighting Point",
+        component: lazy(() => import("@pages/WebGL2/LightingPoint"))
+      },
+      {
         segment: "lighting-normal-map",
         name: "Lighting Normal Map",
         component: lazy(() => import("@pages/WebGL2/LightingNormalMap"))
