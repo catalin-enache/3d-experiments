@@ -62,10 +62,6 @@ export async function LightingPoint({
   );
   const shininessLocation = gl.getUniformLocation(program, "u_shininess");
   const lightColorLocation = gl.getUniformLocation(program, "u_lightColor");
-  const specularColorLocation = gl.getUniformLocation(
-    program,
-    "u_specularColor"
-  );
 
   // one VAO per geometry, each holding its own positions and normals
   function createVao(
@@ -91,7 +87,7 @@ export async function LightingPoint({
   }
 
   const sphereRadius = 60;
-  // shared by the orange sphere and the light marker
+  // shared by the gray sphere and the light marker
   const sphereVao = createVao(spherePositions, sphereNormals);
   const objects = [
     {
@@ -100,7 +96,9 @@ export async function LightingPoint({
       position: [-70, 0, 0],
       // the F already has its real size
       size: 1,
-      color: [0.2, 1, 0.2, 1] // green
+      // neutral grays reflect any light color as it is,
+      // a colored surface would filter out the channels it lacks
+      color: [0.8, 0.8, 0.8, 1] // light gray
     },
     {
       vao: sphereVao,
@@ -108,7 +106,7 @@ export async function LightingPoint({
       position: [80, 0, 0],
       // the sphere geometry has radius 1
       size: sphereRadius,
-      color: [1, 0.6, 0.2, 1] // orange
+      color: [0.6, 0.6, 0.6, 1] // darker gray
     }
   ];
 
@@ -122,16 +120,16 @@ export async function LightingPoint({
     // so their distortion under non-uniform scaling can be observed
     inverseTranspose: true,
     // DIFFERENT from the directional light: the light is a point in the world.
-    // Between the F and the sphere, above and in front of them, so the F gets lit
-    // from its right and the sphere from its left
-    lightX: 0,
-    lightY: 80,
-    lightZ: 120,
+    // Placed left and in front of the F, where it mirrors into the camera
+    // off the F's front face (top rung), so both the F and the sphere
+    // show a specular highlight from the start
+    lightX: -110,
+    lightY: 24,
+    lightZ: 109,
     // DIFFERENT: distance at which the light is at half its brightness
     falloffDistance: 200,
     // 0..1 per channel
     lightColor: { r: 1, g: 1, b: 1 },
-    specularColor: { r: 1, g: 1, b: 1 },
     shininess: 150
   };
 
@@ -161,10 +159,6 @@ export async function LightingPoint({
   });
   lightFolder.addBinding(params, "lightColor", {
     label: "light color",
-    color: { type: "float" }
-  });
-  lightFolder.addBinding(params, "specularColor", {
-    label: "specular color",
     color: { type: "float" }
   });
   lightFolder.addBinding(params, "shininess", { min: 1, max: 500, step: 1 });
@@ -210,16 +204,11 @@ export async function LightingPoint({
     gl.uniform1i(unlitLocation, 0);
     gl.uniform3fv(viewWorldPositionLocation, camera);
     gl.uniform1f(shininessLocation, params.shininess);
-    const { lightColor, specularColor } = params;
+    const { lightColor } = params;
     gl.uniform3fv(lightColorLocation, [
       lightColor.r,
       lightColor.g,
       lightColor.b
-    ]);
-    gl.uniform3fv(specularColorLocation, [
-      specularColor.r,
-      specularColor.g,
-      specularColor.b
     ]);
 
     for (const { vao, vertexCount, position, size, color } of objects) {

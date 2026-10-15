@@ -16,9 +16,8 @@ uniform bool u_unlit;
 // how focused the specular highlight is, the bigger the smaller and sharper
 uniform float u_shininess;
 // color of the light, tints the diffuse part (the surface color is multiplied by it)
+// and is the color of the highlight too
 uniform vec3 u_lightColor;
-// color of the highlight, added on top of the diffuse part
-uniform vec3 u_specularColor;
 
 out vec4 outColor;
 
@@ -53,6 +52,23 @@ void main() {
   // going down as they move apart. Raising it to the shininess power
   // keeps the peak at 1 but makes it fall off faster around it:
   // low shininess = wide soft highlight, high shininess = small sharp spot.
+  //
+  // Why pow does that: dot(normal, halfVector) is between 0 and 1.
+  // Multiplying a number below 1 by itself makes it smaller, and the further
+  // it is below 1 the faster it shrinks. 1 stays 1 no matter the power.
+  // So the power keeps the very center of the highlight and eats its edges:
+  //
+  //   angle between normal and halfVector:    0     5    10    20    45 deg
+  //   dot = cos(angle):                     1.00  0.996 0.985 0.94  0.71
+  //   pow(dot, 1)   (no shininess)          1.00  1.00  0.98  0.94  0.71
+  //   pow(dot, 10)                          1.00  0.96  0.86  0.54  0.03
+  //   pow(dot, 150) (the default)           1.00  0.56  0.10  0.00  0.00
+  //
+  // With power 1 the highlight still has 71% at 45 degrees, so it covers
+  // most of the lit side. With 150 it is almost gone already at 10 degrees,
+  // so only the small spot where the surface mirrors the light remains.
+  // pow never changes the peak (1 at 0 degrees), only how wide the spot is
+  //
   // Only where the light actually reaches the surface, otherwise the half
   // vector could still give a highlight on a side facing away from the light
   float specular = 0.0;
@@ -82,7 +98,8 @@ void main() {
   // a green surface under a red light gets dark
   outColor.rgb *= light * u_lightColor;
 
-  // specular: added on top with its own color, not the surface color,
-  // like the white highlight on a colored plastic
-  outColor.rgb += specular * u_specularColor;
+  // specular: added on top with the light color, not the surface color,
+  // a highlight is the light itself mirrored into the eye
+  // (like the white highlight on a colored plastic under a white light)
+  outColor.rgb += specular * u_lightColor;
 }
