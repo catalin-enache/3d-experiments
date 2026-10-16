@@ -4,3 +4,4 @@ export * from "./headData";
 export * from "./sphere";
 export * from "./cube";
 export * from "./tangents";
+export * from "./plane";

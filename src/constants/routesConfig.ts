@@ -119,6 +119,16 @@ export const routesConfig: RouteNode[] = [
         segment: "lighting-normal-map",
         name: "Lighting Normal Map",
         component: lazy(() => import("@pages/WebGL2/LightingNormalMap"))
+      },
+      {
+        segment: "stencil-portal",
+        name: "Stencil Portal",
+        component: lazy(() => import("@pages/WebGL2/StencilPortal"))
+      },
+      {
+        segment: "stencil-playground",
+        name: "Stencil Playground",
+        component: lazy(() => import("@pages/WebGL2/StencilPlayground"))
       }
     ]
   },
