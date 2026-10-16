@@ -39,38 +39,38 @@ A fragment passes when
 - `ref` is clamped to 0..255.
 - A fragment that fails the stencil test is **not drawn**: no color and no depth.
 
-| func       | passes when                |
-| ---------- | -------------------------- |
-| `NEVER`    | never                      |
+| func       | passes when                    |
+| ---------- | ------------------------------ |
+| `NEVER`    | never                          |
 | `LESS`     | `ref & mask <  stencil & mask` |
 | `LEQUAL`   | `ref & mask <= stencil & mask` |
 | `GREATER`  | `ref & mask >  stencil & mask` |
 | `GEQUAL`   | `ref & mask >= stencil & mask` |
 | `EQUAL`    | `ref & mask == stencil & mask` |
 | `NOTEQUAL` | `ref & mask != stencil & mask` |
-| `ALWAYS`   | always                     |
+| `ALWAYS`   | always                         |
 
 ### `gl.stencilOp(sfail, dpfail, dppass)`: what to write
 
 Every fragment ends up in exactly one of three cases, and each case has its own
 operation:
 
-| argument | when it is used                                       |
-| -------- | ----------------------------------------------------- |
-| `sfail`  | the stencil test failed                               |
-| `dpfail` | the stencil test passed, the depth test failed        |
-| `dppass` | both passed (the fragment is drawn)                   |
+| argument | when it is used                                |
+| -------- | ---------------------------------------------- |
+| `sfail`  | the stencil test failed                        |
+| `dpfail` | the stencil test passed, the depth test failed |
+| `dppass` | both passed (the fragment is drawn)            |
 
-| op          | new stencil value                       |
-| ----------- | --------------------------------------- |
-| `KEEP`      | unchanged                               |
-| `ZERO`      | 0                                       |
-| `REPLACE`   | `ref`                                   |
-| `INCR`      | +1, stays at 255                        |
-| `INCR_WRAP` | +1, 255 becomes 0                       |
-| `DECR`      | -1, stays at 0                          |
-| `DECR_WRAP` | -1, 0 becomes 255                       |
-| `INVERT`    | all bits flipped (`~value`, 0 ↔ 255)    |
+| op          | new stencil value                    |
+| ----------- | ------------------------------------ |
+| `KEEP`      | unchanged                            |
+| `ZERO`      | 0                                    |
+| `REPLACE`   | `ref`                                |
+| `INCR`      | +1, stays at 255                     |
+| `INCR_WRAP` | +1, 255 becomes 0                    |
+| `DECR`      | -1, stays at 0                       |
+| `DECR_WRAP` | -1, 0 becomes 255                    |
+| `INVERT`    | all bits flipped (`~value`, 0 ↔ 255) |
 
 ### `gl.stencilMask(mask)`: which bits can be written
 
@@ -170,16 +170,16 @@ edges would mix samples with different values.
 
 ## Presets
 
-| Preset | Setup | What to look at |
-|---|---|---|
-| **Count overlaps** | P1 `ALWAYS`, dppass `INCR`. P2 `EQUAL 2` | The stencil counts the overlaps (1, 2, 3). The rectangle is only drawn where exactly 2 circles overlap |
-| **Mask outside** | P1 dppass `REPLACE` ref 1. P2 `NOTEQUAL 1` | The rectangle is drawn everywhere except inside the circles |
-| **Odd overlaps** | P1 `INCR`. P2 `EQUAL 1` with func mask 1 | Only bit 0 is compared: counts 1 and 3 pass, 2 doesn't |
-| **XOR** | P1 dppass `INVERT`, write mask 1. P2 `EQUAL 1` | Each circle flips bit 0: 1 where an odd number of circles overlap |
-| **Write mask** | P1 `REPLACE` ref 255, write mask `00001111`. P2 `EQUAL 15` | Only the low 4 bits get written: 255 is stored as 15 |
-| **Wrap around** | P1 dppass `DECR_WRAP`. P2 `LESS 253` | 0 → 255 → 254 → 253. `LESS 253` means `253 < stencil`: 1 or 2 overlaps |
-| **X-ray** | Blocker on. P1 dpfail `REPLACE` ref 1. P2 `EQUAL 1`, depth test off | Only the parts of the circles **hidden** by the blocker are marked, and the rectangle shows just those |
-| **No overdraw** | P1 `EQUAL 0`, dppass `INCR`. P2 off | A circle marks its pixels, the next circles fail there: no pixel is drawn twice |
+| Preset             | Setup                                                               | What to look at                                                                                        |
+| ------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Count overlaps** | P1 `ALWAYS`, dppass `INCR`. P2 `EQUAL 2`                            | The stencil counts the overlaps (1, 2, 3). The rectangle is only drawn where exactly 2 circles overlap |
+| **Mask outside**   | P1 dppass `REPLACE` ref 1. P2 `NOTEQUAL 1`                          | The rectangle is drawn everywhere except inside the circles                                            |
+| **Odd overlaps**   | P1 `INCR`. P2 `EQUAL 1` with func mask 1                            | Only bit 0 is compared: counts 1 and 3 pass, 2 doesn't                                                 |
+| **XOR**            | P1 dppass `INVERT`, write mask 1. P2 `EQUAL 1`                      | Each circle flips bit 0: 1 where an odd number of circles overlap                                      |
+| **Write mask**     | P1 `REPLACE` ref 255, write mask `00001111`. P2 `EQUAL 15`          | Only the low 4 bits get written: 255 is stored as 15                                                   |
+| **Wrap around**    | P1 dppass `DECR_WRAP`. P2 `LESS 253`                                | 0 → 255 → 254 → 253. `LESS 253` means `253 < stencil`: 1 or 2 overlaps                                 |
+| **X-ray**          | Blocker on. P1 dpfail `REPLACE` ref 1. P2 `EQUAL 1`, depth test off | Only the parts of the circles **hidden** by the blocker are marked, and the rectangle shows just those |
+| **No overdraw**    | P1 `EQUAL 0`, dppass `INCR`. P2 off                                 | A circle marks its pixels, the next circles fail there: no pixel is drawn twice                        |
 
 ## Things to try
 
@@ -239,6 +239,18 @@ edges would mix samples with different values.
 
 ## Files
 
-- `StencilPlayground.tsx`: the scene, the passes, the stencil view and the pane
+The stencil logic is all in `StencilPlayground.tsx`. The other files hold the
+setup around it.
+
+- `StencilPlayground.tsx`: the scene, the passes (`applyPass`, `drawScene`),
+  the stencil view (`drawStencilView`) and reading back the value under the cursor
+- `settings.ts`: the stencil state of a pass (`PassSettings`), the enums the
+  dropdowns pick from (`funcs`, `ops`), the defaults and the "passes if" text
+- `presets.ts`: the presets and `applyPreset`
+- `palette.ts`: the color of every stencil value and the reverse lookup
+  (`stencilValueOf`)
+- `shapes.ts`: the buffer with the quad and the circle
+- `pane.ts`: the Tweakpane controls
+- `overlay.ts`: the HTML labels and the legend over the canvas
 - `glsl/vertex.glsl`, `glsl/fragment.glsl`: a flat-color 2D shader
 - `index.tsx`: the page, with the context attributes (`stencil`, `antialias`, `alpha`)

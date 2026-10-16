@@ -1,19 +1,10 @@
-import { Pane } from "tweakpane";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop, type Timer } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
 import { degToRad } from "@lib/webgl2fundamentals/m3";
-import {
-  cubePositions,
-  cubeNormals,
-  cubeVertexCount,
-  spherePositions,
-  sphereNormals,
-  sphereVertexCount,
-  planePositions,
-  planeNormals,
-  planeVertexCount
-} from "@lib/geometries";
+import { createMeshes, type Mesh } from "./meshes";
+import { createScene, portalCenterY } from "./scene";
+import { createPane, type Params } from "./pane";
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
@@ -60,176 +51,20 @@ export async function StencilPortal({
   );
   const unlitLocation = gl.getUniformLocation(program, "u_unlit");
 
-  // one VAO per geometry, each holding its own positions and normals
-  function createVao(
-    setPositions: (gl: WebGL2RenderingContext) => void,
-    setNormals: (gl: WebGL2RenderingContext) => void
-  ) {
-    const vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
-
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    setPositions(gl);
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-    const normalBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-    setNormals(gl);
-    gl.enableVertexAttribArray(normalAttributeLocation);
-    gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-    return vao;
-  }
-
-  const cube = {
-    vao: createVao(cubePositions, cubeNormals),
-    vertexCount: cubeVertexCount
-  };
-  const sphere = {
-    vao: createVao(spherePositions, sphereNormals),
-    vertexCount: sphereVertexCount
-  };
-  const plane = {
-    vao: createVao(planePositions, planeNormals),
-    vertexCount: planeVertexCount
-  };
-
-  // the portal is a plane standing on the floor at the origin, facing +Z
-  const floorY = -80;
-  const portalWidth = 140;
-  const portalHeight = 180;
-  const portalCenterY = floorY + portalHeight / 2;
-  const frameThickness = 10;
-
-  interface Drawable {
-    shape: typeof cube;
-    color: number[];
-    // the world matrix, recomputed every frame so things can move
-    world: (time: number) => m4.Matrix4;
-  }
-
-  // the outside world, seen around the portal
-  const outsideWorld: Drawable[] = [
-    // the floor, a big plane turned to face up
-    {
-      shape: plane,
-      color: [0.55, 0.55, 0.6, 1],
-      world: () =>
-        m4.scale(
-          m4.xRotate(m4.translation(0, floorY, 0), degToRad(-90)),
-          1000,
-          1000,
-          1
-        )
-    },
-    // the frame around the portal: left, right and top bars
-    ...[
-      [
-        -(portalWidth + frameThickness) / 2,
-        portalCenterY,
-        frameThickness,
-        portalHeight
-      ],
-      [
-        (portalWidth + frameThickness) / 2,
-        portalCenterY,
-        frameThickness,
-        portalHeight
-      ],
-      [
-        0,
-        floorY + portalHeight + frameThickness / 2,
-        portalWidth + frameThickness * 2,
-        frameThickness
-      ]
-    ].map(([x, y, width, height]) => ({
-      shape: cube,
-      color: [0.45, 0.3, 0.2, 1], // brown
-      world: () =>
-        m4.scale(m4.translation(x, y, 0), width, height, frameThickness)
-    })),
-    // in front of the portal, it covers part of it.
-    // It is drawn before the portal so the portal plane fails the depth test
-    // behind it and doesn't mark the stencil there
-    {
-      shape: cube,
-      color: [0.9, 0.6, 0.2, 1], // orange
-      world: () => m4.scale(m4.translation(70, floorY + 20, 90), 40, 40, 40)
-    },
-    // behind the portal, in the outside world. It is in the same place as
-    // the inside world but never shows through the portal, only around it
-    {
-      shape: sphere,
-      color: [0.9, 0.9, 0.9, 1], // white
-      world: () => m4.scale(m4.translation(-30, floorY + 40, -220), 40, 40, 40)
-    }
-  ];
-
-  // the inside world, only seen through the portal
-  const insideWorld: Drawable[] = [
-    {
-      shape: sphere,
-      color: [0.2, 0.8, 0.4, 1], // green
-      world: (time) =>
-        m4.scale(
-          m4.translation(
-            -30 + Math.sin(time) * 40,
-            floorY + 50 + Math.abs(Math.sin(time * 2)) * 40,
-            -120
-          ),
-          35,
-          35,
-          35
-        )
-    },
-    // big enough to stick out of the portal's sides, where it gets cut off
-    {
-      shape: cube,
-      color: [0.9, 0.2, 0.5, 1], // pink
-      world: (time) => {
-        let world = m4.translation(10, portalCenterY, -200);
-        world = m4.yRotate(world, time * 0.6);
-        world = m4.xRotate(world, time * 0.4);
-        return m4.scale(world, 130, 130, 130);
-      }
-    }
-  ];
-
-  // what is seen through the portal where nothing of the inside world is,
-  // like the sky of another world
-  const insideBackground = [0.1, 0.15, 0.35, 1]; // dark blue
-  const portalWorld = m4.scale(
-    m4.translation(0, portalCenterY, 0),
-    portalWidth,
-    portalHeight,
-    1
+  const meshes = createMeshes(
+    gl,
+    positionAttributeLocation,
+    normalAttributeLocation
   );
+  const { outsideWorld, insideWorld, portal } = createScene(meshes);
 
-  const params = {
+  const params: Params = {
     useStencil: true,
-    // in degrees, the camera turns around the portal
     cameraAngle: 25,
     animateCamera: true,
     cameraHeight: 80
   };
-
-  const pane = new Pane({ title: "Stencil Portal" });
-  pane.addBinding(params, "useStencil", { label: "use stencil" });
-  pane.addBinding(params, "animateCamera", { label: "animate camera" });
-  pane.addBinding(params, "cameraAngle", {
-    label: "camera angle",
-    min: -180,
-    max: 180,
-    step: 1
-  });
-  pane.addBinding(params, "cameraHeight", {
-    label: "camera height",
-    min: -60,
-    max: 300,
-    step: 1
-  });
+  const pane = createPane(params);
 
   const cameraDistance = 420;
   const target = [0, portalCenterY - 20, -60];
@@ -244,7 +79,7 @@ export async function StencilPortal({
   gl.useProgram(program);
 
   function draw(
-    { shape, color }: { shape: typeof cube; color: number[] },
+    { mesh, color }: { mesh: Mesh; color: number[] },
     world: m4.Matrix4,
     viewProjectionMatrix: m4.Matrix4
   ) {
@@ -259,9 +94,14 @@ export async function StencilPortal({
       m4.transpose(m4.inverse(world))
     );
     gl.uniform4fv(colorLocation, color);
-    gl.bindVertexArray(shape.vao);
-    gl.drawArrays(gl.TRIANGLES, 0, shape.vertexCount);
+    gl.bindVertexArray(mesh.vao);
+    gl.drawArrays(gl.TRIANGLES, 0, mesh.vertexCount);
   }
+
+  // only advances while animating, so the animation resumes where it stopped
+  let animationTime = 0;
+  let animatedAngle = 0;
+  let wasAnimating = false;
 
   function tick({ timer }: { timer: Timer }) {
     const time = timer.getElapsed();
@@ -273,11 +113,21 @@ export async function StencilPortal({
     gl.clearStencil(0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 
+    // the animated angle is kept out of params: the pane rounds a bound value
+    // to its slider step (1 degree) and writes it back on refresh, which made
+    // the camera move in visible 1 degree jumps
     if (params.animateCamera) {
-      params.cameraAngle = Math.sin(time * 0.3) * 50;
+      animationTime += Math.min(0.1, timer.getDelta());
+      animatedAngle = Math.sin(animationTime * 0.3) * 50;
+    } else if (wasAnimating) {
+      // hand the angle over to the slider once, when the animation stops
+      params.cameraAngle = Math.round(animatedAngle);
       pane.refresh();
     }
-    const angle = degToRad(params.cameraAngle);
+    wasAnimating = params.animateCamera;
+    const angle = degToRad(
+      params.animateCamera ? animatedAngle : params.cameraAngle
+    );
     const camera = [
       Math.sin(angle) * cameraDistance,
       params.cameraHeight,
@@ -317,11 +167,7 @@ export async function StencilPortal({
       gl.colorMask(false, false, false, false);
       gl.depthMask(false);
       // the color doesn't matter, nothing reaches the color buffer
-      draw(
-        { shape: plane, color: insideBackground },
-        portalWorld,
-        viewProjectionMatrix
-      );
+      draw(portal, portal.world, viewProjectionMatrix);
       gl.colorMask(true, true, true, true);
       gl.depthMask(true);
 
@@ -339,11 +185,7 @@ export async function StencilPortal({
       gl.depthFunc(gl.ALWAYS);
       gl.depthRange(1, 1);
       gl.uniform1i(unlitLocation, 1);
-      draw(
-        { shape: plane, color: insideBackground },
-        portalWorld,
-        viewProjectionMatrix
-      );
+      draw(portal, portal.world, viewProjectionMatrix);
       gl.uniform1i(unlitLocation, 0);
       gl.depthRange(0, 1);
       gl.depthFunc(gl.LESS);
