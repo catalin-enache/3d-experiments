@@ -71,10 +71,12 @@ void main() {
   //
   // Only where the light actually reaches the surface, otherwise the half
   // vector could still give a highlight on a side facing away from the light
-  float specular = 0.0;
-  if (light > 0.0) {
-    specular = pow(max(dot(normal, halfVector), 0.0), u_shininess);
-  }
+//  float specular = 0.0;
+//  if (light > 0.0) {
+//    specular = pow(max(dot(normal, halfVector), 0.0), u_shininess);
+//  }
+  // arithmetic: step(edge, x) is 1.0 when x >= edge, else 0.0
+  float specular = step(0.0001, light) * pow(max(dot(normal, halfVector), 0.0), u_shininess);
 
   // DIFFERENT: fade with distance (attenuation).
   // A directional light is infinitely far away so the distance is the same
