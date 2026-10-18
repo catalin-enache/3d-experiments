@@ -4,9 +4,9 @@ import {
   flatRoutes,
   isRouteGroup,
   joinPath,
-  routesConfig,
+  routes,
   type RouteNode
-} from "@src/constants/routesConfig";
+} from "@src/routes";
 import classes from "./Menu.module.css";
 import clsx from "clsx";
 
@@ -89,9 +89,9 @@ function MenuItems({
 
 export function ExperimentsMenu() {
   const [open, setOpen] = useState(false);
-  const [expandedGroups, setExpandedGroups] = useState<
-    Record<string, boolean>
-  >({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -124,7 +124,7 @@ export function ExperimentsMenu() {
       {open && (
         <div className={clsx(classes.menu, "overflow")}>
           <MenuItems
-            nodes={routesConfig}
+            nodes={routes}
             parentPath=""
             depth={0}
             pathname={location.pathname}
@@ -148,8 +148,7 @@ export function ExperimentsMenu() {
         }}
         className={`${classes.button} ${open ? classes.buttonOpen : ""}`}
       >
-        {currentRoute?.breadcrumbs.join(" / ") ?? "Unknown"}{" "}
-        {open ? "▼" : "▲"}
+        {currentRoute?.breadcrumbs.join(" / ") ?? "Unknown"} {open ? "▼" : "▲"}
       </button>
     </div>
   );

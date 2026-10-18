@@ -30,7 +30,7 @@ export const isRouteGroup = (node: RouteNode): node is RouteGroupNode =>
 export const joinPath = (parentPath: string, segment: string) =>
   `${parentPath.replace(/\/$/, "")}/${segment}`;
 
-export const routesConfig: RouteNode[] = [
+export const routes: RouteNode[] = [
   {
     segment: "",
     name: "Home",
@@ -181,4 +181,4 @@ const flattenRoutes = (
       : [{ path, name: node.name, breadcrumbs, component: node.component }];
   });
 
-export const flatRoutes = flattenRoutes(routesConfig);
+export const flatRoutes = flattenRoutes(routes);

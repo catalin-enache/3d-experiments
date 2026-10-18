@@ -1,7 +1,7 @@
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense } from "react";
 
-import { flatRoutes } from "@src/constants/routesConfig";
+import { flatRoutes } from "@src/routes";
 
 import classes from "./App.module.css";
 import { ExperimentsMenu } from "@components";
