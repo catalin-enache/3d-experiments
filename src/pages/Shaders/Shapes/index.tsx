@@ -1,7 +1,7 @@
 import { Page } from "@components";
-import ShaderShapes from "./ShaderShapes";
+import Shapes from "./Shapes";
 
-export default function ShaderShapesPage() {
+export default function ShapesPage() {
   return (
     <Page
       orthographic
@@ -9,7 +9,7 @@ export default function ShaderShapesPage() {
         zoom: 55
       }}
     >
-      <ShaderShapes />
+      <Shapes />
     </Page>
   );
 }

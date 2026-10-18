@@ -1,7 +1,7 @@
 import { Page } from "@components";
-import ShaderPatternsUV from "./ShaderPatternsUV";
+import PatternsUV from "./PatternsUV";
 
-export default function ShaderPatternsUVPage() {
+export default function PatternsUVPage() {
   return (
     <Page
       orthographic
@@ -9,7 +9,7 @@ export default function ShaderPatternsUVPage() {
         zoom: 55
       }}
     >
-      <ShaderPatternsUV />
+      <PatternsUV />
     </Page>
   );
 }

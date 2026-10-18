@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioLinesIntersections from "./LineIntersections";
+import LineIntersections from "./LineIntersections";
 
 export default function LineIntersectionsPage() {
   return (
@@ -14,7 +14,7 @@ export default function LineIntersectionsPage() {
       }}
       rendererParams={{ useWebGpu: true }}
     >
-      <ScenarioLinesIntersections />
+      <LineIntersections />
     </Page>
   );
 }

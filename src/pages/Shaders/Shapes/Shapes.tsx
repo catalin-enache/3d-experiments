@@ -31,7 +31,7 @@ interface Params {
   };
 }
 
-export function ShaderShapes() {
+export function Shapes() {
   useEffect(() => {
     const gui = new GUI();
 
@@ -104,4 +104,4 @@ export function ShaderShapes() {
   );
 }
 
-export default ShaderShapes;
+export default Shapes;

@@ -9,7 +9,7 @@ import { Scenario } from "@components";
 
 const planeGeometry = new THREE.PlaneGeometry(10, 10, 1, 1);
 
-export function ShaderPatternsUV() {
+export function PatternsUV() {
   const { scene, camera, size } = useThree();
 
   const { material, uniforms } = useMemo(() => {
@@ -139,4 +139,4 @@ export function ShaderPatternsUV() {
   );
 }
 
-export default ShaderPatternsUV;
+export default PatternsUV;

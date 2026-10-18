@@ -1,14 +1,14 @@
 import { Page } from "@components";
-import ShaderExtendingThreeJSMaterials from "./ShaderExtendingThreeJSMaterials";
+import ExtendingThreeJSMaterials from "./ExtendingThreeJSMaterials";
 
-export default function ShaderExtendingThreeJSMaterialsPage() {
+export default function ExtendingThreeJSMaterialsPage() {
   return (
     <Page
       cameraProps={{
         position: [0, 0, 10]
       }}
     >
-      <ShaderExtendingThreeJSMaterials />
+      <ExtendingThreeJSMaterials />
     </Page>
   );
 }

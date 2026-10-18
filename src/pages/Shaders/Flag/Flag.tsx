@@ -23,7 +23,7 @@ const addRandoms = (geometry: THREE.BufferGeometry) => {
 
 addRandoms(planeGeometry);
 
-export function ShaderFlag() {
+export function Flag() {
   const flagTexture = useTexture(
     "textures/pbr/floors/FloorsCheckerboard_S_Diffuse.jpg"
   );
@@ -138,4 +138,4 @@ export function ShaderFlag() {
   );
 }
 
-export default ShaderFlag;
+export default Flag;

@@ -1,7 +1,7 @@
 import { Page } from "@components";
-import ShaderFlag from "./ShaderFlag";
+import Flag from "./Flag";
 
-export default function ShaderFlagPage() {
+export default function FlagPage() {
   return (
     <Page
       orthographic
@@ -9,7 +9,7 @@ export default function ShaderFlagPage() {
         zoom: 55
       }}
     >
-      <ShaderFlag />
+      <Flag />
     </Page>
   );
 }

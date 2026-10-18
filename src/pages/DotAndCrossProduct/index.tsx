@@ -1,7 +1,7 @@
 import { Page } from "@components";
 import DotAndCrossProduct from "./DotAndCrossProduct";
 
-export default function DotAndCrossProductsPage() {
+export default function DotAndCrossProductPage() {
   return (
     <Page
       cameraProps={{
