@@ -6,7 +6,7 @@ import vertexShader from "./glsl/vertex.glsl";
 import fragmentShader from "./glsl/fragment.glsl";
 import { Scenario } from "@components";
 
-export function ScenarioHeightMapToNormalMap() {
+export function HeightMapToNormalMap() {
   const texture = useTexture(
     "textures/pbr/castle_brick_02/castle_brick_02_red_4k_disp.jpg"
   );
@@ -60,4 +60,4 @@ export function ScenarioHeightMapToNormalMap() {
   );
 }
 
-export default ScenarioHeightMapToNormalMap;
+export default HeightMapToNormalMap;

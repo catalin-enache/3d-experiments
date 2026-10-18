@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioShaderPatternsUV from "./ScenarioShaderPatternsUV";
+import ShaderPatternsUV from "./ShaderPatternsUV";
 
 export default function ShaderPatternsUVPage() {
   return (
@@ -9,7 +9,7 @@ export default function ShaderPatternsUVPage() {
         zoom: 55
       }}
     >
-      <ScenarioShaderPatternsUV />
+      <ShaderPatternsUV />
     </Page>
   );
 }

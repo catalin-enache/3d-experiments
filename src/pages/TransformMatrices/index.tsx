@@ -1,13 +1,13 @@
 import { Page } from "@components";
-import ScenarioTransformMatrices from "./ScenarioTransformMatrices";
+import TransformMatrices from "./TransformMatrices";
 
-export default function MatrixInversePage() {
+export default function TransformMatricesPage() {
   return (
     <Page
       cameraProps={{ position: [0, 0, 5] }}
       rendererParams={{ useWebGpu: true }}
     >
-      <ScenarioTransformMatrices />
+      <TransformMatrices />
     </Page>
   );
 }

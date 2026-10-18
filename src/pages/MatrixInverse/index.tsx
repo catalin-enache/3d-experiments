@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioMatrixInverse from "./ScenarioMatrixInverse";
+import MatrixInverse from "./MatrixInverse";
 
 export default function MatrixInversePage() {
   return (
@@ -7,7 +7,7 @@ export default function MatrixInversePage() {
       cameraProps={{ position: [0, 0, 4] }}
       rendererParams={{ useWebGpu: true }}
     >
-      <ScenarioMatrixInverse />
+      <MatrixInverse />
     </Page>
   );
 }

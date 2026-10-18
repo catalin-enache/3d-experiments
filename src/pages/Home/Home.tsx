@@ -3,7 +3,7 @@ import type { ScenarioParams } from "@appTypes";
 import { SceneInit } from "@native/classes/SceneInit";
 import { isWebGPURenderer } from "@lib/utils";
 
-export function ScenarioHome({
+export function Home({
   container,
   rendererParams: _rendererParams = {},
   axesSize,

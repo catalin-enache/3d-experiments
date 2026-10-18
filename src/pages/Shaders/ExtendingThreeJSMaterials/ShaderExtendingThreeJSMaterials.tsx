@@ -23,7 +23,7 @@ const planeMaterial = new THREE.MeshStandardMaterial({
   side: THREE.DoubleSide
 });
 
-export function ScenarioShaderExtendingThreeJSMaterials() {
+export function ShaderExtendingThreeJSMaterials() {
   const gltf = useGLTF(modelPath);
 
   const { object, objectMaterial, depthMaterial, uniforms } = useMemo(() => {
@@ -225,4 +225,4 @@ ${distortPositions}`
 
 useGLTF.preload(modelPath);
 
-export default ScenarioShaderExtendingThreeJSMaterials;
+export default ShaderExtendingThreeJSMaterials;

@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioShaderExtendingThreeJSMaterials from "./ScenarioShaderExtendingThreeJSMaterials";
+import ShaderExtendingThreeJSMaterials from "./ShaderExtendingThreeJSMaterials";
 
 export default function ShaderExtendingThreeJSMaterialsPage() {
   return (
@@ -8,7 +8,7 @@ export default function ShaderExtendingThreeJSMaterialsPage() {
         position: [0, 0, 10]
       }}
     >
-      <ScenarioShaderExtendingThreeJSMaterials />
+      <ShaderExtendingThreeJSMaterials />
     </Page>
   );
 }

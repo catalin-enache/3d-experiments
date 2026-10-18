@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import { MaterialTest } from "./ScenarioMaterialTest";
+import { MaterialTest } from "./MaterialTest";
 
 export default function MaterialTestPage() {
   return (

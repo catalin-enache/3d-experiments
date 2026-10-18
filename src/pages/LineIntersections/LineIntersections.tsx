@@ -20,7 +20,7 @@ import {
  * ============================================================
  */
 
-export function ScenarioLineIntersections() {
+export function LineIntersections() {
   /*
    * ----------------------------------------------------------
    * 2D LINE / LINE
@@ -1209,4 +1209,4 @@ export function ScenarioLineIntersections() {
   );
 }
 
-export default ScenarioLineIntersections;
+export default LineIntersections;

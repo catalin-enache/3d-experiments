@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioHeightMapToNormalMap from "./ScenarioHeightMapToNormalMap";
+import HeightMapToNormalMap from "./HeightMapToNormalMap";
 
 export default function HeightMapToNormalMapPage() {
   return (
@@ -8,7 +8,7 @@ export default function HeightMapToNormalMapPage() {
         position: [0, 0, 10]
       }}
     >
-      <ScenarioHeightMapToNormalMap />
+      <HeightMapToNormalMap />
     </Page>
   );
 }

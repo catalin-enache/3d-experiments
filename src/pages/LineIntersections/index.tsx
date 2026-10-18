@@ -1,7 +1,7 @@
 import { Page } from "@components";
-import ScenarioLinesIntersections from "./ScenarioLineIntersections";
+import ScenarioLinesIntersections from "./LineIntersections";
 
-export default function MaterialTestPage() {
+export default function LineIntersectionsPage() {
   return (
     <Page
       cameraProps={{

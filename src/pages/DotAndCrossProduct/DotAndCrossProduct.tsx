@@ -6,7 +6,7 @@ import { makeLineGeometry, setLinePoints } from "@lib/utils";
 import { EPSILON } from "@lib/constants";
 import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
 
-export function ScenarioDotAndCrossProduct() {
+export function DotAndCrossProduct() {
   const { scene, camera } = useThree();
 
   const aRef = useRef<THREE.Mesh>(null);
@@ -279,4 +279,4 @@ export function ScenarioDotAndCrossProduct() {
   );
 }
 
-export default ScenarioDotAndCrossProduct;
+export default DotAndCrossProduct;

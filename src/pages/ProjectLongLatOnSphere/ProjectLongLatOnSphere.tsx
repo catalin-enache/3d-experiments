@@ -10,7 +10,7 @@ const initialDirection = {
   y: 1.6
 };
 
-export function ScenarioProjectLongLatOnSphere() {
+export function ProjectLongLatOnSphere() {
   const [direction, setDirection] = useState(() =>
     projectLongLatOnSphere({
       ...initialDirection,
@@ -78,4 +78,4 @@ export function ScenarioProjectLongLatOnSphere() {
   );
 }
 
-export default ScenarioProjectLongLatOnSphere;
+export default ProjectLongLatOnSphere;

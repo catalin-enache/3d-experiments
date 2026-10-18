@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioShaderShapes from "./ScenarioShaderShapes";
+import ShaderShapes from "./ShaderShapes";
 
 export default function ShaderShapesPage() {
   return (
@@ -9,7 +9,7 @@ export default function ShaderShapesPage() {
         zoom: 55
       }}
     >
-      <ScenarioShaderShapes />
+      <ShaderShapes />
     </Page>
   );
 }

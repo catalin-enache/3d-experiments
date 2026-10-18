@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioShaderFlag from "./ScenarioShaderFlag";
+import ShaderFlag from "./ShaderFlag";
 
 export default function ShaderFlagPage() {
   return (
@@ -9,7 +9,7 @@ export default function ShaderFlagPage() {
         zoom: 55
       }}
     >
-      <ScenarioShaderFlag />
+      <ShaderFlag />
     </Page>
   );
 }

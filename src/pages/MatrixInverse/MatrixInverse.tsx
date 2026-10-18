@@ -10,7 +10,7 @@ import {
 } from "@lib/utils";
 import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
 
-export function ScenarioMatrixInverse() {
+export function MatrixInverse() {
   const parentRef = useRef<THREE.Mesh>(null);
   const childRef = useRef<THREE.Mesh>(null);
 
@@ -387,4 +387,4 @@ export function ScenarioMatrixInverse() {
   );
 }
 
-export default ScenarioMatrixInverse;
+export default MatrixInverse;

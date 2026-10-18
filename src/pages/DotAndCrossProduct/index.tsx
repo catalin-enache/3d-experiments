@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ScenarioDotAndCrossProduct from "./ScenarioDotAndCrossProduct";
+import DotAndCrossProduct from "./DotAndCrossProduct";
 
 export default function DotAndCrossProductsPage() {
   return (
@@ -10,7 +10,7 @@ export default function DotAndCrossProductsPage() {
       rendererParams={{ useWebGpu: true }}
       gridConfig={{ position: [0, -2.5, 0] }}
     >
-      <ScenarioDotAndCrossProduct />
+      <DotAndCrossProduct />
     </Page>
   );
 }

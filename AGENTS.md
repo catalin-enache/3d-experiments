@@ -44,3 +44,12 @@ and the menu is built from them in `src/components/Menu`.
 
 Lives in the `python` folder and contains various Python scripts
 that use PyGame and PyOpenGL to render 3D graphics.
+
+
+
+## Coding Rules
+
+### Web area
+- Always TypeScript
+- A page is defined in index.tsx file in inside its experiment folder in `src/pages`
+- A page is default exported from the index.tsx file and is named after its folder name suffixing it with `Page`.

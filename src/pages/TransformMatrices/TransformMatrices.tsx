@@ -6,7 +6,7 @@ import { HtmlInfo, Scenario } from "@components";
 import { formatMatrix4, makeLineGeometry, setLinePoints } from "@lib/utils";
 import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
 
-export function ScenarioTransformMatrices() {
+export function TransformMatrices() {
   const axisARef = useRef<THREE.Mesh>(null);
   const axisBRef = useRef<THREE.Mesh>(null);
 
@@ -594,4 +594,4 @@ export function ScenarioTransformMatrices() {
   );
 }
 
-export default ScenarioTransformMatrices;
+export default TransformMatrices;
