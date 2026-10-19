@@ -1,4 +1,4 @@
-import{Ft as e,Xt as t,fn as n,g as r,gn as i,hn as a,i as o,s}from"./index-Bpj6U8h9.js";import{t as c}from"./lil-gui.esm-BsdZdNnU.js";var l=i(a(),1),u=`varying vec2 vUv;
+import{Ft as e,Xt as t,fn as n,g as r,gn as i,hn as a,i as o,s}from"./index-7pWkORit.js";import{t as c}from"./lil-gui.esm-BsdZdNnU.js";var l=i(a(),1),u=`varying vec2 vUv;
 
 void main() {
      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
@@ -144,25 +144,6 @@ float tifmk_cnoise(vec2 P){
 #endif
 #ifndef TIFMK_SHAPES_GLSL
 #define TIFMK_SHAPES_GLSL
-
-#ifndef PI
-#define PI 3.1415926535897932384626433832795
-#endif
-
-#ifndef TWO_PI
-#define TWO_PI 6.28318530718
-#endif
-
-#ifndef TIFMK_MATH_GLSL
-#define TIFMK_MATH_GLSL
-
-float tifmk_modulo(float a, float b) {
-    
-    
-    return a - floor(a / b) * b;
-}
-
-#endif
 
 float tifmk_plot(vec2 p, float pct) { 
     return  smoothstep(pct - 0.01, pct, p.y) -
