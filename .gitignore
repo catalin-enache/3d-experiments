@@ -15,6 +15,11 @@ dist-ssr
 
 src/**/__screenshots__/
 
+# Playwright
+test-results/
+playwright-report/
+screenshots/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -25,3 +30,6 @@ src/**/__screenshots__/
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+__pycache__/

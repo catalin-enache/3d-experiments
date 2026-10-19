@@ -27,11 +27,15 @@ for experimenting and learning various
 
 Stack: React 19 + TypeScript, Vite, React Router, Three.js (WebGL & WebGPU renderers),
 React Three Fiber (R3F) + drei, raw WebGL2, Tweakpane / lil-gui for controls.
+`wesl` (WGSL with imports, via `wesl-plugin` in `vite.config.ts`) is set up for WebGPU experiments:
+use it for WGSL shaders when an experiment needs them; nothing uses it yet.
 
 Commands:
 - `npm run dev` - start the dev server (Vite runs TypeScript & ESLint checks via `vite-plugin-checker`).
 - `npm run build` - type check (`tsc -b`) and build.
 - `npm run lint` - ESLint.
+- `npm run smoke` - Playwright smoke test (`tests/smoke.spec.ts`): opens every route in Chrome, fails on console/page errors
+  and saves a screenshot per page in `screenshots/`. One page: `npm run smoke -- -g "<Route Name>"`; `HEADED=1` to watch it (needed for WebGPU if headless fails).
 
 The app is served under the `/3d-experiments/` base path (GitHub Pages).
 
@@ -39,8 +43,13 @@ The app is served under the `/3d-experiments/` base path (GitHub Pages).
 
 - `src` contains the entire web area.
 
-- `public` contains static assets (`textures`, `models`) loaded at runtime (fetched / loaded by URL),
-  never imported. Reference them with a relative path, e.g. `"textures/pbr/..."`.
+- `public` contains static assets (`textures`, `models`) loaded at runtime (fetched / loaded by URL).
+  Reference them with a relative path, e.g. `"textures/pbr/..."`.
+
+  Assets (images, textures, models, data files) **always** live in `public` and are loaded at runtime
+  (`fetch`, `TextureLoader`, `useTexture`, `GLTFLoader`...). Never import them in code
+  (`import url from "./x.png"`, `?url`, `?raw`, `new URL(..., import.meta.url)`) and never put them in `src`.
+  Shaders are not assets: they live in the experiment's `glsl` folder and are imported.
 
 - `src/pages` contains the pages of the application, each page folder being an experiment in itself.
 

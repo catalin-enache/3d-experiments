@@ -10,7 +10,9 @@ export default defineConfig({
   plugins: [
     react(),
     glsl({
-      root: "/"
+      root: "/",
+      // shared chunks include each other (e.g. math, random): keep only the first copy per shader
+      removeDuplicatedImports: true
     }),
     viteWesl({ extensions: [staticBuildExtension, linkBuildExtension] }),
     checker({
