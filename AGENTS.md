@@ -164,3 +164,20 @@ that use PyGame and PyOpenGL to render 3D graphics.
 - Do not add, remove or upgrade dependencies without asking first.
 - Do not edit `dist/` (build output) or commit generated files (e.g. Python `__pycache__`).
 - Renaming a page folder or route `segment` changes its public URL on GitHub Pages; mention it when doing so.
+- **Ask before running the Playwright smoke test** (`npm run smoke`), saying which pages and why.
+  The type check and lint already run automatically (Stop hook); the smoke test is an extra, deliberate step.
+
+  When it is worth proposing:
+
+  | Change | Smoke test |
+  |---|---|
+  | New experiment | That page, and look at its screenshot |
+  | Rendering / shader / scene code of one experiment | That page; the screenshot when the visual result matters |
+  | Shared code: `Page`, `NativePage`, `SceneInit`, `lib/utils/webgl.ts`, `src/glsl`, `vite.config.ts`, dependency upgrades | Full run; screenshots only for failures or a sample of 2-3 pages |
+  | Route / folder renames | Full run (confirms every route still loads) |
+  | `AGENTS.md`, docs, config without runtime effect, comments | Not needed |
+  | Pure TS refactors already covered by `tsc -b` + lint | Usually not needed |
+  | Math helpers | Only if the change affects what is drawn |
+
+  Keep it cheap: read only the pass/fail lines and failure details of the output,
+  and open only the screenshots that are needed (each costs ~800 tokens), never all of them.

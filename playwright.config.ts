@@ -16,7 +16,8 @@ export default defineConfig({
     // the installed Google Chrome (real GPU, WebGPU support) instead of the bundled Chromium
     channel: "chrome",
     headless: !process.env.HEADED,
-    viewport: { width: 1280, height: 800 },
+    // small enough to keep screenshots cheap to inspect, large enough to judge a render
+    viewport: { width: 960, height: 600 },
     launchOptions: {
       args: ["--enable-unsafe-webgpu", "--ignore-gpu-blocklist"]
     }
@@ -25,6 +26,8 @@ export default defineConfig({
     command: `npm run dev -- --port ${port} --strictPort`,
     url,
     reuseExistingServer: true,
+    // keep Vite's log (warnings, stack traces) out of the test output
+    stderr: "ignore",
     timeout: 60_000
   }
 });

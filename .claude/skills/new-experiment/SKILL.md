@@ -106,8 +106,8 @@ Add to `src/routes.ts`, inside the topic group when there is one (create the gro
 ## 5. Verify
 
 1. `npx tsc -b` and `npm run lint` pass (Prettier runs automatically on edited files through the project hook).
-2. Run the smoke test for the new page and look at the screenshot:
+2. Ask the user whether to run the smoke test for the new page (see `AGENTS.md` → Agent Behavior); if yes, run it and look at the screenshot:
    `npm run smoke -- -g "<Spaced Name>"` → `screenshots/<route path, "/" as "__">.png`
    (e.g. `screenshots/web-gl-2__basic.png`). Read the image to check the render.
    If the page uses WebGPU and the canvas stays blank, retry with `HEADED=1`.
-3. Report what was created, the route URL (`/#/<path>`), and show the screenshot result.
+3. Report what was created, the route URL (`/#/<path>`), and the smoke test result if it was run.
