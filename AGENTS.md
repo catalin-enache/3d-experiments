@@ -95,12 +95,13 @@ The app is served under the `/3d-experiments/` base path (GitHub Pages).
 
     Use them in raw WebGL2 experiments. When working with `three.js` (or `babylon.js`)
     use that library's own math instead.
-
-- `src/native/classes` defines classes used by native (non R3F) Three.js experiments.
+  - `src/lib/nativeThreeJs` - classes for native (non R3F) Three.js experiments:
+    `SceneInit` (scene, camera, WebGL/WebGPU renderer, controls, helpers, animation loop, cleanup)
+    and `AxisViewportHelper`.
 
 ### Path aliases (tsconfig)
 
-`@src/*`, `@pages/*`, `@lib/*`, `@native/*`, `@components`, `@hooks`, `@appTypes`.
+`@src/*`, `@pages/*`, `@lib/*`, `@components`, `@hooks`, `@appTypes`.
 Prefer them over long relative imports when reaching outside the experiment folder.
 
 ## Python area

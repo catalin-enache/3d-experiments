@@ -15,7 +15,7 @@ Get these from the request; **ask** for any that is missing (one question, all i
 - **Topic folder** (optional): an existing group (`Math`, `ThreeJs`, `WebGL2`, `Shaders`) or a new one, or top level.
 - **Kind**:
   - `r3f` – React Three Fiber, wrapped in `Page`.
-  - `native-three` – plain Three.js via `SceneInit`, wrapped in `NativePage`.
+  - `native-three` – plain Three.js via `SceneInit` (`@lib/nativeThreeJs/SceneInit`), wrapped in `NativePage`.
   - `webgl2` – raw WebGL2 via `@lib/utils/webgl`, wrapped in `NativePage`.
 - **Renderer** (r3f / native-three): WebGL or WebGPU (`rendererParams: { useWebGpu: true }`).
 - **GUI**: Tweakpane or lil-gui (never pick one yourself, see AGENTS.md).

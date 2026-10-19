@@ -1,6 +1,6 @@
 import * as THREE from "three/webgpu";
 import type { ScenarioParams } from "@appTypes";
-import { SceneInit } from "@native/classes/SceneInit";
+import { SceneInit } from "@lib/nativeThreeJs/SceneInit";
 import { isWebGPURenderer } from "@lib/utils";
 
 export function Home({

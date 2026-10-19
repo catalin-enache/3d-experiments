@@ -3,7 +3,7 @@ import * as THREE_WEBGL from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { Inspector } from "three/addons/inspector/Inspector.js";
 import Stats from "three/addons/libs/stats.module.js";
-import { AxisViewportHelper } from "@native/classes/AxisViewportHelper";
+import { AxisViewportHelper } from "@lib/nativeThreeJs/AxisViewportHelper";
 import type { ScenarioParams } from "@appTypes";
 
 interface SceneInitParams extends ScenarioParams {
