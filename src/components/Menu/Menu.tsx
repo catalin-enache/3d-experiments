@@ -13,6 +13,15 @@ import clsx from "clsx";
 const isInGroup = (pathname: string, groupPath: string) =>
   pathname.startsWith(`${groupPath}/`);
 
+const collectGroupPaths = (nodes: RouteNode[], parentPath = ""): string[] =>
+  nodes.flatMap((node) => {
+    if (!isRouteGroup(node)) return [];
+    const path = joinPath(parentPath, node.segment);
+    return [path, ...collectGroupPaths(node.children, path)];
+  });
+
+const groupPaths = collectGroupPaths(routes);
+
 interface MenuItemsProps {
   nodes: RouteNode[];
   parentPath: string;
@@ -130,10 +139,22 @@ export function ExperimentsMenu() {
             pathname={location.pathname}
             expandedGroups={expandedGroups}
             onToggleGroup={(groupPath, expanded) => {
-              setExpandedGroups((current) => ({
-                ...current,
-                [groupPath]: expanded
-              }));
+              if (!expanded) {
+                setExpandedGroups((current) => ({
+                  ...current,
+                  [groupPath]: false
+                }));
+                return;
+              }
+              // accordion: opening a group closes all the others, except its ancestors
+              setExpandedGroups(
+                Object.fromEntries(
+                  groupPaths.map((path) => [
+                    path,
+                    path === groupPath || isInGroup(groupPath, path)
+                  ])
+                )
+              );
             }}
             onNavigate={() => {
               setOpen(false);

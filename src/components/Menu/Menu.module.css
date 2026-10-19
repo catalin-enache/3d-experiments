@@ -79,8 +79,22 @@
   font-weight: 600;
 }
 
+/* folders: header-like, so they stand apart from the pages inside them */
 .group {
   cursor: pointer;
+
+  color: #e8e8e8;
+  background: rgba(255, 255, 255, 0.05);
+
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  border-top: 1px solid #4a4a4a;
+}
+
+.group:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .activeGroup {
