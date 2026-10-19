@@ -1,5 +1,5 @@
 import { NativePage } from "@components";
-import { HeadsLookingAt } from "./HeadsLookingAt.tsx";
+import { HeadsLookingAt } from "./HeadsLookingAt";
 
 export default function HeadsLookingAtPage() {
   return (

@@ -1,5 +1,5 @@
 import { NativePage } from "@components";
-import { StencilPortal } from "./StencilPortal.tsx";
+import { StencilPortal } from "./StencilPortal";
 
 export default function StencilPortalPage() {
   return (

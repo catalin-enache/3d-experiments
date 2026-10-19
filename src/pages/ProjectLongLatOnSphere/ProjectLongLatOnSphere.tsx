@@ -77,5 +77,3 @@ export function ProjectLongLatOnSphere() {
     />
   );
 }
-
-export default ProjectLongLatOnSphere;

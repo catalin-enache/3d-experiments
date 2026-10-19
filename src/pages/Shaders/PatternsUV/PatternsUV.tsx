@@ -138,5 +138,3 @@ export function PatternsUV() {
     />
   );
 }
-
-export default PatternsUV;

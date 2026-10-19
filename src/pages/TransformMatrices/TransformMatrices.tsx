@@ -593,5 +593,3 @@ export function TransformMatrices() {
     />
   );
 }
-
-export default TransformMatrices;

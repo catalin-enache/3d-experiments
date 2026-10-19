@@ -1,5 +1,5 @@
 import { NativePage } from "@components";
-import { DrawImagesInRectangles } from "./DrawImagesInRectangles.tsx";
+import { DrawImagesInRectangles } from "./DrawImagesInRectangles";
 
 export default function DrawImagesInRectanglesPage() {
   return (

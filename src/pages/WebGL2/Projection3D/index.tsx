@@ -1,5 +1,5 @@
 import { NativePage } from "@components";
-import { Projection3D } from "./Projection3D.tsx";
+import { Projection3D } from "./Projection3D";
 
 export default function Projection3DPage() {
   return (

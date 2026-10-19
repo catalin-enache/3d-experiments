@@ -1,10 +1,10 @@
 import { NativePage } from "@components";
-import { WebGL2Basic } from "./WebGL2Basic";
+import { Basic } from "./Basic";
 
-export default function WebGL2BasicPage() {
+export default function BasicPage() {
   return (
     <NativePage
-      nativeScenario={WebGL2Basic}
+      nativeScenario={Basic}
       options={{
         webglContextAttributes: {
           preserveDrawingBuffer: false

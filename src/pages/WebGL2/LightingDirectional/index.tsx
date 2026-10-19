@@ -1,5 +1,5 @@
 import { NativePage } from "@components";
-import { LightingDirectional } from "./LightingDirectional.tsx";
+import { LightingDirectional } from "./LightingDirectional";
 
 export default function LightingDirectionalPage() {
   return (

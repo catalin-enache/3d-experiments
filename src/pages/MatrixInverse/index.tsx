@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import MatrixInverse from "./MatrixInverse";
+import { MatrixInverse } from "./MatrixInverse";
 
 export default function MatrixInversePage() {
   return (

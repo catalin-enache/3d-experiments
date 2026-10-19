@@ -1,5 +1,5 @@
 import { NativePage } from "@components";
-import { StencilPlayground } from "./StencilPlayground.tsx";
+import { StencilPlayground } from "./StencilPlayground";
 
 export default function StencilPlaygroundPage() {
   return (

@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ExtendingThreeJSMaterials from "./ExtendingThreeJSMaterials";
+import { ExtendingThreeJSMaterials } from "./ExtendingThreeJSMaterials";
 
 export default function ExtendingThreeJSMaterialsPage() {
   return (

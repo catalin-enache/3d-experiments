@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import DotAndCrossProduct from "./DotAndCrossProduct";
+import { DotAndCrossProduct } from "./DotAndCrossProduct";
 
 export default function DotAndCrossProductPage() {
   return (

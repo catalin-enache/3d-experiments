@@ -386,5 +386,3 @@ export function MatrixInverse() {
     />
   );
 }
-
-export default MatrixInverse;

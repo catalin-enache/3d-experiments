@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import ProjectLongLatOnSphere from "./ProjectLongLatOnSphere";
+import { ProjectLongLatOnSphere } from "./ProjectLongLatOnSphere";
 
 export default function ProjectLongLatOnSpherePage() {
   return (

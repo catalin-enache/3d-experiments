@@ -6,7 +6,7 @@ import * as m3 from "@lib/webgl2fundamentals/m3";
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
 
-export async function WebGL2Basic({
+export async function Basic({
   container,
   webglContextAttributes
 }: ScenarioParams) {

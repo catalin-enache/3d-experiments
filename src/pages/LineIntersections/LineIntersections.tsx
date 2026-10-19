@@ -1208,5 +1208,3 @@ export function LineIntersections() {
     />
   );
 }
-
-export default LineIntersections;

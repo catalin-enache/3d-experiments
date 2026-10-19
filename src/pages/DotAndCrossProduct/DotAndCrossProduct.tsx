@@ -278,5 +278,3 @@ export function DotAndCrossProduct() {
     />
   );
 }
-
-export default DotAndCrossProduct;

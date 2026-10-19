@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import TransformMatrices from "./TransformMatrices";
+import { TransformMatrices } from "./TransformMatrices";
 
 export default function TransformMatricesPage() {
   return (

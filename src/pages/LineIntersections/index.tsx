@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import LineIntersections from "./LineIntersections";
+import { LineIntersections } from "./LineIntersections";
 
 export default function LineIntersectionsPage() {
   return (

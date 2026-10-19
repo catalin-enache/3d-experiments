@@ -59,5 +59,3 @@ export function HeightMapToNormalMap() {
     />
   );
 }
-
-export default HeightMapToNormalMap;

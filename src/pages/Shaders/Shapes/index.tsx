@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import Shapes from "./Shapes";
+import { Shapes } from "./Shapes";
 
 export default function ShapesPage() {
   return (

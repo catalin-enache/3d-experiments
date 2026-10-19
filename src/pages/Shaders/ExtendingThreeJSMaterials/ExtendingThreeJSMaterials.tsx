@@ -224,5 +224,3 @@ ${distortPositions}`
 }
 
 useGLTF.preload(modelPath);
-
-export default ExtendingThreeJSMaterials;

@@ -61,6 +61,13 @@ The app is served under the `/3d-experiments/` base path (GitHub Pages).
 
 - `src/appTypes` defines cross/general types (e.g. `ScenarioParams`, `RendererParams`).
 
+- `src/threeExtensions.ts` (imported once in `main.tsx`) registers some Three.js classes in R3F under
+  prefixed names, because their default JSX tags clash with DOM element types.
+  In R3F use `<threeLine>`, `<threePath>`, `<threeAudio>`, `<threeSource>` instead of `<line>`, `<path>`, `<audio>`, `<source>`.
+
+- `src/sharedClasses.css` holds global CSS classes (loaded through `src/index.css`).
+  Component / page specific styles go in a `*.module.css` next to the component.
+
 - `src/glsl` contains a shared GLSL library reusable throughout experiments.
 
   Shaders are imported as strings via `vite-plugin-glsl` and can include shared chunks
@@ -71,6 +78,7 @@ The app is served under the `/3d-experiments/` base path (GitHub Pages).
 - `src/lib` contains shared utilities:
   - `src/lib/utils` - general helpers (`webgl.ts` holds the WebGL2 boilerplate: `init`, `createProgram`, `loop`, ...).
   - `src/lib/math` - math helpers (intersections, lerp, quaternions, ...).
+  - `src/lib/constants.ts` - shared constants (e.g. `EPSILON` for float comparisons).
   - `src/lib/geometries` - reusable geometries as TS objects (vertex data),
     complementary to the `public/models` static models.
   - `src/lib/webgl2fundamentals` - math functions (`m3`, `m4`, `matrixStack`) taken from
@@ -105,10 +113,19 @@ that use PyGame and PyOpenGL to render 3D graphics.
 - Naming: the folder name is the single source for all names, with no extra prefixes/suffixes
   (e.g. no `Shader`, `Scenario`) other than `Page`. For a folder `<Name>`:
   - experiment file: `<Name>.tsx`
-  - experiment component / function: `<Name>` (imported in `index.tsx` under the same name, no alias)
-  - page component: `<Name>Page`
+  - experiment component / function: `<Name>`, a **named export only** (no default export),
+    imported in `index.tsx` as `import { <Name> } from "./<Name>";` (no alias, no file extension)
+  - page component: `<Name>Page`, the only default export of the folder
+  - route `segment`: the folder name in kebab-case. Words are split at case changes,
+    acronyms and numbers being words of their own
+    (`DotAndCrossProduct` -> `dot-and-cross-product`, `PatternsUV` -> `patterns-uv`,
+    `Projection3D` -> `projection-3d`, `WebGL2` -> `web-gl-2`)
+  - route `name` (shown in the Menu): the same words separated by spaces
+    (`Dot And Cross Product`, `Patterns UV`, `Projection 3D`), product names written as usual (`WebGL 2`)
 
-  e.g. `src/pages/Shaders/Flag/` -> `Flag.tsx` exporting `Flag`, and `index.tsx` default exporting `FlagPage`.
+  e.g. `src/pages/Shaders/Flag/` -> `Flag.tsx` exporting `Flag`, `index.tsx` default exporting `FlagPage`,
+  route `{ segment: "flag", name: "Flag" }`. Topic folders (route groups) follow the same segment/name rule.
+  The only exception is `Home`, whose segment is `""` (the site root).
 - Experiment specific files (shaders in a `glsl` subfolder, meshes, scene, GUI pane, README.md) stay in the same folder.
 - R3F (React Three Fiber) experiments are wrapped in a `components/Page` component
   (it owns the `<Canvas>`, camera, renderer - WebGL or WebGPU via `rendererParams` - grid, stats and gizmo).
@@ -120,3 +137,21 @@ that use PyGame and PyOpenGL to render 3D graphics.
   since React StrictMode mounts it twice.
 - Register every new page in `src/routes.ts`.
 - When using Three.js with WebGPU import from `three/webgpu`; for the WebGL renderer import from `three`.
+- GUI controls: both Tweakpane and `lil-gui` are fine, neither is preferred.
+  The choice is made per experiment when it is started: use the one requested,
+  ask if none was specified, and keep using the one an existing experiment already uses.
+  In R3F experiments, to inspect/edit a Three.js object there is also
+  the `Inspector` component (Tweakpane based, `<Inspector object={...} />`).
+- Shared code: keep code inside the experiment folder until a second experiment needs it,
+  then move it to `src/lib` (TS utilities, math, geometries), `src/glsl` (shader chunks),
+  `src/components` or `src/hooks`, and re-export it from the barrel `index.ts` where there is one.
+- This is a learning project: every new experiment starts with a comment explaining the concept
+  it demonstrates and how it works (see `StencilPortal.tsx`). Non obvious math and GL state changes are commented.
+  Larger experiments may add a `README.md` in their folder.
+- Formatting follows `.prettierrc.json` (double quotes, semicolons, no trailing commas, 2 spaces, 80 columns).
+- Before finishing a task, run Prettier on the changed files and make sure `npm run lint` and `npx tsc -b` pass.
+
+# Agent Behavior
+- Do not add, remove or upgrade dependencies without asking first.
+- Do not edit `dist/` (build output) or commit generated files (e.g. Python `__pycache__`).
+- Renaming a page folder or route `segment` changes its public URL on GitHub Pages; mention it when doing so.

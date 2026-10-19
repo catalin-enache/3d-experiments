@@ -137,5 +137,3 @@ export function Flag() {
     />
   );
 }
-
-export default Flag;

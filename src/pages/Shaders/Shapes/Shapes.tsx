@@ -103,5 +103,3 @@ export function Shapes() {
     />
   );
 }
-
-export default Shapes;

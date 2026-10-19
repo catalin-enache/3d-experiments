@@ -47,8 +47,8 @@ export const routes: RouteNode[] = [
     component: lazy(() => import("@pages/MaterialTest"))
   },
   {
-    segment: "dot-cross-product",
-    name: "Dot Cross Product",
+    segment: "dot-and-cross-product",
+    name: "Dot And Cross Product",
     component: lazy(() => import("@pages/DotAndCrossProduct"))
   },
   {
@@ -62,8 +62,8 @@ export const routes: RouteNode[] = [
     component: lazy(() => import("@pages/TransformMatrices"))
   },
   {
-    segment: "lines-intersections",
-    name: "Lines Intersections",
+    segment: "line-intersections",
+    name: "Line Intersections",
     component: lazy(() => import("@pages/LineIntersections"))
   },
   {
@@ -73,7 +73,7 @@ export const routes: RouteNode[] = [
       {
         segment: "basic",
         name: "Basic",
-        component: lazy(() => import("@pages/WebGL2/WebGL2Basic"))
+        component: lazy(() => import("@pages/WebGL2/Basic"))
       },
       {
         segment: "image-processing",

@@ -1,5 +1,5 @@
 import { Page } from "@components";
-import Flag from "./Flag";
+import { Flag } from "./Flag";
 
 export default function FlagPage() {
   return (

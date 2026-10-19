@@ -1,5 +1,5 @@
 import { NativePage } from "@components";
-import { LightingNormalMap } from "./LightingNormalMap.tsx";
+import { LightingNormalMap } from "./LightingNormalMap";
 
 export default function LightingNormalMapPage() {
   return (
