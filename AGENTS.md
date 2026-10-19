@@ -53,7 +53,7 @@ The app is served under the `/3d-experiments/` base path (GitHub Pages).
 
 - `src/pages` contains the pages of the application, each page folder being an experiment in itself.
 
-  Pages can be nested in subfolders to organize them by topic (`WebGL2`, `Shaders`, etc.).
+  Pages can be nested in subfolders to organize them by topic (`Math`, `ThreeJs`, `WebGL2`, `Shaders`, etc.).
   The nesting is reflected in `src/routes.ts` and therefore in the Menu.
 
   A page is a React component that wraps an experiment.
@@ -130,7 +130,7 @@ that use PyGame and PyOpenGL to render 3D graphics.
     (`DotAndCrossProduct` -> `dot-and-cross-product`, `PatternsUV` -> `patterns-uv`,
     `Projection3D` -> `projection-3d`, `WebGL2` -> `web-gl-2`)
   - route `name` (shown in the Menu): the same words separated by spaces
-    (`Dot And Cross Product`, `Patterns UV`, `Projection 3D`), product names written as usual (`WebGL 2`)
+    (`Dot And Cross Product`, `Patterns UV`, `Projection 3D`), product names written as usual (`WebGL 2`, `Three.js`)
 
   e.g. `src/pages/Shaders/Flag/` -> `Flag.tsx` exporting `Flag`, `index.tsx` default exporting `FlagPage`,
   route `{ segment: "flag", name: "Flag" }`. Topic folders (route groups) follow the same segment/name rule.

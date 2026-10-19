@@ -12,7 +12,7 @@ Creates a new experiment following the rules in `AGENTS.md` (Coding Rules → We
 Get these from the request; **ask** for any that is missing (one question, all items together):
 
 - **Name**: PascalCase folder name, e.g. `NormalMapping`. All other names derive from it.
-- **Topic folder** (optional): an existing group (`WebGL2`, `Shaders`) or a new one, or top level.
+- **Topic folder** (optional): an existing group (`Math`, `ThreeJs`, `WebGL2`, `Shaders`) or a new one, or top level.
 - **Kind**:
   - `r3f` – React Three Fiber, wrapped in `Page`.
   - `native-three` – plain Three.js via `SceneInit`, wrapped in `NativePage`.

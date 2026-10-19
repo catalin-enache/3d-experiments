@@ -37,34 +37,46 @@ export const routes: RouteNode[] = [
     component: lazy(() => import("@pages/Home"))
   },
   {
-    segment: "project-long-lat-on-sphere",
-    name: "Project Long Lat On Sphere",
-    component: lazy(() => import("@pages/ProjectLongLatOnSphere"))
+    segment: "math",
+    name: "Math",
+    children: [
+      {
+        segment: "project-long-lat-on-sphere",
+        name: "Project Long Lat On Sphere",
+        component: lazy(() => import("@pages/Math/ProjectLongLatOnSphere"))
+      },
+      {
+        segment: "dot-and-cross-product",
+        name: "Dot And Cross Product",
+        component: lazy(() => import("@pages/Math/DotAndCrossProduct"))
+      },
+      {
+        segment: "matrix-inverse",
+        name: "Matrix Inverse",
+        component: lazy(() => import("@pages/Math/MatrixInverse"))
+      },
+      {
+        segment: "transform-matrices",
+        name: "Transform Matrices",
+        component: lazy(() => import("@pages/Math/TransformMatrices"))
+      },
+      {
+        segment: "line-intersections",
+        name: "Line Intersections",
+        component: lazy(() => import("@pages/Math/LineIntersections"))
+      }
+    ]
   },
   {
-    segment: "material-test",
-    name: "Material Test",
-    component: lazy(() => import("@pages/MaterialTest"))
-  },
-  {
-    segment: "dot-and-cross-product",
-    name: "Dot And Cross Product",
-    component: lazy(() => import("@pages/DotAndCrossProduct"))
-  },
-  {
-    segment: "matrix-inverse",
-    name: "Matrix Inverse",
-    component: lazy(() => import("@pages/MatrixInverse"))
-  },
-  {
-    segment: "transform-matrices",
-    name: "Transform Matrices",
-    component: lazy(() => import("@pages/TransformMatrices"))
-  },
-  {
-    segment: "line-intersections",
-    name: "Line Intersections",
-    component: lazy(() => import("@pages/LineIntersections"))
+    segment: "three-js",
+    name: "Three.js",
+    children: [
+      {
+        segment: "material-test",
+        name: "Material Test",
+        component: lazy(() => import("@pages/ThreeJs/MaterialTest"))
+      }
+    ]
   },
   {
     segment: "web-gl-2",
