@@ -133,14 +133,28 @@ So:
 
 ### The scene
 
-1. **Clear** with `clearStencil` (0 by default).
+`drawScene` in `StencilPlayground.tsx` draws, in this order:
+
+1. **Clear** the color, the depth and the stencil (to `clearStencil`, 0 by
+   default).
 2. **Depth blocker** (optional): a gray vertical bar in front of everything.
-   It writes color and depth only, the stencil test is off while it is drawn.
-   It exists to make the depth test fail, so `dpfail` can be seen.
-3. **Pass 1: three circles**, one draw call each. Where they overlap, a pixel
-   goes through the stencil test and op **once per circle**, and each circle is
+   It is not a pass: it writes color and depth only, the stencil test is off
+   while it is drawn. It exists to make the depth test fail, so `dpfail` can
+   be seen.
+3. **Pass 1: the three circles**, one draw call each, all with the pass 1
+   stencil state: red, then green, then blue. Where they overlap, a pixel goes
+   through the stencil test and op **once per circle**, and each circle is
    tested against what the previous circles left.
-4. **Pass 2: a rectangle**, tested against what pass 1 left in the stencil.
+4. **Pass 2: the rectangle**, one draw call with the pass 2 stencil state,
+   tested against what all three circles left in the stencil.
+
+"Drawn" means the shape is sent to the GPU. Whether its pixels show up depends
+on the stencil and depth tests of its pass. That is why the rectangle only
+shows up as the lens shapes in "Count overlaps", and why the later circles are
+missing in "No overdraw".
+
+All of this happens twice per frame, once for each half. On the right,
+`drawStencilView` then paints the stencil values over the result.
 
 Each pass has its own `stencilFunc`, `stencilOp` and `stencilMask`, plus:
 
