@@ -149,6 +149,52 @@ Each pass has its own `stencilFunc`, `stencilOp` and `stencilMask`, plus:
 - **depth test**: turn it off and `dpfail` never happens for that pass
 - **passes if**: the real comparison with the current values, in binary
 
+### The depth blocker
+
+The blocker (the gray bar, "blocker" in the Scene tab) exists only to **make
+the depth test fail**, so `dpfail` can be seen.
+
+Without it `dpfail` never happens. The circles and the rectangle are all drawn
+at the same depth (`u_depth = 0`) and don't write depth (`depthMask(false)` in
+`applyPass`), while the depth buffer is cleared to 1 (the far plane). So every
+fragment of every shape passes the depth test.
+
+`drawScene` draws the blocker first, right after the clear:
+
+```js
+gl.disable(gl.STENCIL_TEST); // doesn't test or write the stencil
+gl.disable(gl.BLEND);
+gl.enable(gl.DEPTH_TEST);
+drawRect(blocker, blockerColor, false, -0.5); // closer than the shapes
+```
+
+- It writes **color**: the opaque gray bar.
+- It writes **depth**: its strip of the depth buffer holds a closer depth than
+  the shapes (clip z -0.5 is window depth 0.25, the shapes' z 0 is 0.5).
+- It doesn't touch the **stencil**, because the stencil test is off while it is
+  drawn. Anything that shows up in that strip on the right was written by the
+  passes.
+
+Where a shape is behind the bar, the default depth test (`LESS`) fails:
+
+- the shape is not drawn there, the bar hides it on the left
+- if the stencil test passed, `stencilOp` uses **`dpfail`** for those pixels,
+  not `dppass`
+
+So with the blocker on, a pass splits its pixels into three groups: `sfail`
+(the stencil test failed), `dpfail` (behind the bar) and `dppass` (visible).
+Turning off **depth test** for a pass makes the bar irrelevant to it: those
+pixels go back to `dppass` and the shape is drawn over the bar.
+
+The X-ray preset uses this. Pass 1 has dpfail `REPLACE` ref 1, so only the
+parts of the circles **behind** the bar are marked. Pass 2 has its depth test
+off, so the rectangle is drawn over the bar, but only on the marked pixels.
+To try it yourself: turn the blocker on and set pass 1 dpfail to `INCR`. The
+strip counts the overlaps as in "Count overlaps", but only behind the bar.
+
+The same mechanism draws characters hidden behind walls as silhouettes in
+games, and it is the basis of depth-fail ("Carmack's reverse") shadow volumes.
+
 ### Reading the two halves
 
 The left shows the result of the stencil **test** (what was drawn), the right
