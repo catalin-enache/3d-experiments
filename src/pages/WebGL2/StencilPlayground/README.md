@@ -1,7 +1,6 @@
 # Stencil Playground
 
 An interactive page to see what `stencilFunc`, `stencilOp` and `stencilMask` do.
-Route: `#/web-gl-2/stencil-playground`
 
 ## What the stencil buffer is
 

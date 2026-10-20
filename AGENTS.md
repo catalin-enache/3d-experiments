@@ -158,6 +158,7 @@ that use PyGame and PyOpenGL to render 3D graphics.
 - This is a learning project: every new experiment starts with a comment explaining the concept
   it demonstrates and how it works (see `StencilPortal.tsx`). Non obvious math and GL state changes are commented.
   Larger experiments may add a `README.md` in their folder.
+  Don't put the page's route / URL (e.g. `#/web-gl-2/...`) in it: the Menu already leads there.
 - Formatting follows `.prettierrc.json` (double quotes, semicolons, no trailing commas, 2 spaces, 80 columns).
 - Before finishing a task, run Prettier on the changed files and make sure `npm run lint` and `npx tsc -b` pass.
 

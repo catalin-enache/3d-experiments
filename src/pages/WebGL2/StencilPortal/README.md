@@ -2,7 +2,6 @@
 
 A portal made with the stencil buffer: a plane in a frame that shows another
 world through it.
-Route: `#/web-gl-2/stencil-portal`
 
 To see what each stencil setting does on its own, open the
 [Stencil Playground](../StencilPlayground/README.md) first. This page uses the

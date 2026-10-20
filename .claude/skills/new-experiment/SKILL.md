@@ -110,4 +110,4 @@ Add to `src/routes.ts`, inside the topic group when there is one (create the gro
    `npm run smoke -- -g "<Spaced Name>"` → `screenshots/<route path, "/" as "__">.png`
    (e.g. `screenshots/web-gl-2__basic.png`). Read the image to check the render.
    If the page uses WebGPU and the canvas stays blank, retry with `HEADED=1`.
-3. Report what was created, the route URL (`/#/<path>`), and the smoke test result if it was run.
+3. Report what was created and the smoke test result if it was run.
