@@ -1,4 +1,4 @@
-import{g as e,o as t}from"./index-C3o0UbHZ.js";import{t as n}from"./lil-gui.esm-BsdZdNnU.js";import{n as r,r as i,t as a}from"./webgl-xLT4z7BO.js";import{a as o,i as s,n as c,r as l,t as u}from"./m3-PaD3hXb8.js";var d=`#version 300 es
+import{g as e,o as t}from"./index-6FzA5AJq.js";import{t as n}from"./lil-gui.esm-BsdZdNnU.js";import{n as r,r as i,t as a}from"./webgl-vSbijmij.js";import{a as o,i as s,n as c,r as l,t as u}from"./m3-PaD3hXb8.js";var d=`#version 300 es
 
 in vec2 a_position;
 in vec4 a_color;
