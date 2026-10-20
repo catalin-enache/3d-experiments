@@ -6,7 +6,7 @@ Route: `#/web-gl-2/stencil-playground`
 ## What the stencil buffer is
 
 Next to the color and the depth, every pixel can also have a **stencil value**:
-an 8 bit integer (0..255). It is never shown on screen. It is a mask that
+an 8-bit integer (0..255). It is never shown on screen. It is a mask that
 draw calls can **test** against and **write** into.
 
 A drawing buffer has no stencil buffer unless you ask for one when you create
@@ -329,7 +329,7 @@ rectangle. The yellow outline on the right shows the whole rectangle.
 ## Files
 
 The stencil logic is all in `StencilPlayground.tsx`. The other files hold the
-setup around it.
+surrounding setup.
 
 - `StencilPlayground.tsx`: the scene, the passes (`applyPass`, `drawScene`),
   the stencil view (`drawStencilView`) and reading back the value under the cursor
