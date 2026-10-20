@@ -49,7 +49,7 @@ A fragment passes when
 | `NOTEQUAL` | `ref & mask != stencil & mask` |
 | `ALWAYS`   | always                         |
 
-### `gl.stencilOp(sfail, dpfail, dppass)`: what to write
+### `gl.stencilOp(sfail, dpfail, dppass)`: what to write in the stencil buffer
 
 Every fragment ends up in exactly one of three cases, and each case has its own
 operation:
