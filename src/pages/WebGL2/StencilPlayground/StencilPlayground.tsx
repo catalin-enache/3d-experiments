@@ -81,8 +81,10 @@ export async function StencilPlayground({
     { center: [0.24, 0.16], color: [0.25, 1, 0.3, 0.5] },
     { center: [0, -0.24], color: [0.3, 0.45, 1, 0.5] }
   ];
-  // pass 2 draws a rectangle covering most of the circles
-  const rect = { center: [0, -0.02], halfSize: [0.82, 0.78] };
+  // pass 2 draws a rectangle covering most of the circles.
+  // Its half width (0.72) keeps it inside a half of the split view
+  // as long as that half is at least 0.72 times as wide as it is tall
+  const rect = { center: [0, -0.02], halfSize: [0.72, 0.78] };
   const rectColor = [1, 0.85, 0.2, 0.85];
   // a vertical bar in front of everything, to make the depth test fail
   const blocker = { center: [0, 0], halfSize: [0.1, 0.95] };
