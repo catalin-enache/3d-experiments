@@ -19,6 +19,7 @@ Get these from the request; **ask** for any that is missing (one question, all i
   - `webgl2` – raw WebGL2 via `@lib/utils/webgl`, wrapped in `NativePage`.
 - **Renderer** (r3f / native-three): WebGL or WebGPU (`rendererParams: { useWebGpu: true }`).
 - **GUI**: Tweakpane or lil-gui (never pick one yourself, see AGENTS.md).
+  Its configuration goes in a sibling `pane.ts` (`createPane`) or `gui.ts` (`createGui`), not in `<Name>.tsx`.
 - **Concept**: what the experiment demonstrates (used for the header comment).
 
 Check `src/pages/<Topic>/<Name>` does not exist yet.
@@ -27,13 +28,13 @@ Check `src/pages/<Topic>/<Name>` does not exist yet.
 
 For `<Name>` (e.g. `NormalMapping`):
 
-| what | value |
-|---|---|
-| folder | `src/pages[/<Topic>]/<Name>/` |
-| experiment file / export | `<Name>.tsx` / `export function <Name>` (named export only) |
-| page | `index.tsx` / `export default function <Name>Page` |
-| route segment | kebab-case, acronyms and numbers are words: `normal-mapping`, `Projection3D` → `projection-3d` |
-| route name | words with spaces: `Normal Mapping` |
+| what                     | value                                                                                          |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| folder                   | `src/pages[/<Topic>]/<Name>/`                                                                  |
+| experiment file / export | `<Name>.tsx` / `export function <Name>` (named export only)                                    |
+| page                     | `index.tsx` / `export default function <Name>Page`                                             |
+| route segment            | kebab-case, acronyms and numbers are words: `normal-mapping`, `Projection3D` → `projection-3d` |
+| route name               | words with spaces: `Normal Mapping`                                                            |
 
 ## 3. Create the files
 
@@ -83,6 +84,7 @@ export default function <Name>Page() {
 Starts with a comment explaining the concept and how the experiment shows it (see `src/pages/WebGL2/StencilPortal/StencilPortal.tsx`). Keep the explanatory comments through the code, especially for math and GL state.
 
 Native experiments (`native-three`, `webgl2`):
+
 - signature `export function <Name>(params: ScenarioParams)` (or `async` when it awaits, e.g. `createProgram`),
 - everything is created inside `params.container`,
 - the returned cleanup destroys the GUI, listeners, GL objects and stops the loop (StrictMode mounts twice).

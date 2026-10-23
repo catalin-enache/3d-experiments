@@ -1,4 +1,3 @@
-import { Pane } from "tweakpane";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
@@ -13,6 +12,7 @@ import {
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
+import { createPane, type Params } from "./pane";
 
 const normalMapSrc = "textures/normals/Test2.png";
 
@@ -83,41 +83,17 @@ export async function LightingNormalMap({
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
   gl.generateMipmap(gl.TEXTURE_2D);
 
-  const params = {
-    // in degrees
+  const params: Params = {
     rotationX: 20,
     rotationY: -30,
     scaleX: 1,
     scaleY: 1,
     scaleZ: 1,
-    // where the light comes from, in degrees:
-    // horizontal goes left (-) / right (+), vertical goes bottom (-) / top (+)
     lightHorizontalYaw: 30,
     lightVerticalPitch: 30
   };
 
-  const pane = new Pane({ title: "Lighting Normal Map" });
-  const cubeFolder = pane.addFolder({ title: "Cube" });
-  for (const key of ["rotationX", "rotationY"] as const) {
-    cubeFolder.addBinding(params, key, { min: -180, max: 180, step: 1 });
-  }
-  // min > 0 keeps the world matrix invertible
-  for (const key of ["scaleX", "scaleY", "scaleZ"] as const) {
-    cubeFolder.addBinding(params, key, { min: 0.1, max: 3, step: 0.1 });
-  }
-  const lightFolder = pane.addFolder({ title: "Light" });
-  lightFolder.addBinding(params, "lightHorizontalYaw", {
-    label: "left/right",
-    min: -180,
-    max: 180,
-    step: 1
-  });
-  lightFolder.addBinding(params, "lightVerticalPitch", {
-    label: "bottom/top",
-    min: -90,
-    max: 90,
-    step: 1
-  });
+  const pane = createPane(params);
 
   const cubeSize = 150;
   const camera = [0, 0, 400];

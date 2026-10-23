@@ -1,7 +1,6 @@
 import * as THREE from "three/webgpu";
 import { useEffect, useMemo } from "react";
 import { Environment, useGLTF } from "@react-three/drei";
-import { Pane } from "tweakpane";
 
 import { Scenario } from "@components";
 
@@ -11,6 +10,7 @@ import {
   distortNormals,
   distortPositions
 } from "./glsl/includes.glsl";
+import { createPane } from "./pane";
 
 const modelPath =
   "models/FromThreeRepo/gltf_glb/DamagedHelmet/glTF/DamagedHelmet.gltf";
@@ -126,41 +126,7 @@ ${distortPositions}`
    * Tweakpane
    */
   useEffect(() => {
-    const pane = new Pane({
-      title: "Material Distortion"
-    });
-
-    const varsFolder = pane.addFolder({
-      title: "Vars"
-    });
-
-    varsFolder.addBinding(uniforms.uVars.value, "x", {
-      label: "X",
-      min: 0,
-      max: 1,
-      step: 0.01
-    });
-
-    varsFolder.addBinding(uniforms.uVars.value, "y", {
-      label: "Y",
-      min: 0,
-      max: 1,
-      step: 0.01
-    });
-
-    varsFolder.addBinding(uniforms.uVars.value, "z", {
-      label: "Z",
-      min: 0,
-      max: 1,
-      step: 0.01
-    });
-
-    varsFolder.addBinding(uniforms.uVars.value, "w", {
-      label: "W",
-      min: 0,
-      max: 1,
-      step: 0.01
-    });
+    const pane = createPane(uniforms.uVars.value);
 
     return () => {
       pane.dispose();

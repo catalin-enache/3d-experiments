@@ -1,10 +1,10 @@
 import * as THREE from "three/webgpu";
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Pane } from "tweakpane";
 import { HtmlInfo, Scenario } from "@components";
 import { formatMatrix4, makeLineGeometry, setLinePoints } from "@lib/utils";
 import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
+import { createPane, type Params } from "./pane";
 
 export function TransformMatrices() {
   const axisARef = useRef<THREE.Mesh>(null);
@@ -39,7 +39,7 @@ export function TransformMatrices() {
    *
    * M = T * R * S
    */
-  const params = useMemo(
+  const params = useMemo<Params>(
     () => ({
       translation: {
         x: 2,
@@ -105,83 +105,7 @@ export function TransformMatrices() {
   );
 
   useEffect(() => {
-    const pane = new Pane({
-      title: "Transform matrices"
-    });
-
-    /*
-     * ---------------------------------------------------------
-     * TRANSLATION
-     * ---------------------------------------------------------
-     */
-    const translationFolder = pane.addFolder({
-      title: "Translation"
-    });
-
-    translationFolder.addBinding(params.translation, "x", {
-      min: -5,
-      max: 5,
-      step: 0.01
-    });
-
-    translationFolder.addBinding(params.translation, "y", {
-      min: -5,
-      max: 5,
-      step: 0.01
-    });
-
-    translationFolder.addBinding(params.translation, "z", {
-      min: -5,
-      max: 5,
-      step: 0.01
-    });
-
-    /*
-     * ---------------------------------------------------------
-     * ROTATION
-     * ---------------------------------------------------------
-     *
-     * The angle is applied around the direction defined by:
-     *
-     * normalize(B - A)
-     */
-    const rotationFolder = pane.addFolder({
-      title: "Rotation"
-    });
-
-    rotationFolder.addBinding(params, "rotationDegrees", {
-      label: "angle",
-      min: -180,
-      max: 180,
-      step: 1
-    });
-
-    /*
-     * ---------------------------------------------------------
-     * SCALE
-     * ---------------------------------------------------------
-     */
-    const scaleFolder = pane.addFolder({
-      title: "Scale"
-    });
-
-    scaleFolder.addBinding(params.scale, "x", {
-      min: 0.1,
-      max: 3,
-      step: 0.01
-    });
-
-    scaleFolder.addBinding(params.scale, "y", {
-      min: 0.1,
-      max: 3,
-      step: 0.01
-    });
-
-    scaleFolder.addBinding(params.scale, "z", {
-      min: 0.1,
-      max: 3,
-      step: 0.01
-    });
+    const pane = createPane(params);
 
     return () => {
       pane.dispose();

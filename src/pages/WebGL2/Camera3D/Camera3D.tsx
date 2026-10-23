@@ -1,4 +1,3 @@
-import { Pane } from "tweakpane";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
@@ -11,6 +10,7 @@ import {
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
+import { createPane, type Params } from "./pane";
 
 // https://webgl2fundamentals.org/webgl/lessons/webgl-3d-camera.html
 export async function Camera3D({
@@ -53,18 +53,11 @@ export async function Camera3D({
     0
   );
 
-  const params = {
-    // in degrees
+  const params: Params = {
     cameraAngle: 0
   };
 
-  const pane = new Pane({ title: "Camera" });
-  pane.addBinding(params, "cameraAngle", {
-    label: "angle",
-    min: -360,
-    max: 360,
-    step: 1
-  });
+  const pane = createPane(params);
 
   const numFs = 5;
   const radius = 200;

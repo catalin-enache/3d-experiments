@@ -1,7 +1,7 @@
-import GUI from "lil-gui";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop } from "@lib/utils/webgl";
 import { kernels, effects, type KernelName } from "./kernels";
+import { createGui } from "./gui";
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
@@ -176,11 +176,7 @@ export async function ImageProcessing({
     );
   }
 
-  const gui = new GUI({ title: "Image processing" });
-  const effectsFolder = gui.addFolder("Effects");
-  for (const effect of effects) {
-    effectsFolder.add(effect, "on").name(effect.name);
-  }
+  const gui = createGui(effects);
 
   gl.useProgram(program);
   gl.bindVertexArray(vao);

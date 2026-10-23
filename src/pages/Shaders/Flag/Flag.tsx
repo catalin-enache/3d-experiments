@@ -2,11 +2,12 @@ import * as THREE from "three/webgpu";
 import { useEffect, useMemo } from "react";
 import { useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { Pane } from "tweakpane";
 
 import vertexShader from "./glsl/vertex.glsl";
 import fragmentShader from "./glsl/fragment.glsl";
 import { Scenario } from "@components";
+
+import { createPane, type Params } from "./pane";
 
 const planeGeometry = new THREE.PlaneGeometry(10, 10, 64, 64);
 
@@ -60,54 +61,20 @@ export function Flag() {
   }, [flagTexture]);
 
   useEffect(() => {
-    const pane = new Pane({
-      title: "Shader Flag"
-    });
-
-    const params = {
+    const params: Params = {
       tessellation: planeGeometry.parameters.heightSegments
     };
 
-    pane
-      .addBinding(params, "tessellation", {
-        label: "Tessellation",
-        min: 1,
-        max: 256,
-        step: 1
-      })
-      .on("change", ({ value }) => {
-        const newGeometry = new THREE.PlaneGeometry(10, 10, value, value);
+    const onTessellationChange = (value: number) => {
+      const newGeometry = new THREE.PlaneGeometry(10, 10, value, value);
 
-        addRandoms(newGeometry);
+      addRandoms(newGeometry);
 
-        planeGeometry.copy(newGeometry);
-        newGeometry.dispose();
-      });
+      planeGeometry.copy(newGeometry);
+      newGeometry.dispose();
+    };
 
-    pane.addBinding(uniforms.uIntensity, "value", {
-      label: "Intensity",
-      min: 0,
-      max: 1,
-      step: 0.1
-    });
-
-    const frequencyFolder = pane.addFolder({
-      title: "Frequency"
-    });
-
-    frequencyFolder.addBinding(uniforms.uFrequency.value, "x", {
-      label: "X",
-      min: 0,
-      max: 2,
-      step: 0.1
-    });
-
-    frequencyFolder.addBinding(uniforms.uFrequency.value, "y", {
-      label: "Y",
-      min: 0,
-      max: 2,
-      step: 0.1
-    });
+    const pane = createPane(params, uniforms, { onTessellationChange });
 
     return () => {
       pane.dispose();

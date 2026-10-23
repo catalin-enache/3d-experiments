@@ -1,4 +1,3 @@
-import { Pane } from "tweakpane";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
@@ -14,6 +13,7 @@ import {
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
+import { createPane, type Params } from "./pane";
 
 // https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-point.html
 export async function LightingPoint({
@@ -110,58 +110,24 @@ export async function LightingPoint({
     }
   ];
 
-  const params = {
-    // in degrees
+  const params: Params = {
     rotation: 0,
     scaleX: 1,
     scaleY: 1,
     scaleZ: 1,
-    // when off, normals are transformed by the world matrix itself
-    // so their distortion under non-uniform scaling can be observed
     inverseTranspose: true,
-    // DIFFERENT from the directional light: the light is a point in the world.
-    // Placed left and in front of the F, where it mirrors into the camera
+    // placed left and in front of the F, where it mirrors into the camera
     // off the F's front face (top rung), so both the F and the sphere
     // show a specular highlight from the start
     lightX: -110,
     lightY: 24,
     lightZ: 109,
-    // DIFFERENT: distance at which the light is at half its brightness
     falloffDistance: 200,
-    // 0..1 per channel
     lightColor: { r: 1, g: 1, b: 1 },
     shininess: 150
   };
 
-  const pane = new Pane({ title: "Lighting Point" });
-  pane.addBinding(params, "rotation", {
-    min: -360,
-    max: 360,
-    step: 1
-  });
-  // non-uniform scaling is where normals break if they are
-  // transformed by the world matrix instead of its inverse transpose.
-  // min > 0 keeps the world matrix invertible
-  for (const key of ["scaleX", "scaleY", "scaleZ"] as const) {
-    pane.addBinding(params, key, { min: 0.1, max: 3, step: 0.1 });
-  }
-  pane.addBinding(params, "inverseTranspose", { label: "inverse transpose" });
-  // DIFFERENT: the light can be moved around the scene
-  const lightFolder = pane.addFolder({ title: "Light position" });
-  for (const key of ["lightX", "lightY", "lightZ"] as const) {
-    lightFolder.addBinding(params, key, { min: -300, max: 300, step: 1 });
-  }
-  lightFolder.addBinding(params, "falloffDistance", {
-    label: "half brightness at",
-    min: 10,
-    max: 1000,
-    step: 1
-  });
-  lightFolder.addBinding(params, "lightColor", {
-    label: "light color",
-    color: { type: "float" }
-  });
-  lightFolder.addBinding(params, "shininess", { min: 1, max: 500, step: 1 });
+  const pane = createPane(params);
 
   const camera = [100, 150, 250];
   const target = [0, 0, 0];

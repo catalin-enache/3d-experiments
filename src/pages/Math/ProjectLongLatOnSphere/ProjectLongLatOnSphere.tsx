@@ -1,7 +1,7 @@
-import GUI from "lil-gui";
 import { useEffect, useRef, useState } from "react";
 import { Scenario } from "@components";
 import { projectLongLatOnSphere } from "@lib/math";
+import { createGui, type Params } from "./gui";
 
 const radius = 10;
 
@@ -18,14 +18,12 @@ export function ProjectLongLatOnSphere() {
     })
   );
 
-  const guiValues = useRef({
+  const guiValues = useRef<Params>({
     longitude: initialDirection.x,
     latitude: initialDirection.y
   });
 
   useEffect(() => {
-    const gui = new GUI();
-
     const updateDirection = () => {
       setDirection(
         projectLongLatOnSphere({
@@ -36,15 +34,9 @@ export function ProjectLongLatOnSphere() {
       );
     };
 
-    gui
-      .add(guiValues.current, "longitude", 0, 2 * Math.PI)
-      .name("Longitude")
-      .onChange(updateDirection);
-
-    gui
-      .add(guiValues.current, "latitude", 0, Math.PI)
-      .name("Latitude")
-      .onChange(updateDirection);
+    const gui = createGui(guiValues.current, {
+      onDirectionChange: updateDirection
+    });
 
     return () => {
       gui.destroy();

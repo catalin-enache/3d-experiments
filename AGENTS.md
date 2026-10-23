@@ -4,22 +4,21 @@ This application is an environment
 for experimenting and learning various
 2d & 3d graphics principles and Math topics (mostly graphics related).
 
-
 ## Areas of interest in general
- - 2D and 3D graphics
- - Math (mostly graphics related)
- - Physics simulations (planned)
 
+- 2D and 3D graphics
+- Math (mostly graphics related)
+- Physics simulations (planned)
 
 ## Areas of interest in particular
- - Linear Algebra
- - WebGL2
- - WebGpu
- - OpenGL (with Python)
- - Shaders
- - Three.js 
- - Babylon.js (planned)
 
+- Linear Algebra
+- WebGL2
+- WebGpu
+- OpenGL (with Python)
+- Shaders
+- Three.js
+- Babylon.js (planned)
 
 # Structure
 
@@ -31,6 +30,7 @@ React Three Fiber (R3F) + drei, raw WebGL2, Tweakpane / lil-gui for controls.
 use it for WGSL shaders when an experiment needs them; nothing uses it yet.
 
 Commands:
+
 - `npm run dev` - start the dev server (Vite runs TypeScript & ESLint checks via `vite-plugin-checker`).
 - `npm run build` - type check (`tsc -b`) and build.
 - `npm run lint` - ESLint.
@@ -95,6 +95,7 @@ The app is served under the `/3d-experiments/` base path (GitHub Pages).
 
     Use them in raw WebGL2 experiments. When working with `three.js` (or `babylon.js`)
     use that library's own math instead.
+
   - `src/lib/nativeThreeJs` - classes for native (non R3F) Three.js experiments:
     `SceneInit` (scene, camera, WebGL/WebGPU renderer, controls, helpers, animation loop, cleanup)
     and `AxisViewportHelper`.
@@ -109,11 +110,10 @@ Prefer them over long relative imports when reaching outside the experiment fold
 Lives in the `python` folder and contains various Python scripts
 that use PyGame and PyOpenGL to render 3D graphics.
 
-
-
 # Coding Rules
 
 ## Web area
+
 - Always TypeScript.
 - Every experiment lives in its own folder in `src/pages` (optionally nested in a topic folder).
 - The page is defined in the `index.tsx` file of that folder.
@@ -136,6 +136,7 @@ that use PyGame and PyOpenGL to render 3D graphics.
   e.g. `src/pages/Shaders/Flag/` -> `Flag.tsx` exporting `Flag`, `index.tsx` default exporting `FlagPage`,
   route `{ segment: "flag", name: "Flag" }`. Topic folders (route groups) follow the same segment/name rule.
   The only exception is `Home`, whose segment is `""` (the site root).
+
 - Experiment specific files (shaders in a `glsl` subfolder, meshes, scene, GUI pane, README.md) stay in the same folder.
 - R3F (React Three Fiber) experiments are wrapped in a `components/Page` component
   (it owns the `<Canvas>`, camera, renderer - WebGL or WebGPU via `rendererParams` - grid, stats and gizmo).
@@ -145,6 +146,7 @@ that use PyGame and PyOpenGL to render 3D graphics.
   passed as `nativeScenario`. It must create everything inside `params.container`
   and return a cleanup function that releases all resources (listeners, GUI, GL objects, animation loop),
   since React StrictMode mounts it twice.
+
 - Register every new page in `src/routes.ts`.
 - When using Three.js with WebGPU import from `three/webgpu`; for the WebGL renderer import from `three`.
 - GUI controls: both Tweakpane and `lil-gui` are fine, neither is preferred.
@@ -152,6 +154,14 @@ that use PyGame and PyOpenGL to render 3D graphics.
   ask if none was specified, and keep using the one an existing experiment already uses.
   In R3F experiments, to inspect/edit a Three.js object there is also
   the `Inspector` component (Tweakpane based, `<Inspector object={...} />`).
+- GUI configuration lives outside the experiment file, in a sibling `pane.ts` (Tweakpane,
+  exporting `createPane`) or `gui.ts` (lil-gui, exporting `createGui`), like `StencilPortal/pane.ts`.
+  The function builds the whole panel (folders, bindings, options, labels, ranges) and returns it;
+  the experiment creates it and disposes it (`pane.dispose()` / `gui.destroy()`) in its cleanup.
+  The experiment owns the state: it passes the objects to bind (params, uniforms, materials...)
+  and, for changes that need more than the bound value (rebuild a geometry, reset a scene,
+  call GL), callbacks such as `onTessellationChange`. The panel file holds no rendering, GL or scene code.
+  The params type lives in the panel file, or in a `settings.ts` when other files use it too.
 - Shared code: keep code inside the experiment folder until a second experiment needs it,
   then move it to `src/lib` (TS utilities, math, geometries), `src/glsl` (shader chunks),
   `src/components` or `src/hooks`, and re-export it from the barrel `index.ts` where there is one.
@@ -163,6 +173,7 @@ that use PyGame and PyOpenGL to render 3D graphics.
 - Before finishing a task, run Prettier on the changed files and make sure `npm run lint` and `npx tsc -b` pass.
 
 # Agent Behavior
+
 - Do not add, remove or upgrade dependencies without asking first.
 - Do not edit `dist/` (build output) or commit generated files (e.g. Python `__pycache__`).
 - Renaming a page folder or route `segment` changes its public URL on GitHub Pages; mention it when doing so.
@@ -171,15 +182,15 @@ that use PyGame and PyOpenGL to render 3D graphics.
 
   When it is worth proposing:
 
-  | Change | Smoke test |
-  |---|---|
-  | New experiment | That page, and look at its screenshot |
-  | Rendering / shader / scene code of one experiment | That page; the screenshot when the visual result matters |
+  | Change                                                                                                                  | Smoke test                                                       |
+  | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+  | New experiment                                                                                                          | That page, and look at its screenshot                            |
+  | Rendering / shader / scene code of one experiment                                                                       | That page; the screenshot when the visual result matters         |
   | Shared code: `Page`, `NativePage`, `SceneInit`, `lib/utils/webgl.ts`, `src/glsl`, `vite.config.ts`, dependency upgrades | Full run; screenshots only for failures or a sample of 2-3 pages |
-  | Route / folder renames | Full run (confirms every route still loads) |
-  | `AGENTS.md`, docs, config without runtime effect, comments | Not needed |
-  | Pure TS refactors already covered by `tsc -b` + lint | Usually not needed |
-  | Math helpers | Only if the change affects what is drawn |
+  | Route / folder renames                                                                                                  | Full run (confirms every route still loads)                      |
+  | `AGENTS.md`, docs, config without runtime effect, comments                                                              | Not needed                                                       |
+  | Pure TS refactors already covered by `tsc -b` + lint                                                                    | Usually not needed                                               |
+  | Math helpers                                                                                                            | Only if the change affects what is drawn                         |
 
   Keep it cheap: read only the pass/fail lines and failure details of the output,
   and open only the screenshots that are needed (each costs ~800 tokens), never all of them.

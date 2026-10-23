@@ -1,4 +1,3 @@
-import { Pane } from "tweakpane";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
@@ -11,6 +10,7 @@ import {
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
+import { createPane, type Params } from "./pane";
 
 // https://webgl2fundamentals.org/webgl/lessons/webgl-3d-perspective.html
 export async function Projection3D({
@@ -53,37 +53,19 @@ export async function Projection3D({
     0
   );
 
-  const params = {
-    projection: "orthographic" as "perspective" | "orthographic",
+  const params: Params = {
+    projection: "orthographic",
     translation: { x: 0, y: 0, z: -950 },
-    // in degrees
     rotation: { x: 40, y: 25, z: 325 },
     scale: { x: 1, y: 1, z: 1 }
   };
 
   const depth = 2000;
 
-  const pane = new Pane({ title: "Transform" });
-  pane.addBinding(params, "projection", {
-    options: {
-      Perspective: "perspective",
-      Orthographic: "orthographic"
-    }
-  });
-  pane.addBinding(params, "translation", {
-    x: { min: -gl.canvas.width / 2, max: gl.canvas.width / 2, step: 1 },
-    y: { min: -gl.canvas.height / 2, max: gl.canvas.height / 2, step: 1 },
-    z: { min: -depth, max: depth, step: 1 }
-  });
-  pane.addBinding(params, "rotation", {
-    x: { min: -360, max: 360, step: 1 },
-    y: { min: -360, max: 360, step: 1 },
-    z: { min: -360, max: 360, step: 1 }
-  });
-  pane.addBinding(params, "scale", {
-    x: { min: -5, max: 5, step: 0.01 },
-    y: { min: -5, max: 5, step: 0.01 },
-    z: { min: -5, max: 5, step: 0.01 }
+  const pane = createPane(params, {
+    width: gl.canvas.width,
+    height: gl.canvas.height,
+    depth
   });
 
   // only draw the faces pointing toward the viewer

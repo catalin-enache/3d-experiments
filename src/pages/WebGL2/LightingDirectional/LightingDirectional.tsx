@@ -1,4 +1,3 @@
-import { Pane } from "tweakpane";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
@@ -14,6 +13,7 @@ import {
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
+import { createPane, type Params } from "./pane";
 
 // https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-directional.html
 export async function LightingDirectional({
@@ -88,30 +88,15 @@ export async function LightingDirectional({
     }
   ];
 
-  const params = {
-    // in degrees
+  const params: Params = {
     rotation: 0,
     scaleX: 1,
     scaleY: 1,
     scaleZ: 1,
-    // when off, normals are transformed by the world matrix itself
-    // so their distortion under non-uniform scaling can be observed
     inverseTranspose: true
   };
 
-  const pane = new Pane({ title: "Lighting Directional" });
-  pane.addBinding(params, "rotation", {
-    min: -360,
-    max: 360,
-    step: 1
-  });
-  // non-uniform scaling is where normals break if they are
-  // transformed by the world matrix instead of its inverse transpose.
-  // min > 0 keeps the world matrix invertible
-  for (const key of ["scaleX", "scaleY", "scaleZ"] as const) {
-    pane.addBinding(params, key, { min: 0.1, max: 3, step: 0.1 });
-  }
-  pane.addBinding(params, "inverseTranspose", { label: "inverse transpose" });
+  const pane = createPane(params);
 
   const camera = [100, 150, 250];
   const target = [0, 0, 0];

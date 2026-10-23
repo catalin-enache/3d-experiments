@@ -1,10 +1,10 @@
 import * as THREE from "three/webgpu";
 import { useEffect, useRef, useMemo } from "react";
-import GUI from "lil-gui";
 import { useTexture } from "@react-three/drei";
 import vertexShader from "./glsl/vertex.glsl";
 import fragmentShader from "./glsl/fragment.glsl";
 import { Scenario } from "@components";
+import { createGui } from "./gui";
 
 export function HeightMapToNormalMap() {
   const texture = useTexture(
@@ -23,15 +23,8 @@ export function HeightMapToNormalMap() {
   );
 
   useEffect(() => {
-    const gui = new GUI();
-
-    gui
-      .add(materialRef.current!.uniforms.uIntensity, "value", 0, 10, 0.1)
-      .name("Intensity");
-
-    gui
-      .add(materialRef.current!.uniforms.uOffset, "value", -1, 1, 0.01)
-      .name("Offset");
+    const { uIntensity, uOffset } = materialRef.current!.uniforms;
+    const gui = createGui({ uIntensity, uOffset });
 
     return () => {
       gui.destroy();

@@ -1,10 +1,18 @@
 import * as THREE from "three/webgpu";
-import GUI from "lil-gui";
+import type GUI from "lil-gui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Environment, useTexture } from "@react-three/drei";
 import { useCubeCamera } from "@components";
 import { Scenario } from "@components";
 import { useFrame } from "@react-three/fiber";
+import {
+  createGui,
+  type MaterialType,
+  type MeshType,
+  type Params,
+  type PlatformMaterialType,
+  type SceneBackgroundName
+} from "./gui";
 
 const platformDefaultMaterialSpruitSunriseColor = new THREE.Color().setHSL(
   0.13,
@@ -22,24 +30,6 @@ const platformDefaultMaterialDefaultColor = new THREE.Color().setHSL(
   0.0,
   0.07
 );
-
-type MeshType = "cube" | "sphere" | "plane";
-type PlatformMaterialType = "default" | "mirror";
-
-const meshTypes: MeshType[] = ["cube", "sphere", "plane"];
-
-const materialTypes = [
-  "MeshBasicMaterial",
-  "MeshStandardMaterial",
-  "MeshLambertMaterial",
-  "MeshPhongMaterial",
-  "MeshPhysicalMaterial",
-  "MeshToonMaterial",
-  "MeshMatcapMaterial",
-  "MeshNormalMaterial"
-] as const;
-
-type MaterialType = (typeof materialTypes)[number];
 
 const materialsMap: Record<MaterialType, THREE.Material> = {
   MeshBasicMaterial: new THREE.MeshBasicMaterial(),
@@ -59,20 +49,6 @@ const pbrTexture = {
   roughnessMap: "textures/pbr/Rocks005/Rocks005_1K-JPG_Roughness.jpg",
   aoMap: "textures/pbr/Rocks005/Rocks005_1K-JPG_AmbientOcclusion.jpg"
 };
-
-const minTessellation = 1;
-const maxTessellation = 300;
-
-const sceneBackgrounds = [
-  "None",
-  "SpruitSunrise",
-  "MilkyWay",
-  "Park3Med",
-  "SkyboxSun",
-  "Pisa"
-] as const;
-
-type SceneBackgroundName = (typeof sceneBackgrounds)[number];
 
 const cubeCoords = ["px", "nx", "py", "ny", "pz", "nz"];
 
@@ -123,7 +99,7 @@ export function MaterialTest() {
 
   const maps = useTexture(pbrTexture);
 
-  const paramsRef = useRef({
+  const paramsRef = useRef<Params>({
     materialType,
     meshType,
     tessellation,
@@ -174,71 +150,16 @@ export function MaterialTest() {
   }, [material]);
 
   useEffect(() => {
-    const gui = new GUI({
-      title: "Material Test"
+    const gui = createGui(paramsRef.current, material, {
+      onMaterialTypeChange: setMaterialType,
+      onMeshTypeChange: setMeshType,
+      onTessellationChange: setTessellation,
+      onShowPlatformChange: setShowPlatform,
+      onPlatformMaterialChange: setPlatformMaterialType,
+      onSceneBackgroundChange: setSceneBackgroundName
     });
 
     guiRef.current = gui;
-
-    gui
-      .add(paramsRef.current, "materialType", materialTypes)
-      .name("Current Material")
-      .onChange((value: MaterialType) => {
-        setMaterialType(value);
-      });
-
-    gui
-      .add(paramsRef.current, "meshType", meshTypes)
-      .name("Current Mesh")
-      .onChange((value: MeshType) => {
-        setMeshType(value);
-      });
-
-    gui
-      .add(
-        paramsRef.current,
-        "tessellation",
-        minTessellation,
-        maxTessellation,
-        1
-      )
-      .name("Tessellation")
-      .onChange((value: number) => {
-        setTessellation(value);
-      });
-
-    if ("wireframe" in material) {
-      gui
-        .add(paramsRef.current, "wireframe")
-        .name("Wireframe")
-        .onChange((value: boolean) => {
-          material.wireframe = value;
-        });
-    }
-
-    gui
-      .add(paramsRef.current, "showPlatform")
-      .name("Show Platform")
-      .onChange((value: boolean) => {
-        setShowPlatform(value);
-      });
-
-    gui
-      .add(paramsRef.current, "platformMaterial", {
-        Default: "default",
-        Mirror: "mirror"
-      })
-      .name("Platform Material")
-      .onChange((value: PlatformMaterialType) => {
-        setPlatformMaterialType(value);
-      });
-
-    gui
-      .add(paramsRef.current, "sceneBackground", sceneBackgrounds)
-      .name("Scene Background")
-      .onChange((value: SceneBackgroundName) => {
-        setSceneBackgroundName(value);
-      });
 
     return () => {
       gui.destroy();

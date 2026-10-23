@@ -1,11 +1,12 @@
 import * as THREE from "three/webgpu";
 import { useEffect, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Pane } from "tweakpane";
 
 import vertexShader from "./glsl/vertex.glsl";
 import fragmentShader from "./glsl/fragment.glsl";
 import { Scenario } from "@components";
+
+import { createPane } from "./pane";
 
 const planeGeometry = new THREE.PlaneGeometry(10, 10, 1, 1);
 
@@ -44,48 +45,7 @@ export function PatternsUV() {
   }, []);
 
   useEffect(() => {
-    const pane = new Pane({
-      title: "Shader Patterns UV"
-    });
-
-    pane.addBinding(uniforms.uPattern, "value", {
-      label: "Pattern",
-      min: 1,
-      max: 40,
-      step: 1
-    });
-
-    const varsFolder = pane.addFolder({
-      title: "Vars"
-    });
-
-    varsFolder.addBinding(uniforms.uVars.value, "x", {
-      label: "X",
-      min: 0,
-      max: 1,
-      step: 0.01
-    });
-
-    varsFolder.addBinding(uniforms.uVars.value, "y", {
-      label: "Y",
-      min: 0,
-      max: 1,
-      step: 0.01
-    });
-
-    varsFolder.addBinding(uniforms.uVars.value, "z", {
-      label: "Z",
-      min: 0,
-      max: 1,
-      step: 0.01
-    });
-
-    varsFolder.addBinding(uniforms.uVars.value, "w", {
-      label: "W",
-      min: 0,
-      max: 1,
-      step: 0.01
-    });
+    const pane = createPane(uniforms);
 
     return () => {
       pane.dispose();

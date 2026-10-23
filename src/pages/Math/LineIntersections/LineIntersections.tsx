@@ -1,7 +1,6 @@
 import * as THREE from "three/webgpu";
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Pane } from "tweakpane";
 
 import { HtmlInfo, Scenario } from "@components";
 import { HtmlLabel } from "@src/components/HtmlLabel/HtmlLabel";
@@ -13,6 +12,8 @@ import {
   intersectLinePlane,
   cross2D
 } from "@lib/math/intersections";
+
+import { createPane, type Params } from "./pane";
 
 /*
  * ============================================================
@@ -169,9 +170,9 @@ export function LineIntersections() {
    * ----------------------------------------------------------
    */
 
-  const params = useMemo(
+  const params = useMemo<Params>(
     () => ({
-      intersectionType: "segment_segment" as const,
+      intersectionType: "segment_segment",
 
       /*
        * Only for displaying the plane larger than the
@@ -275,34 +276,7 @@ export function LineIntersections() {
    */
 
   useEffect(() => {
-    const pane = new Pane({
-      title: "Intersections"
-    });
-
-    const lineLineFolder = pane.addFolder({
-      title: "Line / Line"
-    });
-
-    lineLineFolder.addBinding(params, "intersectionType", {
-      label: "type",
-      options: {
-        "Segment / Segment": "segment_segment",
-        "Line / Line": "line_line",
-        "Segment / Line": "segment_line",
-        "Line / Segment": "line_segment"
-      }
-    });
-
-    const planeFolder = pane.addFolder({
-      title: "Line / Plane"
-    });
-
-    planeFolder.addBinding(params, "planeVisualScale", {
-      label: "plane size",
-      min: 0.5,
-      max: 4,
-      step: 0.1
-    });
+    const pane = createPane(params);
 
     return () => {
       pane.dispose();

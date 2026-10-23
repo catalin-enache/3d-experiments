@@ -1,7 +1,7 @@
-import GUI from "lil-gui";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop, type Timer } from "@lib/utils/webgl";
 import * as m3 from "@lib/webgl2fundamentals/m3";
+import { createGui, type Params } from "./gui";
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
@@ -65,7 +65,7 @@ export async function Basic({
   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
   gl.vertexAttribPointer(aColorLocation, 4, gl.FLOAT, false, 0, 0);
 
-  const transform1 = {
+  const transform1: Params = {
     translationX: 200,
     translationY: 200,
     rotation: 0, // degrees
@@ -74,16 +74,7 @@ export async function Basic({
     scaleY: 1
   };
 
-  const gui = new GUI({ title: "Triangle transform" });
-  const translationFolder = gui.addFolder("Translation");
-  translationFolder.add(transform1, "translationX", -2000, 2000, 1).name("x");
-  translationFolder.add(transform1, "translationY", -2000, 2000, 1).name("y");
-  const rotationFolder = gui.addFolder("Rotation");
-  rotationFolder.add(transform1, "rotation", -360, 360, 1).name("angle (deg)");
-  rotationFolder.add(transform1, "rotationSpeed", -5, 5, 0.01).name("speed");
-  const scaleFolder = gui.addFolder("Scale");
-  scaleFolder.add(transform1, "scaleX", -5, 5, 0.01).name("x");
-  scaleFolder.add(transform1, "scaleY", -5, 5, 0.01).name("y");
+  const gui = createGui(transform1);
 
   function tick({ timer }: { timer: Timer }) {
     // Clear the canvas
