@@ -12,7 +12,7 @@ export default function StencilPlaygroundPage() {
           stencil: true,
           // without antialiasing every pixel has exactly one stencil value,
           // which makes the stencil view (and the value under the cursor) exact
-          antialias: false,
+          antialias: true,
           // an opaque canvas, so blending the shapes never makes it see-through
           alpha: false
         }
