@@ -1,17 +1,15 @@
+import * as twgl from "twgl.js";
 import type { ScenarioParams } from "@appTypes";
-import { createProgram, init, loop } from "@lib/utils/webgl";
+import { init, loop } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
 import { degToRad } from "@lib/webgl2fundamentals/m3";
 import {
-  letterF3DPositions,
-  letterF3DNormals,
-  letterF3DVertexCount,
-  spherePositions,
-  sphereNormals,
-  sphereVertexCount,
-  planePositions,
-  planeNormals,
-  planeVertexCount
+  letterF3DVertices,
+  _letterF3DNormals,
+  sphereVertices,
+  _sphereNormals,
+  planeVertices,
+  _planeNormals
 } from "@lib/geometries";
 
 import vertexShaderSource from "./glsl/vertex.glsl";
@@ -40,90 +38,43 @@ import { createPane, type Params } from "./pane";
 // Everything else (diffuse, specular, attenuation) is the point light's,
 // multiplied by how much the pixel is inside the cone.
 // A floor is added so the circle of light the cone draws on it is visible.
-export async function LightingSpot({
+//
+// The WebGL boilerplate is done by twgl.js (https://twgljs.org), by the
+// author of WebGL2Fundamentals. LightingPoint does the same things by hand:
+//   - createProgramInfo: compiles and links the program and looks up all its
+//     attribute and uniform locations
+//   - createBufferInfoFromArrays: one buffer per attribute, the keys are
+//     the attribute names in the shader
+//   - createVertexArrayInfo: a VAO with those buffers bound to the attributes
+//   - setUniforms: calls the right gl.uniform* for each uniform, by name
+//     and by the type declared in the shader
+//   - drawBufferInfo: drawArrays with the vertex count of the buffers
+export function LightingSpot({
   container,
   webglContextAttributes
 }: ScenarioParams) {
   const { gl, cleanUp } = init({ container, webglContextAttributes });
 
-  const program = await createProgram({
-    gl,
+  const programInfo = twgl.createProgramInfo(gl, [
     vertexShaderSource,
     fragmentShaderSource
-  });
-
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-  const normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
-
-  const worldLocation = gl.getUniformLocation(program, "u_world");
-  const worldViewProjectionLocation = gl.getUniformLocation(
-    program,
-    "u_worldViewProjection"
-  );
-  const worldInverseTransposeLocation = gl.getUniformLocation(
-    program,
-    "u_worldInverseTranspose"
-  );
-  const colorLocation = gl.getUniformLocation(program, "u_color");
-  const lightWorldPositionLocation = gl.getUniformLocation(
-    program,
-    "u_lightWorldPosition"
-  );
-  const falloffDistanceLocation = gl.getUniformLocation(
-    program,
-    "u_falloffDistance"
-  );
-  const unlitLocation = gl.getUniformLocation(program, "u_unlit");
-  const viewWorldPositionLocation = gl.getUniformLocation(
-    program,
-    "u_viewWorldPosition"
-  );
-  const shininessLocation = gl.getUniformLocation(program, "u_shininess");
-  const lightColorLocation = gl.getUniformLocation(program, "u_lightColor");
-  // DIFFERENT from the point light: where the spot points
-  const lightDirectionLocation = gl.getUniformLocation(
-    program,
-    "u_lightDirection"
-  );
-  // DIFFERENT: the cosines of the inner and outer cone angles
-  const innerLimitLocation = gl.getUniformLocation(program, "u_innerLimit");
-  const outerLimitLocation = gl.getUniformLocation(program, "u_outerLimit");
-  const ditheringLocation = gl.getUniformLocation(program, "u_dithering");
-  const ditherStrengthLocation = gl.getUniformLocation(
-    program,
-    "u_ditherStrength"
-  );
+  ]);
 
   // one VAO per geometry, each holding its own positions and normals
-  function createVao(
-    setPositions: (gl: WebGL2RenderingContext) => void,
-    setNormals: (gl: WebGL2RenderingContext) => void
-  ) {
-    const vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
-
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    setPositions(gl);
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-    const normalBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-    setNormals(gl);
-    gl.enableVertexAttribArray(normalAttributeLocation);
-    gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-    return vao;
+  function createVao(positions: Float32Array, normals: Float32Array) {
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, {
+      a_position: { numComponents: 3, data: positions },
+      a_normal: { numComponents: 3, data: normals }
+    });
+    return twgl.createVertexArrayInfo(gl, programInfo, bufferInfo);
   }
 
   const sphereRadius = 60;
   // shared by the gray sphere and the light marker
-  const sphereVao = createVao(spherePositions, sphereNormals);
+  const sphereVao = createVao(sphereVertices, _sphereNormals);
   const objects = [
     {
-      vao: createVao(letterF3DPositions, letterF3DNormals),
-      vertexCount: letterF3DVertexCount,
+      vao: createVao(letterF3DVertices, _letterF3DNormals),
       position: [-70, 0, 0],
       // the F already has its real size
       size: 1,
@@ -131,7 +82,6 @@ export async function LightingSpot({
     },
     {
       vao: sphereVao,
-      vertexCount: sphereVertexCount,
       position: [80, 0, 0],
       // the sphere geometry has radius 1
       size: sphereRadius,
@@ -142,7 +92,7 @@ export async function LightingSpot({
   // DIFFERENT: a floor under the objects (the F goes down to y = -75).
   // The plane geometry faces +Z, -90 degrees around X turns it to face up.
   // It is not rotated / scaled by the pane, it only shows the cone's footprint
-  const floorVao = createVao(planePositions, planeNormals);
+  const floorVao = createVao(planeVertices, _planeNormals);
   const floorSize = 600;
   let floorMatrix = m4.translation(0, -80, 0);
   floorMatrix = m4.xRotate(floorMatrix, degToRad(-90));
@@ -152,15 +102,16 @@ export async function LightingSpot({
   // DIFFERENT: a line from the light to its target, to see where the spot
   // points. Its 2 points change every frame, so the buffer is updated in tick.
   // It has no normals: the attribute stays disabled (normals aren't used unlit)
-  const aimVao = gl.createVertexArray();
-  gl.bindVertexArray(aimVao);
-  const aimBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, aimBuffer);
-  // DYNAMIC_DRAW: a hint that the data will be rewritten often
-  gl.bufferData(gl.ARRAY_BUFFER, 6 * 4, gl.DYNAMIC_DRAW);
-  gl.enableVertexAttribArray(positionAttributeLocation);
-  gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
   const aimPoints = new Float32Array(6);
+  const aimBufferInfo = twgl.createBufferInfoFromArrays(gl, {
+    a_position: {
+      numComponents: 3,
+      data: aimPoints,
+      // a hint that the data will be rewritten often
+      drawType: gl.DYNAMIC_DRAW
+    }
+  });
+  const aimVao = twgl.createVertexArrayInfo(gl, programInfo, aimBufferInfo);
 
   const params: Params = {
     rotation: 0,
@@ -198,23 +149,29 @@ export async function LightingSpot({
   // only draw pixels closer than what's already been drawn
   gl.enable(gl.DEPTH_TEST);
 
-  gl.useProgram(program);
+  gl.useProgram(programInfo.program);
 
-  function setMatrices(worldMatrix: m4.Matrix4, viewProjection: m4.Matrix4) {
-    gl.uniformMatrix4fv(worldLocation, false, worldMatrix);
-    gl.uniformMatrix4fv(
-      worldViewProjectionLocation,
-      false,
-      m4.multiply(viewProjection, worldMatrix)
-    );
-    // used to orient the normals with the object
-    gl.uniformMatrix4fv(
-      worldInverseTransposeLocation,
-      false,
-      params.inverseTranspose
+  // the matrices of one object
+  function matrixUniforms(worldMatrix: m4.Matrix4, viewProjection: m4.Matrix4) {
+    return {
+      u_world: worldMatrix,
+      u_worldViewProjection: m4.multiply(viewProjection, worldMatrix),
+      // used to orient the normals with the object
+      u_worldInverseTranspose: params.inverseTranspose
         ? m4.transpose(m4.inverse(worldMatrix))
         : worldMatrix
-    );
+    };
+  }
+
+  function draw(
+    vao: twgl.VertexArrayInfo,
+    uniforms: Record<string, unknown>,
+    type: number = gl.TRIANGLES
+  ) {
+    twgl.setUniforms(programInfo, uniforms);
+    // binds the VAO
+    twgl.setBuffersAndAttributes(gl, programInfo, vao);
+    twgl.drawBufferInfo(gl, vao, type);
   }
 
   function tick() {
@@ -238,34 +195,33 @@ export async function LightingSpot({
 
     const lightPosition = [params.lightX, params.lightY, params.lightZ];
     const lightTarget = [params.targetX, params.targetY, params.targetZ];
-    gl.uniform3fv(lightWorldPositionLocation, lightPosition);
-    gl.uniform1f(falloffDistanceLocation, params.falloffDistance);
-    gl.uniform1i(unlitLocation, 0);
-    gl.uniform3fv(viewWorldPositionLocation, camera);
-    gl.uniform1f(shininessLocation, params.shininess);
     const { lightColor } = params;
-    gl.uniform3fv(lightColorLocation, [
-      lightColor.r,
-      lightColor.g,
-      lightColor.b
-    ]);
-
-    // DIFFERENT: the spot direction, from the light toward its target.
-    // Normalized here once, the shader compares it with per pixel directions
-    // through a dot product, which only gives the cosine for unit vectors
-    gl.uniform3fv(
-      lightDirectionLocation,
-      m4.normalize(m4.subtractVectors(lightTarget, lightPosition))
-    );
     // DIFFERENT: the cone angles are sent as cosines (see the shader).
     // The inner cone can't be wider than the outer one
     const innerAngle = Math.min(params.innerAngle, params.outerAngle);
-    gl.uniform1f(innerLimitLocation, Math.cos(degToRad(innerAngle)));
-    gl.uniform1f(outerLimitLocation, Math.cos(degToRad(params.outerAngle)));
-    gl.uniform1i(ditheringLocation, params.dithering ? 1 : 0);
-    gl.uniform1f(ditherStrengthLocation, params.ditherStrength);
 
-    for (const { vao, vertexCount, position, size, color } of objects) {
+    // the same for every object
+    twgl.setUniforms(programInfo, {
+      u_lightWorldPosition: lightPosition,
+      u_falloffDistance: params.falloffDistance,
+      u_unlit: false,
+      u_viewWorldPosition: camera,
+      u_shininess: params.shininess,
+      u_lightColor: [lightColor.r, lightColor.g, lightColor.b],
+      // DIFFERENT: the spot direction, from the light toward its target.
+      // Normalized here once, the shader compares it with per pixel
+      // directions through a dot product, which only gives the cosine
+      // for unit vectors
+      u_lightDirection: m4.normalize(
+        m4.subtractVectors(lightTarget, lightPosition)
+      ),
+      u_innerLimit: Math.cos(degToRad(innerAngle)),
+      u_outerLimit: Math.cos(degToRad(params.outerAngle)),
+      u_dithering: params.dithering,
+      u_ditherStrength: params.ditherStrength
+    });
+
+    for (const { vao, position, size, color } of objects) {
       // move each object to its place, rotate it around its own center
       // and scale it in its local space (scale first, then rotation)
       let worldMatrix = m4.translation(position[0], position[1], position[2]);
@@ -276,16 +232,16 @@ export async function LightingSpot({
         params.scaleY * size,
         params.scaleZ * size
       );
-      setMatrices(worldMatrix, viewProjectionMatrix);
-      gl.uniform4fv(colorLocation, color);
-      gl.bindVertexArray(vao);
-      gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+      draw(vao, {
+        ...matrixUniforms(worldMatrix, viewProjectionMatrix),
+        u_color: color
+      });
     }
 
-    setMatrices(floorMatrix, viewProjectionMatrix);
-    gl.uniform4fv(colorLocation, floorColor);
-    gl.bindVertexArray(floorVao);
-    gl.drawArrays(gl.TRIANGLES, 0, planeVertexCount);
+    draw(floorVao, {
+      ...matrixUniforms(floorMatrix, viewProjectionMatrix),
+      u_color: floorColor
+    });
 
     // a small sphere where the light is.
     // It is unlit: the light is inside it, so lighting it would make it dark
@@ -295,21 +251,25 @@ export async function LightingSpot({
       markerRadius,
       markerRadius
     );
-    setMatrices(markerMatrix, viewProjectionMatrix);
-    // the marker shows the light color
-    gl.uniform4fv(colorLocation, [lightColor.r, lightColor.g, lightColor.b, 1]);
-    gl.uniform1i(unlitLocation, 1);
-    gl.bindVertexArray(sphereVao);
-    gl.drawArrays(gl.TRIANGLES, 0, sphereVertexCount);
+    draw(sphereVao, {
+      ...matrixUniforms(markerMatrix, viewProjectionMatrix),
+      // the marker shows the light color
+      u_color: [lightColor.r, lightColor.g, lightColor.b, 1],
+      u_unlit: true
+    });
 
-    // the aim line, already in world space: identity world matrix
+    // the aim line, already in world space: identity world matrix.
+    // With an offset twgl uses bufferSubData: the buffer is only rewritten,
+    // not reallocated
     aimPoints.set(lightPosition, 0);
     aimPoints.set(lightTarget, 3);
-    gl.bindBuffer(gl.ARRAY_BUFFER, aimBuffer);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, aimPoints);
-    setMatrices(m4.identity(), viewProjectionMatrix);
-    gl.bindVertexArray(aimVao);
-    gl.drawArrays(gl.LINES, 0, 2);
+    twgl.setAttribInfoBufferFromArray(
+      gl,
+      aimBufferInfo.attribs!.a_position,
+      aimPoints,
+      0
+    );
+    draw(aimVao, matrixUniforms(m4.identity(), viewProjectionMatrix), gl.LINES);
   }
 
   return loop({
