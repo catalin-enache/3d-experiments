@@ -22,8 +22,34 @@ uniform vec3 u_lightDirection;
 // in between it fades out
 uniform float u_innerLimit;
 uniform float u_outerLimit;
+// adds a tiny noise to hide the banding of slow gradients (see dither)
+uniform bool u_dithering;
 
 out vec4 outColor;
+
+// The canvas stores 8 bits per channel: 256 levels. A slow gradient
+// (the dark side of the floor drops 1 level every ~10 pixels) becomes
+// flat bands with a 1 level jump between them, which the eye sees as lines.
+//
+// Dithering adds a different tiny offset to every pixel, between
+// -0.5 and +0.5 of a level, before the color gets rounded to 8 bits.
+// Near the border between two bands, some pixels then round up and some
+// round down, mixed more and more as the true value moves toward the
+// next level. The eye averages neighboring pixels, so it sees the
+// in-between values again, and the noise itself is too faint to notice.
+//
+// The noise is "interleaved gradient noise" (Jorge Jimenez, Call of Duty):
+// a cheap hash of the pixel position, without the clumps of plain random
+// noise, so it looks like an even fine grain.
+// gl_FragCoord.xy is the pixel position on the screen, so the pattern is
+// fixed to the screen and doesn't crawl over the surfaces
+float dither() {
+  float noise = fract(
+    52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715)))
+  );
+  // from 0..1 to -0.5..0.5 of one level (1 / 255)
+  return (noise - 0.5) / 255.0;
+}
 
 void main() {
   if (u_unlit) {
@@ -75,4 +101,9 @@ void main() {
   outColor = u_color;
   outColor.rgb *= light * u_lightColor;
   outColor.rgb += specular * u_lightColor;
+
+  // the same offset for r, g and b: the grays stay gray
+  if (u_dithering) {
+    outColor.rgb += dither();
+  }
 }

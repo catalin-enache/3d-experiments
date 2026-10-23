@@ -88,6 +88,7 @@ export async function LightingSpot({
   // DIFFERENT: the cosines of the inner and outer cone angles
   const innerLimitLocation = gl.getUniformLocation(program, "u_innerLimit");
   const outerLimitLocation = gl.getUniformLocation(program, "u_outerLimit");
+  const ditheringLocation = gl.getUniformLocation(program, "u_dithering");
 
   // one VAO per geometry, each holding its own positions and normals
   function createVao(
@@ -176,7 +177,8 @@ export async function LightingSpot({
     targetY: -30,
     targetZ: 0,
     innerAngle: 20,
-    outerAngle: 30
+    outerAngle: 30,
+    dithering: true
   };
 
   const pane = createPane(params);
@@ -255,6 +257,7 @@ export async function LightingSpot({
     const innerAngle = Math.min(params.innerAngle, params.outerAngle);
     gl.uniform1f(innerLimitLocation, Math.cos(degToRad(innerAngle)));
     gl.uniform1f(outerLimitLocation, Math.cos(degToRad(params.outerAngle)));
+    gl.uniform1i(ditheringLocation, params.dithering ? 1 : 0);
 
     for (const { vao, vertexCount, position, size, color } of objects) {
       // move each object to its place, rotate it around its own center

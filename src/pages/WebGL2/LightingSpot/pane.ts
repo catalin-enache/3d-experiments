@@ -26,6 +26,8 @@ export interface Params {
   // fading out up to the outer cone
   innerAngle: number;
   outerAngle: number;
+  // hides the banding of slow gradients (see the fragment shader)
+  dithering: boolean;
 }
 
 export function createPane(params: Params) {
@@ -40,6 +42,8 @@ export function createPane(params: Params) {
     pane.addBinding(params, key, { min: 0.1, max: 3, step: 0.1 });
   }
   pane.addBinding(params, "inverseTranspose", { label: "inverse transpose" });
+  // off: look at the dark side of the floor, it shows bands
+  pane.addBinding(params, "dithering");
 
   const lightFolder = pane.addFolder({ title: "Light" });
   for (const key of ["lightX", "lightY", "lightZ"] as const) {
