@@ -28,6 +28,8 @@ export interface Params {
   outerAngle: number;
   // hides the banding of slow gradients (see the fragment shader)
   dithering: boolean;
+  // in 8-bit levels, the noise goes from -strength to +strength
+  ditherStrength: number;
 }
 
 export function createPane(params: Params) {
@@ -44,6 +46,13 @@ export function createPane(params: Params) {
   pane.addBinding(params, "inverseTranspose", { label: "inverse transpose" });
   // off: look at the dark side of the floor, it shows bands
   pane.addBinding(params, "dithering");
+  // too low leaves bands, too high shows the grain
+  pane.addBinding(params, "ditherStrength", {
+    label: "dither strength",
+    min: 0,
+    max: 4,
+    step: 0.25
+  });
 
   const lightFolder = pane.addFolder({ title: "Light" });
   for (const key of ["lightX", "lightY", "lightZ"] as const) {

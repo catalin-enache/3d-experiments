@@ -20,7 +20,7 @@ import { createPane, type Params } from "./pane";
 
 // https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-spot.html
 //
-// A spot light is a point light (see LightingPoint) that only shines
+// A spotlight is a point light (see LightingPoint) that only shines
 // inside a cone, like a flashlight or a stage light.
 // It has a position, like the point light, plus:
 //   - a direction: where the cone points (here aimed at a target point)
@@ -89,6 +89,10 @@ export async function LightingSpot({
   const innerLimitLocation = gl.getUniformLocation(program, "u_innerLimit");
   const outerLimitLocation = gl.getUniformLocation(program, "u_outerLimit");
   const ditheringLocation = gl.getUniformLocation(program, "u_dithering");
+  const ditherStrengthLocation = gl.getUniformLocation(
+    program,
+    "u_ditherStrength"
+  );
 
   // one VAO per geometry, each holding its own positions and normals
   function createVao(
@@ -178,7 +182,8 @@ export async function LightingSpot({
     targetZ: 0,
     innerAngle: 20,
     outerAngle: 30,
-    dithering: true
+    dithering: true,
+    ditherStrength: 1
   };
 
   const pane = createPane(params);
@@ -258,6 +263,7 @@ export async function LightingSpot({
     gl.uniform1f(innerLimitLocation, Math.cos(degToRad(innerAngle)));
     gl.uniform1f(outerLimitLocation, Math.cos(degToRad(params.outerAngle)));
     gl.uniform1i(ditheringLocation, params.dithering ? 1 : 0);
+    gl.uniform1f(ditherStrengthLocation, params.ditherStrength);
 
     for (const { vao, vertexCount, position, size, color } of objects) {
       // move each object to its place, rotate it around its own center
