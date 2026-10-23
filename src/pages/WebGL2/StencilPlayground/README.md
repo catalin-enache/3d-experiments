@@ -244,7 +244,8 @@ exactly on the regions that read 2.
 
 The right shows the stencil after **both** passes. If pass 2 has an op other
 than `KEEP`, the values there are no longer the ones pass 2 was tested
-against. All the presets keep pass 2 at `KEEP`.
+against. "Two masks in one byte" and "Erase" write in pass 2 on purpose: there
+the right shows the values after pass 2 changed them.
 
 ### How the stencil view is painted
 
@@ -272,16 +273,21 @@ almost all the circles. It only shows up on the pixels that pass its stencil
 test, so on the left you usually see pieces cut out by the circles, not a
 rectangle. The yellow outline on the right shows the whole rectangle.
 
-| Preset             | Setup                                                               | What to look at                                                                                               |
-| ------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **Count overlaps** | P1 `ALWAYS`, dppass `INCR`. P2 `EQUAL 2`                            | The stencil counts the overlaps (1, 2, 3). Only the 3 lens shapes where exactly 2 circles overlap turn yellow |
-| **Mask outside**   | P1 dppass `REPLACE` ref 1. P2 `NOTEQUAL 1`                          | The rectangle is drawn everywhere except inside the circles                                                   |
-| **Odd overlaps**   | P1 `INCR`. P2 `EQUAL 1` with func mask 1                            | Only bit 0 is compared: counts 1 and 3 pass, 2 doesn't                                                        |
-| **XOR**            | P1 dppass `INVERT`, write mask 1. P2 `EQUAL 1`                      | Each circle flips bit 0: 1 where an odd number of circles overlap                                             |
-| **Write mask**     | P1 `REPLACE` ref 255, write mask `00001111`. P2 `EQUAL 15`          | Only the low 4 bits get written: 255 is stored as 15                                                          |
-| **Wrap around**    | P1 dppass `DECR_WRAP`. P2 `LESS 253`                                | 0 → 255 → 254 → 253. `LESS 253` means `253 < stencil`: 1 or 2 overlaps                                        |
-| **X-ray**          | Blocker on. P1 dpfail `REPLACE` ref 1. P2 `EQUAL 1`, depth test off | Only the parts of the circles **hidden** by the blocker are marked, and the rectangle shows just those        |
-| **No overdraw**    | P1 `EQUAL 0`, dppass `INCR`. P2 off                                 | A circle marks its pixels, the next circles fail there: no pixel is drawn twice                               |
+| Preset                    | Setup                                                                              | What to look at                                                                                                                             |
+| ------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Count overlaps**        | P1 `ALWAYS`, dppass `INCR`. P2 `EQUAL 2`                                           | The stencil counts the overlaps (1, 2, 3). Only the 3 lens shapes where exactly 2 circles overlap turn yellow                               |
+| **Mask outside**          | P1 dppass `REPLACE` ref 1. P2 `NOTEQUAL 1`                                         | The rectangle is drawn everywhere except inside the circles                                                                                 |
+| **Odd overlaps**          | P1 `INCR`. P2 `EQUAL 1` with func mask 1                                           | Only bit 0 is compared: counts 1 and 3 pass, 2 doesn't                                                                                      |
+| **XOR**                   | P1 dppass `INVERT`, write mask 1. P2 `EQUAL 1`                                     | Each circle flips bit 0: 1 where an odd number of circles overlap                                                                           |
+| **Write mask**            | P1 `REPLACE` ref 255, write mask `00001111`. P2 `EQUAL 15`                         | Only the low 4 bits get written: 255 is stored as 15                                                                                        |
+| **Wrap around**           | P1 dppass `DECR_WRAP`. P2 `LESS 253`                                               | 0 → 255 → 254 → 253. `LESS 253` means `253 < stencil`: 1 or 2 overlaps                                                                      |
+| **X-ray**                 | Blocker on. P1 dpfail `REPLACE` ref 1. P2 `EQUAL 1`, depth test off                | Only the parts of the circles **hidden** by the blocker are marked, and the rectangle shows just those                                      |
+| **No overdraw**           | P1 `EQUAL 0`, dppass `INCR`. P2 off                                                | A circle marks its pixels, the next circles fail there: no pixel is drawn twice                                                             |
+| **Portal**                | P1 color write off, dppass `REPLACE` ref 1. P2 `EQUAL 1`                           | The circles are invisible, they only stamp a mask. The rectangle shows through it: portals, mirrors, scopes, clipping UI to any shape       |
+| **Stamp without drawing** | P1 `NEVER`, sfail `REPLACE` ref 1. P2 `EQUAL 1`                                    | Same mask as the portal, made by a test that always fails: sfail writes even though nothing is drawn                                        |
+| **Clamp at zero**         | Clear 2. P1 dppass `DECR`. P2 `EQUAL 0`                                            | A countdown: 1 circle leaves 1, 2 or 3 circles leave 0 (`DECR` stops at 0). Yellow where at least 2 circles overlap                         |
+| **Two masks in one byte** | P1 `REPLACE` ref 1, write mask `01`. P2 `ALWAYS`, `REPLACE` ref 2, write mask `10` | Each pass owns one bit: 2 on the rectangle, 3 where the circles are too. With write mask `11111111` in P2 the circles would be lost (all 2) |
+| **Erase**                 | P1 dppass `INCR`. P2 color write off, `EQUAL 1`, dppass `ZERO`                     | The circles look as usual on the left, but on the right only the overlaps (2, 3) keep a value: an invisible pass erased the rest            |
 
 ## Things to try
 

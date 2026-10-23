@@ -87,6 +87,63 @@ export const presets: {
       Object.assign(pass1, { func: GL.EQUAL, ref: 0, dppass: GL.INCR });
       pass2.enabled = false;
     }
+  },
+  {
+    // the circles write only the stencil (color write off): an invisible mask.
+    // The rectangle shows through it, like a portal, a mirror or a scope
+    title: "Portal (invisible mask)",
+    apply: ({ pass1, pass2 }) => {
+      Object.assign(pass1, {
+        colorWrite: false,
+        ref: 1,
+        dppass: GL.REPLACE
+      });
+      Object.assign(pass2, { func: GL.EQUAL, ref: 1 });
+    }
+  },
+  {
+    // NEVER fails everywhere, so nothing is drawn, but sfail still writes:
+    // the same mask as the portal, without touching the color mask
+    title: "Stamp without drawing (NEVER + sfail)",
+    apply: ({ pass1, pass2 }) => {
+      Object.assign(pass1, { func: GL.NEVER, ref: 1, sfail: GL.REPLACE });
+      Object.assign(pass2, { func: GL.EQUAL, ref: 1 });
+    }
+  },
+  {
+    // a countdown from 2: 1 circle -> 1, 2 circles -> 0, 3 circles -> still 0
+    // because DECR stops at 0. EQUAL 0 then means "at least 2 overlaps"
+    title: "Clamp at zero (clear 2 + DECR)",
+    apply: (params) => {
+      params.clearStencil = 2;
+      Object.assign(params.pass1, { dppass: GL.DECR });
+      Object.assign(params.pass2, { func: GL.EQUAL, ref: 0 });
+    }
+  },
+  {
+    // two independent masks in one byte: the circles own bit 0, the rectangle
+    // bit 1. The write masks keep each pass off the other's bit, so the
+    // rectangle adds its bit (2) instead of overwriting the circles: 1 + 2 = 3
+    title: "Two masks in one byte (bit planes)",
+    apply: ({ pass1, pass2 }) => {
+      Object.assign(pass1, { ref: 1, dppass: GL.REPLACE, writeMask: 0b01 });
+      Object.assign(pass2, { ref: 2, dppass: GL.REPLACE, writeMask: 0b10 });
+    }
+  },
+  {
+    // the circles count the overlaps, then an invisible pass 2 sets to 0
+    // the pixels that read 1: only the overlaps keep a value.
+    // gl.clear can only erase rectangles (with the scissor), this erases any shape
+    title: "Erase (invisible pass + ZERO)",
+    apply: ({ pass1, pass2 }) => {
+      Object.assign(pass1, { dppass: GL.INCR });
+      Object.assign(pass2, {
+        colorWrite: false,
+        func: GL.EQUAL,
+        ref: 1,
+        dppass: GL.ZERO
+      });
+    }
   }
 ];
 
