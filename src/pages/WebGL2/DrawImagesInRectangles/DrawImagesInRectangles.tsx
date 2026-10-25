@@ -238,10 +238,16 @@ export async function DrawImagesInRectangles({
     for (const drawInfo of drawInfos) {
       drawInfo.x += drawInfo.dx * speed * deltaTime;
       drawInfo.y += drawInfo.dy * speed * deltaTime;
+      // (x, y) is the rectangle's top-left corner, so on the right / bottom
+      // it bounces when its far edge (x + width, y + height) reaches the canvas
+      // edge. The rotation only spins the texture inside the rectangle,
+      // the rectangle itself stays axis aligned.
+      const dstWidth = drawInfo.textureInfo.width * drawInfo.xScale;
+      const dstHeight = drawInfo.textureInfo.height * drawInfo.yScale;
       if (drawInfo.x < 0) drawInfo.dx = 1;
-      if (drawInfo.x >= gl.canvas.width) drawInfo.dx = -1;
+      if (drawInfo.x + dstWidth >= gl.canvas.width) drawInfo.dx = -1;
       if (drawInfo.y < 0) drawInfo.dy = 1;
-      if (drawInfo.y >= gl.canvas.height) drawInfo.dy = -1;
+      if (drawInfo.y + dstHeight >= gl.canvas.height) drawInfo.dy = -1;
       drawInfo.rotation += drawInfo.deltaRotation * deltaTime;
     }
   }
