@@ -148,9 +148,9 @@ export const routes: RouteNode[] = [
         component: lazy(() => import("@pages/WebGL2/StencilPlayground"))
       },
       {
-        segment: "scene-graph",
-        name: "Scene Graph",
-        component: lazy(() => import("@pages/WebGL2/SceneGraph"))
+        segment: "scene-graph-humanoid",
+        name: "Scene Graph Humanoid",
+        component: lazy(() => import("@pages/WebGL2/SceneGraphHumanoid"))
       }
     ]
   },

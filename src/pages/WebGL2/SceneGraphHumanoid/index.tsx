@@ -1,10 +1,10 @@
 import { NativePage } from "@components";
-import { SceneGraph } from "./SceneGraph";
+import { SceneGraphHumanoid } from "./SceneGraphHumanoid";
 
-export default function SceneGraphPage() {
+export default function SceneGraphHumanoidPage() {
   return (
     <NativePage
-      nativeScenario={SceneGraph}
+      nativeScenario={SceneGraphHumanoid}
       options={{
         webglContextAttributes: {
           preserveDrawingBuffer: false

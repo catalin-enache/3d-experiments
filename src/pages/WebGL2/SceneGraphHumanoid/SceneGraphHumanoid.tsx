@@ -22,7 +22,7 @@ import fragmentShaderSource from "./glsl/fragment.glsl";
 // it only sets a few angles per part and the hierarchy does the rest.
 //
 // Ported from https://webgl2fundamentals.org/webgl/lessons/webgl-scene-graph.html
-export async function SceneGraph({
+export async function SceneGraphHumanoid({
   container,
   webglContextAttributes
 }: ScenarioParams) {
