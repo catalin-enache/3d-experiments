@@ -146,6 +146,11 @@ export const routes: RouteNode[] = [
         segment: "stencil-playground",
         name: "Stencil Playground",
         component: lazy(() => import("@pages/WebGL2/StencilPlayground"))
+      },
+      {
+        segment: "scene-graph",
+        name: "Scene Graph",
+        component: lazy(() => import("@pages/WebGL2/SceneGraph"))
       }
     ]
   },
