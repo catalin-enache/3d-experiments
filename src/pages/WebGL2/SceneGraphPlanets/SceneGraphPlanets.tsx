@@ -92,9 +92,11 @@ export async function SceneGraphPlanets({
     moonSpin: -0.6
   };
 
-  // below the sun, looking up at it; z is up on the screen
+  // below the sun, looking up at it; z is up on the screen.
+  // 300 units away (the tutorial uses 200) so the whole earth orbit
+  // (100 units + the earth and the moon) stays in view on wide, short canvases
   const camera = {
-    position: [0, -200, 0],
+    position: [0, -300, 0],
     target: [0, 0, 0],
     up: [0, 0, 1]
   };
