@@ -1,6 +1,6 @@
-import { Matrix4 } from "three";
 import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop } from "@lib/utils/webgl";
+import * as m4 from "@lib/webgl2fundamentals/m4";
 
 import vertexShaderSource from "./glsl/vertex.glsl";
 import fragmentShaderSource from "./glsl/fragment.glsl";
@@ -199,34 +199,36 @@ export async function DrawImagesInRectangles({
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     // this matrix will convert from pixels to clip space
-    const matrix = new Matrix4()
-      .makeOrthographic(0, gl.canvas.width, 0, gl.canvas.height, -1, 1)
-      // translate our quad to dstX, dstY
-      .multiply(new Matrix4().makeTranslation(dstX, dstY, 0))
-      // scale our 1 unit quad from 1 unit to dstWidth, dstHeight units
-      .multiply(new Matrix4().makeScale(dstWidth, dstHeight, 1));
+    // (bottom = height, top = 0: y points down, like the 2D canvas API)
+    let matrix = m4.orthographic(
+      0,
+      gl.canvas.width,
+      gl.canvas.height,
+      0,
+      -1,
+      1
+    );
+    // translate our quad to dstX, dstY
+    matrix = m4.translate(matrix, dstX, dstY, 0);
+    // scale our 1 unit quad from 1 unit to dstWidth, dstHeight units
+    matrix = m4.scale(matrix, dstWidth, dstHeight, 1);
 
-    gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
+    gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
     // just like a 2d projection matrix except in texture space (0 to 1)
     // instead of clip space. This matrix puts us in pixel space.
-    const texMatrix = new Matrix4()
-      .makeScale(1 / texWidth, 1 / texHeight, 1)
-      // We need to pick a place to rotate around
-      // We'll move to the middle, rotate, then move back
-      .multiply(
-        new Matrix4().makeTranslation(texWidth * 0.5, texHeight * 0.5, 0)
-      )
-      .multiply(new Matrix4().makeRotationZ(srcRotation))
-      .multiply(
-        new Matrix4().makeTranslation(texWidth * -0.5, texHeight * -0.5, 0)
-      )
-      // because were in pixel space
-      // the scale and translation are now in pixels
-      .multiply(new Matrix4().makeTranslation(srcX, srcY, 0))
-      .multiply(new Matrix4().makeScale(srcWidth, srcHeight, 1));
+    let texMatrix = m4.scaling(1 / texWidth, 1 / texHeight, 1);
+    // We need to pick a place to rotate around
+    // We'll move to the middle, rotate, then move back
+    texMatrix = m4.translate(texMatrix, texWidth * 0.5, texHeight * 0.5, 0);
+    texMatrix = m4.zRotate(texMatrix, srcRotation);
+    texMatrix = m4.translate(texMatrix, texWidth * -0.5, texHeight * -0.5, 0);
+    // because were in pixel space
+    // the scale and translation are now in pixels
+    texMatrix = m4.translate(texMatrix, srcX, srcY, 0);
+    texMatrix = m4.scale(texMatrix, srcWidth, srcHeight, 1);
 
-    gl.uniformMatrix4fv(textureMatrixLocation, false, texMatrix.elements);
+    gl.uniformMatrix4fv(textureMatrixLocation, false, texMatrix);
 
     // draw the quad (2 triangles, 6 vertices)
     gl.drawArrays(gl.TRIANGLES, 0, 6);

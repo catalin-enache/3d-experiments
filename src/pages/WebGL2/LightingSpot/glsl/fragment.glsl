@@ -66,7 +66,6 @@ void main() {
     max(u_innerLimit, u_outerLimit + 0.0001),
     dotFromDirection
   );
-
   // the same diffuse and specular as the point light
   float light = max(dot(normal, surfaceToLightDirection), 0.0);
   float specular = step(0.0001, light) * pow(max(dot(normal, halfVector), 0.0), u_shininess);

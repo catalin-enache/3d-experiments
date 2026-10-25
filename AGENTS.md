@@ -93,8 +93,9 @@ The app is served under the `/3d-experiments/` base path (GitHub Pages).
   - `src/lib/webgl2fundamentals` - math functions (`m3`, `m4`, `matrixStack`) taken from
     [WebGL2Fundamentals](https://webgl2fundamentals.org/).
 
-    Use them in raw WebGL2 experiments. When working with `three.js` (or `babylon.js`)
-    use that library's own math instead.
+    Every WebGL2 experiment (`src/pages/WebGL2`) uses them for all its math
+    (matrices, vectors, projections, rotations), never `three`'s math classes (`Matrix4`, `Vector3`...).
+    When working with `three.js` (or `babylon.js`) use that library's own math instead.
 
   - `src/lib/nativeThreeJs` - classes for native (non R3F) Three.js experiments:
     `SceneInit` (scene, camera, WebGL/WebGPU renderer, controls, helpers, animation loop, cleanup)
@@ -149,6 +150,8 @@ that use PyGame and PyOpenGL to render 3D graphics.
 
 - Register every new page in `src/routes.ts`.
 - When using Three.js with WebGPU import from `three/webgpu`; for the WebGL renderer import from `three`.
+- WebGL2 experiments (`src/pages/WebGL2`) do all their math with `src/lib/webgl2fundamentals`
+  (`import * as m4 from "@lib/webgl2fundamentals/m4"`, `m3`, `matrixStack`), not with `three`.
 - GUI controls: both Tweakpane and `lil-gui` are fine, neither is preferred.
   The choice is made per experiment when it is started: use the one requested,
   ask if none was specified, and keep using the one an existing experiment already uses.
