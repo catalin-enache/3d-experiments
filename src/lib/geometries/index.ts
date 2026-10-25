@@ -5,3 +5,4 @@ export * from "./sphere";
 export * from "./cube";
 export * from "./tangents";
 export * from "./plane";
+export * from "./randomGrayColors";

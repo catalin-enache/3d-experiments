@@ -2,7 +2,11 @@ import type { ScenarioParams } from "@appTypes";
 import { createProgram, init, loop, type Timer } from "@lib/utils/webgl";
 import * as m4 from "@lib/webgl2fundamentals/m4";
 import { degToRad } from "@lib/webgl2fundamentals/m3";
-import { cubeVertices, cubeVertexCount } from "@lib/geometries";
+import {
+  cubeVertices,
+  cubeVertexCount,
+  randomGrayColors
+} from "@lib/geometries";
 import { createBlockGuy, type Part, type PartName } from "./blockGuy";
 
 import vertexShaderSource from "./glsl/vertex.glsl";
@@ -52,7 +56,9 @@ export async function SceneGraphHumanoid({
 
   const colorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, createFaceColors(), gl.STATIC_DRAW);
+  // one gray per cube face (6 vertices)
+  const colors = randomGrayColors(cubeVertexCount, 6);
+  gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
   gl.enableVertexAttribArray(colorAttributeLocation);
   // convert the colors from 0-255 to 0.0-1.0
   gl.vertexAttribPointer(
@@ -122,24 +128,6 @@ export async function SceneGraphHumanoid({
       cleanUp();
     }
   });
-}
-
-// One random gray (128-255) per cube face, as RGBA bytes for every vertex.
-// The cube in @lib/geometries lists its faces one after the other,
-// 6 vertices (2 triangles) each.
-function createFaceColors() {
-  const verticesPerFace = 6;
-  const colors = new Uint8Array(cubeVertexCount * 4);
-  for (let vertex = 0; vertex < cubeVertexCount; vertex++) {
-    if (vertex % verticesPerFace === 0) {
-      const gray = (128 + Math.random() * 128) | 0;
-      colors.set([gray, gray, gray, 255], vertex * 4);
-    } else {
-      // same color as the face's first vertex
-      colors.copyWithin(vertex * 4, (vertex - 1) * 4, vertex * 4);
-    }
-  }
-  return colors;
 }
 
 // The walk cycle: every part only gets its own angles (relative to its

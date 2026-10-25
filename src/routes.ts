@@ -151,6 +151,11 @@ export const routes: RouteNode[] = [
         segment: "scene-graph-humanoid",
         name: "Scene Graph Humanoid",
         component: lazy(() => import("@pages/WebGL2/SceneGraphHumanoid"))
+      },
+      {
+        segment: "scene-graph-planets",
+        name: "Scene Graph Planets",
+        component: lazy(() => import("@pages/WebGL2/SceneGraphPlanets"))
       }
     ]
   },
